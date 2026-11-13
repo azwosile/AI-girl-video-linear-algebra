@@ -1,0 +1,14 @@
+{
+ "pile": "\\begin{matrix} \\class{e11}{2} & \\class{e12}{-1} \\\\ \\class{e21}{1} & \\class{e22}{1} \\end{matrix}",
+ "A": "\\class{nm}{A} \\class{eq}{=} \\begin{bmatrix} \\color{#C8643C}{\\class{e11}{2}} & \\color{#3E8E7E}{\\class{e12}{-1}} \\\\ \\color{#C8643C}{\\class{e21}{1}} & \\color{#3E8E7E}{\\class{e22}{1}} \\end{bmatrix}",
+ "ihat": "\\color{#C8643C}{\\hat{\\imath}}",
+ "jhat": "\\color{#3E8E7E}{\\hat{\\jmath}}",
+ "iland": "\\color{#C8643C}{\\begin{bmatrix} \\class{n}{2} \\\\ \\class{n}{1} \\end{bmatrix}}",
+ "jland": "\\color{#3E8E7E}{\\begin{bmatrix} \\class{n}{-1} \\\\ \\class{n}{1} \\end{bmatrix}}",
+ "v": "\\mathbf{v} = \\begin{bmatrix} 1 \\\\ 2 \\end{bmatrix}",
+ "Av": "\\class{p0}{A\\mathbf{v}} \\class{p0}{\\class{eq}{=}} \\class{p1}{1 \\color{#C8643C}{\\begin{bmatrix} 2 \\\\ 1 \\end{bmatrix}}} \\class{p2}{+\\, 2 \\color{#3E8E7E}{\\begin{bmatrix} -1 \\\\ 1 \\end{bmatrix}}}",
+ "res": "\\begin{bmatrix} 0 \\\\ 3 \\end{bmatrix}",
+ "A3": "\\begin{bmatrix} \\class{c1}{\\color{#C8643C}{1}} & \\class{c2}{\\color{#3E8E7E}{1}} & \\class{c3}{\\color{#D9A441}{0}} \\\\ \\class{c1}{\\color{#C8643C}{0}} & \\class{c2}{\\color{#3E8E7E}{1}} & \\class{c3}{\\color{#D9A441}{1}} \\\\ \\class{c1}{\\color{#C8643C}{1}} & \\class{c2}{\\color{#3E8E7E}{0}} & \\class{c3}{\\color{#D9A441}{1}} \\end{bmatrix}",
+ "vb": "\\mathbf{v}",
+ "Av2": "\\class{eq}{=} \\begin{bmatrix} 0 \\\\ 3 \\end{bmatrix}"
+}

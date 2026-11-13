@@ -16,3 +16,5 @@ pipeline/_from_calc/
 
 # 大体积原稿
 assets/characters/raw/
+assets/fonts/src/
+.cache48/

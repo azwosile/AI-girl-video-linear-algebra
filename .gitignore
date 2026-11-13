@@ -1,0 +1,18 @@
+# 资料（版权）
+参考书籍和PPT/
+
+# 生成物
+**/out/
+**/frames/
+**/vo/
+**/vo48/
+**/tex_cache.json
+**/__pycache__/
+node_modules/
+*.log
+
+# 旧版参考实现（重写后删除）
+pipeline/_from_calc/
+
+# 大体积原稿
+assets/characters/raw/

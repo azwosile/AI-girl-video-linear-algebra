@@ -5,10 +5,11 @@ import { clamp, smooth, outBack, inCubic, lerp } from '../core/util.js';
 export class Cast {
   /** env: envelope.json（每句 30 fps RMS 0..1）；TL: 时间轴 */
   constructor(env, TL) { this.env = env; this.TL = TL; this.img = {}; this.shadow = {}; }
-  add(name, img) {
+  /** shadow：错版投影颜色（深底上用角色暗色做丝网错位感） */
+  add(name, img, shadow = C.paperHi) {
     this.img[name] = img;
     const s = document.createElement('canvas'); s.width = img.width; s.height = img.height; const g = s.getContext('2d');
-    g.drawImage(img, 0, 0); g.globalCompositeOperation = 'source-in'; g.fillStyle = C.ink; g.fillRect(0, 0, s.width, s.height);
+    g.drawImage(img, 0, 0); g.globalCompositeOperation = 'source-in'; g.fillStyle = shadow; g.fillRect(0, 0, s.width, s.height);
     this.shadow[name] = s;
   }
   /** 说话人 spk 在 t 时刻的音量包络（0..1，已平滑） */
@@ -23,7 +24,7 @@ export class Cast {
    * 画一个角色。o：
    *   name 图片名, spk 说话人字母, x 脚底中心 x, y 底边 y, h 高度（px）,
    *   in [t0,t1] 入场时间, out [t0,t1] 退场时间, from 入场方向 'left'|'right'|'bottom',
-   *   disc {r, dx, dy, color} 身后色圆, flip 镜像
+   *   disc {r, dx, dy, color} 身后色圆, flip 镜像, alpha 整体透明度（差分交叉淡化用）, pop 0..1 换差分时的小跳
    */
   draw(ctx, t, o) {
     const im = this.img[o.name]; if (!im) return;
@@ -42,16 +43,17 @@ export class Cast {
     const breath = 1 + 0.006 * Math.sin(t * 2 * Math.PI / 3.4 + (o.phase || 0));
     const bounce = lv * 9, sx = breath * (1 - lv * 0.006), sy = breath * (1 + lv * 0.012);
     const H = o.h, W = H * im.width / im.height;
-    const a = clamp(sIn * 3) * (1 - clamp((sOut - 0.6) / 0.4));
+    const aBase = clamp(sIn * 3) * (1 - clamp((sOut - 0.6) / 0.4)), a = aBase * (o.alpha ?? 1);
+    const pop = o.pop || 0;
     ctx.save();
     ctx.translate(o.x + dx, o.y + dy); ctx.rotate(rot);
-    if (o.disc) {
+    if (o.disc && !o.noDisc) {
       const dr = o.disc.r * smooth(clamp(sIn * 1.6)) * (1 - eOut);
-      ctx.globalAlpha = a; ctx.fillStyle = o.disc.color; ctx.beginPath(); ctx.arc(o.disc.dx || 0, -(o.disc.dy ?? H * 0.62), dr, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = aBase; ctx.fillStyle = o.disc.color; ctx.beginPath(); ctx.arc(o.disc.dx || 0, -(o.disc.dy ?? H * 0.62), dr, 0, Math.PI * 2); ctx.fill();
     }
-    ctx.translate(0, -bounce); ctx.scale(o.flip ? -sx : sx, sy);
-    // 纸片投影
-    ctx.globalAlpha = a * 0.13; ctx.drawImage(this.shadow[o.name], -W / 2 + 9, -H + 7, W, H);
+    ctx.translate(0, -bounce - pop * 14); const ps = 1 + pop * 0.015; ctx.scale((o.flip ? -sx : sx) * ps, sy * ps);
+    // 错版投影
+    ctx.globalAlpha = a * 0.9; ctx.drawImage(this.shadow[o.name], -W / 2 + 12, -H + 8, W, H);
     ctx.globalAlpha = a; ctx.drawImage(im, -W / 2, -H, W, H);
     ctx.restore();
   }
@@ -67,7 +69,7 @@ export function subtitle(ctx, t, TL, { y = 1018, px = 40, maxW = 1240 } = {}) {
   const name = sp.name, nw = (ctx.font = F.sans(26, 700), ctx.measureText(name).width); ctx.font = F.sans(px);
   const tw = Math.min(maxW, ctx.measureText(L.sub).width), pad = 22, gap = 18, w = nw + gap + tw + pad * 2, h = px + 26;
   const x0 = 960 - w / 2;
-  ctx.globalAlpha = a * 0.86; ctx.fillStyle = C.paperHi; ctx.fillRect(x0, y - h / 2, w, h);
+  ctx.globalAlpha = a * 0.82; ctx.fillStyle = C.paperHi; ctx.fillRect(x0, y - h / 2, w, h);
   ctx.globalAlpha = a; ctx.fillStyle = sp.color; ctx.fillRect(x0, y - h / 2, 6, h);
   ctx.font = F.sans(26, 700); ctx.fillText(name, x0 + pad, y + 1);
   ctx.font = F.sans(px); ctx.fillStyle = C.ink; ctx.fillText(L.sub, x0 + pad + nw + gap, y + 1, maxW);

@@ -1,11 +1,16 @@
-// 视觉 token（见 docs/视觉规范.md）。全课统一，场景里不要写裸色值。
+// 视觉 token v2（深色海报，见 docs/视觉规范.md）。全课统一，场景里不要写裸色值。
+// 语义名沿用 v1：paper = 底色，ink = 前景主色（现在是奶油色），peri = 强调色（现在是橙）。
 export const C = {
-  paper: '#EDE7DA', paperHi: '#F5EBDC', ink: '#302959', inkMid: '#5B5E90',
-  peri: '#748DD8', periLt: '#95A2DC', mist: '#ABB5DE', ghost: '#CFCDD5',
-  // 数学语义
-  i: '#C8643C', j: '#3E8E7E', k: '#D9A441', vec: '#302959', free: '#B04A7A',
+  paper: '#121010', paperHi: '#0B0A09', ink: '#F2E2C8', inkMid: '#A89982',
+  peri: '#E06A3A', periLt: '#F0955F', mist: '#6E6253', ghost: '#3A322B',
+  disc: '#211915', discRim: '#4A3A2E',
+  // 网格：原始网格 = 淡奶油（始终可见），变换后网格 = 橙
+  gridOld: '#F2E2C8', gridNew: '#E06A3A',
+  // 数学语义（深底上互相可分辨，也不和橙色网格撞色）
+  i: '#F2B544', j: '#4FC1A6', k: '#8C9DFF', vec: '#F2E2C8', free: '#E8577A',
   // 角色
-  claude: '#C8643C', claudeLt: '#E9B79A', gpt: '#2F6B5A', gptLt: '#A9C9BD', ds: '#748DD8', dsLt: '#95A2DC',
+  claude: '#DF763F', claudeLt: '#DF763F', gpt: '#3FA88E', gptLt: '#3FA88E', ds: '#4D6BFE', dsLt: '#4D6BFE',
+  shadowClaude: '#7A3517', shadowGpt: '#1D5446', shadowDs: '#22318A',
 };
 export const F = {
   serif: (px, w = 900) => `${w} ${px}px "LA-Serif", "LA-Latin", serif`,

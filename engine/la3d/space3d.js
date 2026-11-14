@@ -21,18 +21,18 @@ export class Space3D {
     const segs = [];
     for (let k = -R; k <= R; k++) { if (k) segs.push([k, -R, 0], [k, R, 0], [-R, k, 0], [R, k, 0]); }
     this.gridSrc = segs;
-    this.grid = this.lines(segs, C.paperHi, 2.2); this.ghost = this.lines(segs, C.ink, 1.2, 0.12);
+    this.grid = this.lines(segs, C.gridNew, 2.0, 0.85); this.ghost = this.lines(segs, C.gridOld, 1.2, 0.22);
     // 竖直方向的格线（x=k 平面与 z 轴方向），只画边框柱，暗示空间
     this.axes = this.lines([[-R, 0, 0], [R, 0, 0], [0, -R, 0], [0, R, 0], [0, 0, -0.01], [0, 0, R * 0.8]], C.ink, 3);
     // 单位立方体
     const cube = new THREE.Group(); cube.matrixAutoUpdate = false; this.cube = cube;
-    const tones = [C.paperHi, C.periLt, C.mist];
+    const tones = [C.peri, C.periLt, C.mist];
     const faces = [ // [法向轴, 位置, 色调]
       ['x', 1, 1], ['x', 0, 1], ['y', 1, 2], ['y', 0, 2], ['z', 1, 0], ['z', 0, 0]];
     this.faceMats = [];
     for (const [ax, pos, tone] of faces) {
       const g = new THREE.PlaneGeometry(1, 1); const mat = new THREE.MeshBasicMaterial({ color: tones[tone], transparent: true, opacity: 0.78, side: THREE.DoubleSide, depthWrite: false });
-      const m = new THREE.Mesh(g, mat);
+      const mat2 = mat; const m = new THREE.Mesh(g, mat2);
       if (ax === 'x') { m.rotation.y = Math.PI / 2; m.position.set(pos, 0.5, 0.5); }
       if (ax === 'y') { m.rotation.x = Math.PI / 2; m.position.set(0.5, pos, 0.5); }
       if (ax === 'z') { m.position.set(0.5, 0.5, pos); }
@@ -69,10 +69,10 @@ export class Space3D {
     this.cam.position.set(T.x + dist * Math.cos(e) * Math.cos(a), T.y + dist * Math.cos(e) * Math.sin(a), T.z + dist * Math.sin(e));
     this.cam.lookAt(T);
     const ap = p => [M[0][0] * p[0] + M[0][1] * p[1] + M[0][2] * p[2], M[1][0] * p[0] + M[1][1] * p[1] + M[1][2] * p[2], M[2][0] * p[0] + M[2][1] * p[1] + M[2][2] * p[2]];
-    this.grid.geometry.setPositions(this.gridSrc.map(ap).flat()); this.grid.material.opacity = gridA; this.grid.material.transparent = gridA < 1;
-    this.ghost.material.opacity = 0.12 * gridA;
+    this.grid.geometry.setPositions(this.gridSrc.map(ap).flat()); this.grid.material.opacity = 0.85 * gridA; this.grid.material.transparent = true;
+    this.ghost.material.opacity = 0.22 * gridA;
     this.cube.matrix.copy(m4(M)); this.cube.matrixWorldNeedsUpdate = true; this.cube.visible = cubeA > 0.01;
-    this.faceMats.forEach(m => m.opacity = 0.78 * cubeA); this.cubeEdges.material.opacity = cubeA; this.cubeEdges.material.transparent = cubeA < 1;
+    this.faceMats.forEach(m => m.opacity = 0.62 * cubeA); this.cubeEdges.material.opacity = cubeA; this.cubeEdges.material.transparent = cubeA < 1;
     [[1, 0, 0], [0, 1, 0], [0, 0, 1]].forEach((b, i) => this.setArrow(this.arrows[i], ap(b).map(x => x * arrowGrow), arrowGrow));
     this.renderer.render(this.scene, this.cam);
     return this.canvas;

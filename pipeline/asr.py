@@ -19,6 +19,8 @@ os.chdir(G)
 if 'GPT-SoVITS' in sys.executable: sys.path.insert(0, G)  # 用独立 uv 环境时不混入整合包源码
 from funasr import AutoModel
 from pypinyin import lazy_pinyin
+sys.path.insert(0, str(ROOT / 'pipeline'))
+import pron  # 两边都过发音修正表：稿子里的 行→航；ASR 写成 形/型 的会被比出来
 m = AutoModel(model='tools/asr/models/speech_paraformer-large_asr_nat-zh-cn-16k-common-vocab8404-pytorch',
               disable_update=True, device=os.environ.get('QA_DEVICE', 'cuda'))
 # 线代读法归一：字母与帽子统一成汉字读音再转拼音
@@ -30,7 +32,7 @@ def norm(s):
     for e, z in sorted(EN.items(), key=lambda x: -len(x[0])): s = s.replace(e, z)
     s = re.sub(r'(?<![a-z])i(?![a-z])', '爱', s); s = re.sub(r'(?<![a-z])j(?![a-z])', '杰', s)
     s = re.sub(r'(?<![a-z])x(?![a-z])', '艾克斯', s); s = re.sub(r'(?<![a-z])y(?![a-z])', '歪', s)
-    s = re.sub(r'[^\w]', '', s)
+    s = re.sub(r'[^\w]', '', pron.fix_hang(s))
     return ''.join(lazy_pinyin(s))
 
 
@@ -42,7 +44,8 @@ for k in sorted(ref):
     t = m.generate(input=str(f))[0]['text'].replace(' ', '')
     A, B = norm(t), norm(ref[k]); sm = difflib.SequenceMatcher(None, A, B); r = sm.ratio()
     diff = [f'{B[j1:j2] or "∅"}→{A[i1:i2] or "∅"}' for op, i1, i2, j1, j2 in sm.get_opcodes() if op != 'equal']
-    flag = '⚠' if r < 0.90 else 'OK'
+    hx = A.count('hang') < B.count('hang')  # 稿子该读 háng 的 行 被听成 形/型（xíng），哪怕整体相似度高也要标
+    flag = '⚠' if r < 0.90 or hx else 'OK'
     out.append(f'{flag} {k} {r:.2f} | ASR: {t} | 稿: {ref[k]}' + (f'\n      差异: {" ".join(diff)}' if diff else ''))
     if flag != 'OK': bad.append(k)
 (seg / 'qa_asr.txt').write_text('\n'.join(out) + f'\n\n需人工复听 / 重配：{" ".join(bad) or "无"}\n', encoding='utf-8')

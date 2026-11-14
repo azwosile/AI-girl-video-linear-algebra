@@ -1,0 +1,22 @@
+{
+ "zero": "x_1 = x_2 = x_3 = 0",
+ "e1": "x_1 + x_3 = 0",
+ "e2": "2x_1 + x_2 + x_3 = 0",
+ "e3": "x_1 + x_2 + x_3 = 0",
+ "e3s": "x_1 + 2x_2 - x_3 = 0",
+ "par": "\\class{p0}{x_3 = t,} \\quad \\class{p1}{x_2 = t,} \\quad \\class{p2}{x_1 = -t}",
+ "sol": "(x_1, x_2, x_3) = t\\,(-1,\\; 1,\\; 1)",
+ "thm": "n > m \\;\\Longrightarrow\\; \\mathbf{x} \\neq \\mathbf{0}",
+ "rank": "R(\\mathbf{A}) < n",
+ "rx": "x_1\\,\\mathrm{CO_2} + x_2\\,\\mathrm{H_2O} \\;\\longrightarrow\\; x_3\\,\\mathrm{O_2} + x_4\\,\\mathrm{C_6H_{12}O_6}",
+ "rx6": "6\\,\\mathrm{CO_2} + 6\\,\\mathrm{H_2O} \\;\\longrightarrow\\; 6\\,\\mathrm{O_2} + \\mathrm{C_6H_{12}O_6}",
+ "eqC": "\\mathrm{C}:\\quad x_1 = 6x_4",
+ "eqO": "\\mathrm{O}:\\quad 2x_1 + x_2 = 2x_3 + 6x_4",
+ "eqH": "\\mathrm{H}:\\quad 2x_2 = 12x_4",
+ "solP": "x_1 = x_2 = x_3 = 6x_4",
+ "eqA": "x_1 + 450 = x_2 + 610",
+ "solT": "\\class{a}{x_1 = x_4 + 330} \\quad \\class{b}{x_2 = x_4 + 170} \\quad \\class{c}{x_3 = x_4 + 210}",
+ "solT1": "x_1 = x_4 + 330",
+ "solT2": "x_2 = x_4 + 170",
+ "solT3": "x_3 = x_4 + 210"
+}

@@ -2,14 +2,18 @@
 """GPT-SoVITS 配音（本地 API 127.0.0.1:9880）。参考音只取本项目 assets/voice_ref/。
 用法：$PY pipeline/tts.py ch01/p0_sample [--only C01 G01] [--force] [--seed 42]
 读取 <段>/script.json：{id: [朗读文本, 情绪]}；输出 <段>/vo/<id>.wav
+送字前经 pron.apply（pipeline/pron.json）修正多音字；配音前先跑 pipeline/g2p_lint.py
 <段>/tts_override.json 可覆盖：{"C02": {"seed": 7, "mood": "panic"}}
 """
-import argparse, json, sys, time, urllib.request
+import argparse, json, os, sys, time, urllib.request
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import pron  # 发音修正表 pipeline/pron.json（行→háng 等）
 
 ROOT = Path(__file__).resolve().parents[1]
 REF = ROOT / 'assets' / 'voice_ref'
-API = 'http://127.0.0.1:9880/tts'
+API = os.environ.get('GSV_API', 'http://127.0.0.1:9880/tts')  # 端口被别的工程占用时用 GSV_API 改
 SQ = json.loads((REF / 'refs.json').read_text(encoding='utf-8'))
 VOICE = {
     'C': (REF / SQ['C']['file'], SQ['C']['text']),
@@ -23,12 +27,11 @@ D_REF = {
     'easy':  ('dwg_0031', '今天的海水温度刚刚好，特别适合一边摸鱼，一边认真工作。'),
 }
 SPEED = {'C': 1.0, 'G': 1.0, 'D': 1.08}
-READ = {'Claude': '克劳德', 'GPT': 'G P T', 'DeepSeek': '深度求索'}
 SEED = 1234
 
 
 def body(uid, text, mood, ov):
-    for a, b in READ.items(): text = text.replace(a, b)
+    text = pron.apply(text)
     k = uid[0]
     if k == 'D':
         r, prompt = D_REF[ov.get('mood') or mood or 'daily']; ref = REF / f'{r}.wav'

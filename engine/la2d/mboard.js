@@ -113,10 +113,16 @@ export class MBoard {
     }
     // 倍加：幽灵行
     if (op && op.type === 'add') {
-      const g = smoother(prog(s, 0, 0.5)), fade = 1 - smooth(prog(s, 0.42, 0.6));
+      // 幽灵行（k·R_src）先滑到目标行正下方停住，像竖式加法那样上下对齐；再并入目标行、目标行变数
+      const g = smoother(prog(s, 0, 0.3)), mg = smoother(prog(s, 0.45, 0.6)), fade = 1 - smooth(prog(s, 0.52, 0.66));
       if (fade > 0) {
-        const ghost = rowsA[op.src].map(v => v * op.kk), y = lerp(L.ry(op.src), L.ry(op.dst), g);
-        this._row(ctx, o, L, ghost, ghost, 0, y, px * 0.15, mode, a0 * 0.85 * fade * smooth(prog(s, 0, 0.12)), () => false, 0, 1, C.peri);
+        const ghost = rowsA[op.src].map(v => v * op.kk), below = L.ry(op.dst) + L.rh * 0.74;
+        const y = lerp(lerp(L.ry(op.src), below, g), L.ry(op.dst), mg), ga = a0 * fade * smooth(prog(s, 0, 0.12));
+        const w = lerp(L.wS, L.wM, mode) + px * 1.6;
+        if (op.dst < this.m - 1 && g > 0.6) { ctx.globalAlpha = ga * 0.92 * (1 - mg); ctx.fillStyle = o.ghostBg || C.disc; ctx.fillRect(o.x - w / 2, y - L.rh * 0.36, w, L.rh * 0.72); }
+        this._row(ctx, o, L, ghost, ghost, 0, y, 0, mode, ga, () => false, 0, 1, C.peri);
+        ctx.globalAlpha = ga * smooth(prog(s, 0.2, 0.32)) * (1 - mg); ctx.font = F.sans(px * 0.8, 700); ctx.fillStyle = C.peri; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText('+', o.x - w / 2 - px * 0.1, y);
       }
     }
     // 操作标签

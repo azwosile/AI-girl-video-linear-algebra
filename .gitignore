@@ -6,6 +6,7 @@
 **/frames/
 **/vo/
 **/vo48/
+**/vo_v1/
 **/tex_cache.json
 **/__pycache__/
 node_modules/

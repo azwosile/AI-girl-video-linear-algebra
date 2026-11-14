@@ -2,7 +2,7 @@
 // 场景模块需导出：
 //   export const assets = { chars: ['claude_explain', ...] }
 //   export async function setup(R) → { TL, draw(t) }
-//   R = { stage, ctx, lines, durations, envelope, tex(TexBank), cast(Cast), img{} }
+//   R = { stage, ctx, lines, durations, envelope, tex(TexBank), cast(Cast), img{}, math（<段>/math.json，没有则 null） }
 import { Stage, loadJSON, loadJSONOr, loadImage } from './stage.js';
 import { TexBank } from '../tex/tex.js';
 import { Cast } from '../cast/cast.js';
@@ -22,12 +22,12 @@ export async function boot(scene, segURL) {
   const seg = new URL(segURL, location.href).href.replace(/\/?$/, '/');
   const cv = document.getElementById('c');
   const stage = new Stage(cv);
-  const [lines, durations, envelope, texCache] = await Promise.all([
-    loadJSON(seg + 'lines.json'), loadJSONOr(seg + 'durations.json', {}), loadJSONOr(seg + 'envelope.json', {}), loadJSONOr(seg + 'tex_cache.json', {}),
+  const [lines, durations, envelope, texCache, math] = await Promise.all([
+    loadJSON(seg + 'lines.json'), loadJSONOr(seg + 'durations.json', {}), loadJSONOr(seg + 'envelope.json', {}), loadJSONOr(seg + 'tex_cache.json', {}), loadJSONOr(seg + 'math.json', null),
     loadFonts()]);
   const img = {};
   await Promise.all((scene.assets?.chars || []).map(async n => { img[n] = await loadImage(`${ROOT}assets/characters/cutout/${n}.png`); }));
-  const R = { stage, ctx: stage.ctx, lines, durations, envelope, tex: new TexBank(texCache), img };
+  const R = { stage, ctx: stage.ctx, lines, durations, envelope, tex: new TexBank(texCache), img, math };
   const { TL, draw } = await scene.setup(R);
   window.TIMELINE = TL.export();
   window.DURATION = TL.total;

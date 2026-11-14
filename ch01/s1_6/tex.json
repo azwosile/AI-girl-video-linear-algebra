@@ -1,0 +1,20 @@
+{
+ "colAB": "A\\,\\big[\\,\\class{c1}{\\color{#F2B544}{\\mathbf{b}_1}}\\ \\ \\class{c2}{\\color{#4FC1A6}{\\mathbf{b}_2}}\\ \\ \\class{c3}{\\color{#8C9DFF}{\\mathbf{b}_3}}\\,\\big] = \\big[\\,\\class{c1}{\\color{#F2B544}{A\\mathbf{b}_1}}\\ \\ \\class{c2}{\\color{#4FC1A6}{A\\mathbf{b}_2}}\\ \\ \\class{c3}{\\color{#8C9DFF}{A\\mathbf{b}_3}}\\,\\big]",
+ "colEx": "\\begin{bmatrix} 1 & 3 & 1 \\\\ 2 & 1 & -2 \\end{bmatrix}\\begin{bmatrix} \\class{c1}{\\color{#F2B544}{-1}} & \\class{c2}{\\color{#4FC1A6}{2}} & \\class{c3}{\\color{#8C9DFF}{1}} \\\\ \\class{c1}{\\color{#F2B544}{2}} & \\class{c2}{\\color{#4FC1A6}{3}} & \\class{c3}{\\color{#8C9DFF}{1}} \\\\ \\class{c1}{\\color{#F2B544}{1}} & \\class{c2}{\\color{#4FC1A6}{4}} & \\class{c3}{\\color{#8C9DFF}{1}} \\end{bmatrix}",
+ "colRes": "= \\begin{bmatrix} \\class{c1}{\\color{#F2B544}{6}} & \\class{c2}{\\color{#4FC1A6}{15}} & \\class{c3}{\\color{#8C9DFF}{5}} \\\\ \\class{c1}{\\color{#F2B544}{-2}} & \\class{c2}{\\color{#4FC1A6}{-1}} & \\class{c3}{\\color{#8C9DFF}{1}} \\end{bmatrix}",
+ "AI": "A = AI = \\big[\\,A\\mathbf{e}_1\\ \\ A\\mathbf{e}_2\\ \\ \\cdots\\ \\ A\\mathbf{e}_n\\,\\big]",
+ "rowAB": "AB = \\begin{bmatrix} \\class{r1}{\\color{#F2B544}{\\vec a_1 B}} \\\\ \\class{r2}{\\color{#4FC1A6}{\\vec a_2 B}} \\\\ \\class{r3}{\\color{#8C9DFF}{\\vec a_3 B}} \\end{bmatrix}",
+ "rowEx": "\\begin{bmatrix} \\class{r1}{\\color{#F2B544}{2}} & \\class{r1}{\\color{#F2B544}{5}} \\\\ \\class{r2}{\\color{#4FC1A6}{3}} & \\class{r2}{\\color{#4FC1A6}{4}} \\\\ \\class{r3}{\\color{#8C9DFF}{1}} & \\class{r3}{\\color{#8C9DFF}{7}} \\end{bmatrix}\\begin{bmatrix} 3 & 2 & -3 \\\\ -1 & 1 & 1 \\end{bmatrix}",
+ "rowRes": "= \\begin{bmatrix} \\class{r1}{\\color{#F2B544}{1}} & \\class{r1}{\\color{#F2B544}{9}} & \\class{r1}{\\color{#F2B544}{-1}} \\\\ \\class{r2}{\\color{#4FC1A6}{5}} & \\class{r2}{\\color{#4FC1A6}{10}} & \\class{r2}{\\color{#4FC1A6}{-5}} \\\\ \\class{r3}{\\color{#8C9DFF}{-4}} & \\class{r3}{\\color{#8C9DFF}{9}} & \\class{r3}{\\color{#8C9DFF}{4}} \\end{bmatrix}",
+ "blk4": "\\begin{bmatrix} \\class{ra}{A_{11}} & \\class{ra}{A_{12}} \\\\ A_{21} & A_{22} \\end{bmatrix}\\begin{bmatrix} \\class{cb}{B_{11}} & B_{12} \\\\ \\class{cb}{B_{21}} & B_{22} \\end{bmatrix} = \\begin{bmatrix} \\class{c11}{A_{11}B_{11}+A_{12}B_{21}} & A_{11}B_{12}+A_{12}B_{22} \\\\ A_{21}B_{11}+A_{22}B_{21} & A_{21}B_{12}+A_{22}B_{22} \\end{bmatrix}",
+ "ord": "A_{12}B_{21} \\;\\ne\\; \\color{#E8577A}{B_{21}A_{12}}",
+ "c11": "C_{11} = A_{11}B_{11} + A_{12}B_{21} = (2,\\ 3) + (6,\\ 3) = (8,\\ 6)",
+ "case3": "\\big[\\,A_1\\ \\ A_2\\,\\big]\\begin{bmatrix} B_1 \\\\ B_2 \\end{bmatrix} = A_1B_1 + A_2B_2",
+ "bd": "\\begin{bmatrix} A_{11} & O \\\\ O & A_{22} \\end{bmatrix}^{-1} = \\begin{bmatrix} A_{11}^{-1} & O \\\\ O & A_{22}^{-1} \\end{bmatrix}",
+ "inner": "\\mathbf{x}^T\\mathbf{y} = \\begin{bmatrix} 4 & 1 & 3 \\end{bmatrix}\\begin{bmatrix} 3 \\\\ 5 \\\\ 2 \\end{bmatrix} = 23",
+ "outer": "\\mathbf{x}\\mathbf{y}^T = \\begin{bmatrix} 4 \\\\ 1 \\\\ 3 \\end{bmatrix}\\begin{bmatrix} 3 & 5 & 2 \\end{bmatrix} =",
+ "oxy2": "\\begin{bmatrix} 2 \\\\ 1 \\end{bmatrix}\\begin{bmatrix} 1 & 1 \\end{bmatrix} = \\begin{bmatrix} 2 & 2 \\\\ 1 & 1 \\end{bmatrix}",
+ "expand": "XY^T = \\mathbf{x}_1\\mathbf{y}_1^T + \\mathbf{x}_2\\mathbf{y}_2^T + \\cdots + \\mathbf{x}_n\\mathbf{y}_n^T",
+ "ex3": "\\color{#F2B544}{\\begin{bmatrix} 3 \\\\ 2 \\\\ 1 \\end{bmatrix}\\begin{bmatrix} 1 & 2 & 3 \\end{bmatrix}} + \\color{#4FC1A6}{\\begin{bmatrix} 1 \\\\ 4 \\\\ 2 \\end{bmatrix}\\begin{bmatrix} 2 & 4 & 1 \\end{bmatrix}} = XY^T",
+ "num1": "\\text{rows} \\parallel (3,5,2),\\quad \\text{cols} \\parallel \\mathbf{x}"
+}

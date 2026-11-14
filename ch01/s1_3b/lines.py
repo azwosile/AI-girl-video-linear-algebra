@@ -1,0 +1,74 @@
+# -*- coding: utf-8 -*-
+"""第 1 章 §1.3（下）矩阵乘法（Leon 9th §1.3 Matrix Multiplication：AB = (Ab₁, …, Abᵣ)、定义 cᵢⱼ = ⃗aᵢbⱼ、例 8 / 9 / 10、Application 1 生产成本；
+同济第六版 第二章 §2 矩阵的乘法（例 4：AB ≠ BA、BA = O 而 A、B 都不是 O））台词源（唯一真源）。
+3B1B 对应：Essence of Linear Algebra 第 4 集（矩阵乘法 = 线性变换的复合；旋转 + 剪切，顺序不同结果不同）。
+字段：id（首字母=说话人 C/G/D）、sub（字幕）、read（朗读稿，可省）、mood（大肥鱼参考音情绪）、pose（立绘差分）
+多音字由 pipeline/pron.json 统一修正；配音前必须跑 pipeline/g2p_lint.py。屏幕数字见 math.json（mathcheck.py 复核）。
+运行：python lines.py → script.json / lines.json
+"""
+import json
+from pathlib import Path
+
+LINES = [
+    # —— 开场
+    dict(id='D01', mood='daily', pose='ds_ask', sub='矩阵乘向量我会了。那矩阵乘矩阵呢？是不是对应元素相乘？', read='矩阵乘向量我会了。那矩阵乘矩阵呢？是不是对应元素相乘？'),
+    dict(id='C01', pose='claude_smile', sub='不是哦。答案藏在你已经会的东西里：把 B 拆成一列一列。'),
+    # —— 按列定义
+    dict(id='C02', pose='claude_explain', sub='B 的每一列都是一个向量。A 乘这一列，你会算，得到一个新的列。', read='B的每一列都是一个向量。A乘这一列，你会算，得到一个新的列。'),
+    dict(id='C03', pose='claude_point', sub='把这些新列并排放好，就是 AB。第 j 列就是 A 乘 B 的第 j 列。', read='把这些新列并排放好，就是A B。它的第j列，就是A乘B的第j列。'),
+    dict(id='C03b', pose='claude_point', sub='用例 8 试一下：B 的第一列是 (−2, 4)，A 乘它，得到 (−14, 12, −14)，这正是 AB 的第一列。', read='用例八试一下：B的第一列是负二、四，A乘它，得到负十四、十二、负十四，这正是A B的第一列。'),
+    dict(id='D02', mood='think', pose='ds_confused', sub='那一个一个元素怎么算？'),
+    dict(id='C04', pose='claude_explain', sub='AB 第 i 行第 j 列的元素，就是 A 的第 i 行，和 B 的第 j 列，对应相乘再相加。', read='A B第i行、第j列的元素，就是A的第i行，和B的第j列，对应相乘、再相加。'),
+    dict(id='C05', pose='claude_point', sub='看教材例 8。A 是三行两列，B 是两行三列。', read='看教材例八。A是三行两列，B是两行三列。'),
+    dict(id='C06', pose='claude_explain', sub='算第 2 行第 3 列：A 的第二行是 (2, 4)，B 的第三列是 (3, 6)。', read='算第二行、第三列：A的第二行是二、四，B的第三列是三、六。'),
+    dict(id='C07', pose='claude_point', sub='2 乘 3 加 4 乘 6，等于 30。九个位置都这样算，就得到整个 AB。', read='二乘三，加四乘六，等于三十。九个位置都这样算，就得到整个A B。'),
+    # —— 尺寸
+    dict(id='D03', mood='panic', pose='ds_shock', sub='等等，A 的一行有两个数，B 的一列也得是两个数才能配对吧？', read='等等，A的一行有两个数，B的一列也得是两个数，才能配对吧？'),
+    dict(id='C08', pose='claude_smile', sub='对，这就是尺寸规则：A 的列数必须等于 B 的行数。'),
+    dict(id='C09', pose='claude_explain', sub='m 行 n 列乘 n 行 r 列，中间的 n 对上就消掉，结果是 m 行 r 列。', read='m行n列，乘n行r列，中间的n对上就消掉，结果是m行r列。'),
+    dict(id='C10', pose='claude_point', sub='例 9：A 是两行两列，B 是三行两列。AB 根本乘不了；反过来 BA 却可以，得到三行两列。', read='例九：A是两行两列，B是三行两列。A B根本乘不了；反过来，B A却可以，得到三行两列。'),
+    dict(id='G01', pose='gpt_explain', sub='记个口诀：内标相同才能乘，外标决定结果多大。', read='记个口诀：里面的数相同才能乘，外面的数决定结果多大。'),
+    # —— 几何：复合
+    dict(id='C11', pose='claude_explain', sub='好，算法有了。但为什么要这么乘？回到上一节的画面：矩阵是一个动作。'),
+    dict(id='C12', pose='claude_point', sub='先看旋转：整个平面逆时针转 90 度。î 落到 (0, 1)，ĵ 落到 (−1, 0)。', read='先看旋转：整个平面逆时针转九十度。i帽落到零、一，j帽落到负一、零。'),
+    dict(id='C13', pose='claude_explain', sub='这两个落点当成两列，就是旋转矩阵。', read='把这两个落点当作两列，就是旋转矩阵。'),
+    dict(id='C14', pose='claude_point', sub='再看剪切：î 不动，ĵ 被推到 (1, 1)，网格像一摞纸被推斜。', read='再看剪切：i帽不动，j帽被推到一、一，网格像一摞纸被推斜了。'),
+    dict(id='C15', pose='claude_explain', sub='现在先旋转，再剪切。两个动作连着做，最后的网格还是平行等距，所以它也是一个矩阵。', read='现在，先旋转，再剪切。两个动作连着做，最后的网格还是平行、等距，所以它也是一个矩阵。'),
+    dict(id='D04', mood='think', pose='ds_ask', sub='那这个矩阵是多少？'),
+    dict(id='C16', pose='claude_point', sub='跟踪 î：旋转后到了 (0, 1)，再剪切，到了 (1, 1)。这就是第一列。', read='跟踪i帽：旋转后到了零、一，再剪切，到了一、一。这就是第一列。'),
+    dict(id='C17', pose='claude_point', sub='跟踪 ĵ：旋转后到了 (−1, 0)，剪切不动它，还是 (−1, 0)。这是第二列。', read='跟踪j帽：旋转后到了负一、零，剪切不动它，还是负一、零。这是第二列。'),
+    dict(id='C18', pose='claude_smile', sub='再用公式算剪切乘旋转，结果一模一样。矩阵乘法，就是把两个动作合成一个。', read='再用公式算剪切乘旋转，结果一模一样。矩阵乘法，就是把两个动作合成一个。'),
+    dict(id='C18b', pose='claude_explain', sub='比如剪切矩阵乘 (0, 1)，就是 0 倍的第一列加 1 倍的第二列，正是 (1, 1)。', read='比如剪切矩阵乘零、一，就是零倍的第一列，加一倍的第二列，正是一、一。'),
+    dict(id='D05', mood='panic', pose='ds_shock', sub='等下！先做的是旋转，为什么旋转写在右边？', read='等下！先做的是旋转，为什么旋转写在右边？'),
+    dict(id='C19', pose='claude_explain', sub='因为向量从右边进来。ABx，x 先碰到 B，再碰到 A。从右往左读，像函数 f(g(x))。', read='因为向量从右边进来。A B x，x先碰到B，再碰到A。从右往左读，就像函数f g x。'),
+    # —— 不可交换
+    dict(id='C20', pose='claude_think', sub='那反过来，先剪切再旋转呢？'),
+    dict(id='D05b', mood='think', pose='ds_confused', sub='转一下再推一下，和推一下再转一下……应该差不多吧？'),
+    dict(id='C21', pose='claude_point', sub='î 剪切不动，旋转到 (0, 1)；ĵ 先到 (1, 1)，再转到 (−1, 1)。网格完全不一样。', read='i帽剪切不动，旋转到零、一；j帽先到一、一，再转到负一、一。网格完全不一样。'),
+    dict(id='C22', pose='claude_explain', sub='所以一般来说 AB ≠ BA。矩阵乘法不满足交换律。', read='所以一般来说，A B不等于B A。矩阵乘法不满足交换律。'),
+    dict(id='C23', pose='claude_point', sub='例 10 用数字说话：AB 是 (3, 3; 0, 0)，BA 是 (1, 1; 2, 2)。', read='例十用数字说话：A B第一行是三、三，第二行是零、零；B A第一行是一、一，第二行是二、二。'),
+    dict(id='C24', pose='claude_explain', sub='例 8 更夸张：AB 是三行三列，BA 是两行两列，连大小都不一样。', read='例八更夸张：A B是三行三列，B A是两行两列，连大小都不一样。'),
+    dict(id='D06', mood='sigh', pose='ds_confused', sub='数字乘法随便换顺序，矩阵就不行……我要把顺序刻在脑子里。'),
+    dict(id='G02', pose='gpt_cross', sub='同济第二章例 4 还有更怪的：两个都不是零矩阵，乘出来 BA 却是零矩阵。', read='同济第二章例四还有更怪的：两个都不是零矩阵，乘出来，B A却是零矩阵。'),
+    dict(id='G03', pose='gpt_explain', sub='所以 AB = O 推不出 A = O 或 B = O；AB = AC 也不能直接约掉 A。', read='所以，A B等于零矩阵，推不出A或B是零矩阵；A B等于A C，也不能直接约掉A。'),
+    # —— 应用
+    dict(id='C25', pose='claude_explain', sub='最后看一个真实用途。教材应用 1：一家工厂做三种产品。', read='最后看一个真实用途。教材应用一：一家工厂做三种产品。'),
+    dict(id='C26', pose='claude_point', sub='矩阵 M 记每件产品的单件成本：原料、人工、杂费；矩阵 P 记每个季度各产品的产量。', read='矩阵M记每件产品的单件成本：原料、人工、杂费；矩阵P记每个季度各种产品的产量。'),
+    dict(id='C27', pose='claude_explain', sub='MP 的第一列，就是夏季的三项总成本：原料 1870，人工 3450，杂费 1670。', read='M P的第一列，就是夏季的三项总成本：原料一千八百七十，人工三千四百五十，杂费一千六百七十。'),
+    dict(id='C28', pose='claude_point', sub='每个数都是“行乘列”：单件成本乘产量，再加起来。', read='每个数都是行乘列：单件成本乘产量，再加起来。'),
+    dict(id='D07', mood='easy', pose='ds_happy', sub='原来记账也是矩阵乘法！'),
+    # —— 总结
+    dict(id='D08', mood='easy', pose='ds_happy', sub='我来总结！AB 的每一列，是 A 乘 B 的对应列；每个元素，是行乘列。', read='我来总结！A B的每一列，是A乘B的对应列；每个元素，是行乘列。'),
+    dict(id='D09', mood='easy', pose='ds_happy', sub='几何上，AB 是先做 B、再做 A；顺序不能随便换！', read='几何上，A B是先做B、再做A；顺序不能随便换！'),
+    dict(id='C29', pose='claude_smile', sub='完美。下一节我们看矩阵运算还剩哪些规律，以及怎么把一个动作撤销。'),
+]
+
+if __name__ == '__main__':
+    here = Path(__file__).resolve().parent
+    for l in LINES:
+        l.setdefault('read', l['sub'])
+        l.setdefault('mood', None)
+    ids = [l['id'] for l in LINES]; assert len(ids) == len(set(ids)), '台词 id 重复'
+    (here / 'script.json').write_text(json.dumps({l['id']: [l['read'], l['mood']] for l in LINES}, ensure_ascii=False, indent=1), encoding='utf-8')
+    (here / 'lines.json').write_text(json.dumps(LINES, ensure_ascii=False, indent=1), encoding='utf-8')
+    print(len(LINES), 'lines,', sum(len(l['read']) for l in LINES), 'chars')

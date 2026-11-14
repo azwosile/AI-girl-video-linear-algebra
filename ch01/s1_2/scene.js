@@ -28,9 +28,9 @@ export async function setup(R) {
   const { ctx, stage, tex } = R;
   const TL = buildTimeline({
     lines: R.lines, durations: R.durations, lead: 2.2,
-    pre: { C02: 0.3, C03: 0.5, D01: 0.4, C05: 0.3, C06: 0.6, C07: 0.4, C08: 0.3, C09: 0.5, C10: 0.3, C12: 1.0, C13: 0.3, C14: 0.3, G01: 0.4, C15: 0.5,
-      D04: 0.7, C16: 0.5, C17: 0.6, C18: 0.9, C19: 0.4, C20: 0.6, G02: 0.4, D05: 0.6, C21: 0.4 },
-    post: { C09: 2.6, C21: 2.0 }, tail: 0.6,
+    pre: { C02: 0.3, C03: 0.5, D01: 0.4, C05: 0.3, C06: 0.4, C07: 0.4, C08: 0.3, C09: 0.5, C10: 0.3, C12: 0.5, C13: 0.3, C14: 0.3, G01: 0.4, C15: 0.5,
+      D04: 0.4, C16: 0.5, C17: 0.4, C18: 0.5, C19: 0.4, C20: 0.4, G02: 0.4, D05: 0.4, C21: 0.4 },
+    post: { C09: 2.0, C21: 1.0 }, tail: 0.6,
   });
   const L = TL.L, cue = TL.cue;
   const cast = new Cast(R.envelope, TL);

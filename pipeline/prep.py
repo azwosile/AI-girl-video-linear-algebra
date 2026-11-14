@@ -34,7 +34,7 @@ def squeeze(x, sr):
 (seg / 'vo48').mkdir(exist_ok=True)
 dur, env = {}, {}
 for f in sorted((seg / 'vo').glob('*.wav')):
-    if not re.fullmatch(r'[A-Z]\d\d', f.stem): continue
+    if not re.fullmatch(r'[A-Z]\d\d[a-z]?', f.stem): continue
     d = seg / 'vo48' / f.name
     ff('-i', f, '-af', f'atempo={TEMPO.get(f.stem[0], 1.1)}', '-ar', 48000, '-ac', 1, d)
     x, sr = sf.read(d); e = np.abs(x) > 0.012; i = int(np.argmax(e)); j = len(x) - int(np.argmax(e[::-1]))

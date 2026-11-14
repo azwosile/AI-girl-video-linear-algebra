@@ -29,12 +29,12 @@ for name, S in M.get('systems', {}).items():
     A = sp.Matrix(S['A']); n = A.cols
     b = sp.Matrix(S.get('b', [0] * A.rows))
     if 'steps' in S:
-        cur = A.copy()
+        cur = sp.Matrix([[sp.nsimplify(v) for v in r] for r in S['A']])
         for k, (op, *args) in enumerate(S['ops']):
-            if op == 'add': d, s, c = args; cur[d, :] = cur[d, :] + c * cur[s, :]
+            if op == 'add': d, s_, c = args; cur[d, :] = cur[d, :] + sp.nsimplify(c) * cur[s_, :]
             elif op == 'swap': i, j = args; cur.row_swap(i, j)
             elif op == 'scale': i, c = args; cur[i, :] = sp.nsimplify(c) * cur[i, :]
-            chk(cur == sp.Matrix(S['steps'][k]), f'{name}: 第 {k+1} 步 {op}{args} 得 {cur.tolist()}，math.json 写的是 {S["steps"][k]}')
+            chk(cur == sp.Matrix([[sp.nsimplify(v) for v in r] for r in S['steps'][k]]), f'{name}: 第 {k+1} 步 {op}{args} 得 {cur.tolist()}，math.json 写的是 {S["steps"][k]}')
     if 'rref' in S:
         R = A.rref()[0]; chk(R == sp.Matrix(S['rref']), f'{name}: rref(A) = {R.tolist()}')
     if 'rref_aug' in S:
@@ -93,6 +93,65 @@ if P and 'line' in P:
     if 'ex2' in S: chk(S['ex2']['A'] == [P['n1'], P['n2']], 'planes: n1/n2 与 ex2.A 不一致')
     if 'ex3' in S: chk(S['ex3']['A'][2] == P['n3'], 'planes: n3 与 ex3.A 不一致')
     if 'ex3share' in S: chk(S['ex3share']['A'][2] == P['n3share'], 'planes: n3share 与 ex3share.A 不一致')
+
+# ── 1.4–1.6 扩展：逆、奇异、转置、对称、幂、邻接图、初等矩阵、LU、分块 ──
+def isElem(E):
+    n = E.rows; I = sp.eye(n); D = E - I; nz = [(i, j) for i in range(n) for j in range(n) if D[i, j] != 0]
+    if not nz: return True
+    if len(nz) == 1: i, j = nz[0]; return i != j or E[i, i] != 0          # 倍加 或 倍乘
+    if len(nz) == 4:                                                        # 交换
+        r = sorted({i for i, _ in nz}); return len(r) == 2 and E == I.elementary_row_op('n<->m', row1=r[0], row2=r[1])
+    return False
+for k, iv in enumerate(M.get('inverses', [])):
+    A, B = Mx(iv['A']), Mx(iv['inv']); I = sp.eye(A.rows)
+    chk(A * B == I and B * A == I, f'inverses[{k}] {iv.get("desc","")}: A⁻¹ 应为 {A.inv().tolist() if A.det() != 0 else "不存在"}')
+for k, sg in enumerate(M.get('singular', [])):
+    chk(Mx(sg['A']).det() == 0, f'singular[{k}] {sg.get("desc","")}: det = {Mx(sg["A"]).det()} ≠ 0')
+for k, tr in enumerate(M.get('transposes', [])):
+    chk(Mx(tr['A']).T == Mx(tr['AT']), f'transposes[{k}] {tr.get("desc","")}: Aᵀ = {Mx(tr["A"]).T.tolist()}')
+for k, sy in enumerate(M.get('symmetric', [])):
+    chk(Mx(sy['A']) == Mx(sy['A']).T, f'symmetric[{k}] {sy.get("desc","")}: 不对称')
+for k, pw in enumerate(M.get('powers', [])):
+    chk(Mx(pw['A']) ** pw['n'] == Mx(pw['An']), f'powers[{k}] {pw.get("desc","")}: Aⁿ = {(Mx(pw["A"]) ** pw["n"]).tolist()}')
+G = M.get('graph')
+if G:
+    n = len(G['A']); Adj = sp.zeros(n, n)
+    for a, b in G['edges']: Adj[a - 1, b - 1] = Adj[b - 1, a - 1] = 1
+    chk(Adj == sp.Matrix(G['A']), f'graph: 由边得邻接矩阵 {Adj.tolist()}')
+    if 'walks11' in G:
+        A2 = Adj ** 2; chk(len(G['walks11']) == A2[0, 0], f'graph: (A²)₁₁ = {A2[0,0]}，列出的路线 {len(G["walks11"])} 条')
+        for w in G['walks11']: chk(all(Adj[w[i] - 1, w[i + 1] - 1] == 1 for i in range(len(w) - 1)), f'graph: 路线 {w} 不连通')
+SY = {}
+def MxS(X):
+    out = []
+    for row in X:
+        r = []
+        for v in row:
+            if isinstance(v, str) and v[:1].isalpha(): SY.setdefault(v, sp.Symbol(v)); r.append(SY[v])
+            else: r.append(Q(v))
+        out.append(r)
+    return sp.Matrix(out)
+for k, el in enumerate(M.get('elementary', [])):
+    E = MxS(el['E']); d = el.get('desc', '')
+    chk(isElem(E) if el.get('elem', True) else not isElem(E), f'elementary[{k}] {d}: E 不是初等矩阵')
+    if 'A' in el and 'EA' in el: chk(E * MxS(el['A']) == MxS(el['EA']), f'elementary[{k}] {d}: EA = {(E*MxS(el["A"])).tolist()}')
+    if 'inv' in el: chk(E * MxS(el['inv']) == sp.eye(E.rows), f'elementary[{k}] {d}: E⁻¹ 应为 {E.inv().tolist()}')
+for k, lu in enumerate(M.get('lu', [])):
+    A, Lm, U = Mx(lu['A']), Mx(lu['L']), Mx(lu['U']); n = A.rows; d = lu.get('desc', '')
+    chk(Lm * U == A, f'lu[{k}] {d}: LU = {(Lm*U).tolist()}')
+    chk(all(Lm[i, j] == 0 for i in range(n) for j in range(i + 1, n)) and all(Lm[i, i] == 1 for i in range(n)), f'lu[{k}] {d}: L 不是单位下三角')
+    chk(all(U[i, j] == 0 for i in range(n) for j in range(i)), f'lu[{k}] {d}: U 不是上三角')
+for k, bl in enumerate(M.get('blocks', [])):
+    A, B = Mx(bl['A']), Mx(bl['B']); d = bl.get('desc', '')
+    if 'AB' in bl: chk(A * B == Mx(bl['AB']), f'blocks[{k}] {d}: AB = {(A*B).tolist()}')
+    def parts(n, c):
+        e = [0]; [e.append(e[-1] + x) for x in c]; e.append(n) if e[-1] != n else None; return list(zip(e[:-1], e[1:]))
+    R, K, C2 = parts(A.rows, bl['rows']), parts(A.cols, bl['inner']), parts(B.cols, bl['cols'])
+    blk = sp.zeros(A.rows, B.cols)
+    for r0, r1 in R:
+        for c0, c1 in C2:
+            blk[r0:r1, c0:c1] = sum((A[r0:r1, k0:k1] * B[k0:k1, c0:c1] for k0, k1 in K), sp.zeros(r1 - r0, c1 - c0))
+    chk(blk == A * B, f'blocks[{k}] {d}: 按块相乘与直接相乘不一致')
 
 for m in bad: print('✗', m)
 print(f'{ok} 项通过')

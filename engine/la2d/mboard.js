@@ -9,7 +9,13 @@ import { C, F } from '../style/tokens.js';
 import { clamp, lerp, prog, smooth, smoother, pulse } from '../core/util.js';
 
 const VAR_FONT = px => `italic 500 ${px * 1.02}px "LA-Latin", serif`;
-export const fmtNum = v => (v < 0 ? '−' : '') + Math.abs(v);
+// 数字显示：整数照写；分数（分母 ≤ 12）写成 p/q；负号用 −
+export const fmtNum = v => {
+  const sg = v < -1e-9 ? '−' : '', x = Math.abs(v);
+  if (Math.abs(x - Math.round(x)) < 1e-9) return sg + Math.round(x);
+  for (let q = 2; q <= 12; q++) { const p = Math.round(x * q); if (Math.abs(p / q - x) < 1e-9) return `${sg}${p}/${q}`; }
+  return sg + +x.toFixed(3);
+};
 const SUB = ['₁', '₂', '₃', '₄', '₅', '₆'];
 
 export class MBoard {

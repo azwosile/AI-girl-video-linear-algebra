@@ -1,0 +1,5 @@
+{
+ "par": "\\class{p0}{x_2 = t,} \\quad \\class{p1}{x_3 = 1,} \\quad \\class{p2}{x_1 = 3 - 2t}",
+ "sol3": "(x_1, x_2, x_3) = (3 - 2t,\\; t,\\; 1)",
+ "rref": "x_1 = 3 - 2x_2, \\qquad x_3 = 1"
+}

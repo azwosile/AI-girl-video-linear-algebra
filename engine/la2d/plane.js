@@ -79,3 +79,12 @@ export function ring(ctx, p, s, { color = C.ink, r0 = 8, r1 = 46, width = 3 } = 
   ctx.beginPath(); ctx.arc(p[0], p[1], r0 + (r1 - r0) * smooth(s), 0, Math.PI * 2); ctx.stroke(); ctx.restore();
 }
 export { rgba };
+
+/** 直线 a·x + b·y = c（数学坐标），按当前矩阵画；grow 从直线上离原点最近的点向两端长出 */
+export function eqLine(ctx, P, a, b, c, opt = {}) {
+  const n2 = a * a + b * b; if (n2 < 1e-9) return;
+  const L = Math.sqrt(n2), p0 = [a * c / n2, b * c / n2], d = [-b / L, a / L];
+  P.line(ctx, opt.at || p0, d, opt);
+}
+/** 直线上离原点最近的点（用于放标签） */
+export function eqFoot(a, b, c) { const n2 = a * a + b * b; return [a * c / n2, b * c / n2]; }

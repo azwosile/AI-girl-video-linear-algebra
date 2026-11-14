@@ -8,7 +8,7 @@ export function buildTimeline({ lines, durations, lead = 1.0, same = 0.2, change
     if (prev) t += (prev.id[0] === l.id[0] ? same : change);
     t += pre[l.id] || 0;
     const d = durations[l.id] ?? Math.max(1.2, [...(l.read || l.sub)].length / 4.6);
-    seq.push({ id: l.id, spk: l.id[0], sub: l.sub, s: t, d, e: t + d });
+    seq.push({ id: l.id, spk: l.id[0], sub: l.sub, read: l.read || l.sub, pose: l.pose, s: t, d, e: t + d });
     t += d + (post[l.id] || 0); prev = l;
   }
   const total = t + tail;
@@ -17,6 +17,12 @@ export function buildTimeline({ lines, durations, lead = 1.0, same = 0.2, change
   return {
     seq, total,
     L: id => { if (!by[id]) throw new Error('无此台词 ' + id); return by[id]; },
+    /** 台词 id 里某个词大约在什么时候说出（按朗读稿字数比例估算；k 为字偏移） */
+    cue: (id, word, k = 0) => {
+      const l = by[id]; if (!l) throw new Error('无此台词 ' + id);
+      const i = l.read.indexOf(word); if (i < 0) throw new Error(`cue: ${id} 里找不到「${word}」`);
+      return l.s + l.d * Math.min(1, Math.max(0, (i + k) / [...l.read].length));
+    },
     /** 某一时刻正在说话的句子（含 0.12 s 余量），没有返回 null */
     speaking: tt => seq.find(x => tt >= x.s - 0.05 && tt <= x.e + 0.12) || null,
     /** 最近一句字幕（句间空档仍显示上一句，避免闪烁） */

@@ -59,19 +59,29 @@ export class Cast {
   }
 }
 
-/** 字幕：底部居中，paper 底条 + 说话人色标 */
-export function subtitle(ctx, t, TL, { y = 1018, px = 40, maxW = 1240 } = {}) {
+/** 字幕：底部居中，深色底条 + 说话人色标；太长时在中间附近的标点处折成两行 */
+export function subtitle(ctx, t, TL, { y = 1018, px = 40, maxW = 1300 } = {}) {
   const L = TL.subAt(t); if (!L) return;
   const a = smooth(clamp((t - L.s + 0.1) / 0.18)) * (1 - smooth(clamp((t - L.e - 0.3) / 0.2)));
   if (a <= 0) return;
   const sp = SPEAKER[L.spk];
-  ctx.save(); ctx.font = F.sans(px); ctx.textBaseline = 'middle';
-  const name = sp.name, nw = (ctx.font = F.sans(26, 700), ctx.measureText(name).width); ctx.font = F.sans(px);
-  const tw = Math.min(maxW, ctx.measureText(L.sub).width), pad = 22, gap = 18, w = nw + gap + tw + pad * 2, h = px + 26;
+  ctx.save(); ctx.textBaseline = 'middle';
+  ctx.font = F.sans(26, 700); const name = sp.name, nw = ctx.measureText(name).width;
+  ctx.font = F.sans(px);
+  let parts = [L.sub];
+  if (ctx.measureText(L.sub).width > maxW) {
+    const chars = [...L.sub], mid = chars.length / 2; let best = -1, bd = 1e9;
+    chars.forEach((c, i) => { if ('，。：；！？、'.includes(c) && i < chars.length - 2) { const d = Math.abs(i + 1 - mid); if (d < bd) { bd = d; best = i + 1; } } });
+    if (best < 0) best = Math.round(mid);
+    parts = [chars.slice(0, best).join(''), chars.slice(best).join('')];
+  }
+  const tw = Math.min(maxW, Math.max(...parts.map(p => ctx.measureText(p).width))), pad = 22, gap = 18, lh = px * 1.3, n = parts.length;
+  const w = nw + gap + tw + pad * 2, y1 = y - (n - 1) * lh, top = y1 - px / 2 - 13, h = y + px / 2 + 13 - top;
   const x0 = 960 - w / 2;
-  ctx.globalAlpha = a * 0.82; ctx.fillStyle = C.paperHi; ctx.fillRect(x0, y - h / 2, w, h);
-  ctx.globalAlpha = a; ctx.fillStyle = sp.color; ctx.fillRect(x0, y - h / 2, 6, h);
-  ctx.font = F.sans(26, 700); ctx.fillText(name, x0 + pad, y + 1);
-  ctx.font = F.sans(px); ctx.fillStyle = C.ink; ctx.fillText(L.sub, x0 + pad + nw + gap, y + 1, maxW);
+  ctx.globalAlpha = a * 0.82; ctx.fillStyle = C.paperHi; ctx.fillRect(x0, top, w, h);
+  ctx.globalAlpha = a; ctx.fillStyle = sp.color; ctx.fillRect(x0, top, 6, h);
+  ctx.font = F.sans(26, 700); ctx.fillText(name, x0 + pad, (y1 + y) / 2 + 1);
+  ctx.font = F.sans(px); ctx.fillStyle = C.ink;
+  parts.forEach((p, k) => ctx.fillText(p, x0 + pad + nw + gap, y1 + k * lh + 1, maxW));
   ctx.restore();
 }

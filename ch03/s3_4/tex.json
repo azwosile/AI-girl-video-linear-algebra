@@ -1,0 +1,17 @@
+{
+ "E": "E_{11}=\\begin{bmatrix}1&0\\\\0&0\\end{bmatrix},\\ E_{12}=\\begin{bmatrix}0&1\\\\0&0\\end{bmatrix},\\ E_{21}=\\begin{bmatrix}0&0\\\\1&0\\end{bmatrix},\\ E_{22}=\\begin{bmatrix}0&0\\\\0&1\\end{bmatrix}",
+ "Eab": "\\begin{bmatrix}a&b\\\\c&d\\end{bmatrix}=aE_{11}+bE_{12}+cE_{21}+dE_{22}",
+ "th1": "\\operatorname{Span}(\\mathbf{v}_1,\\dots,\\mathbf{v}_n)=V",
+ "w3": "\\mathbf{w}_3=a\\,\\mathbf{w}_1+b\\,\\mathbf{w}_2",
+ "mn": "m\\le n,\\quad n\\le m\\ \\Longrightarrow\\ m=n",
+ "dim": "\\dim V",
+ "d1": "\\dim\\mathbb{R}^n=n",
+ "d2": "\\dim\\mathbb{R}^{2\\times2}=4",
+ "d3": "\\dim P_n=n:\\quad 1,\\ x,\\ \\dots,\\ x^{n-1}",
+ "d4": "\\dim\\{\\mathbf{0}\\}=0",
+ "Pinf": "1,\\ x,\\ x^2,\\ \\dots,\\ x^n",
+ "th3": "\\dim V=n,\\quad \\mathbf{v}_1,\\dots,\\mathbf{v}_n",
+ "X4": "\\det\\begin{bmatrix}1&-2&1\\\\2&1&0\\\\3&0&1\\end{bmatrix}=2\\neq0",
+ "sym": "\\begin{bmatrix}a&b\\\\b&c\\end{bmatrix}=a\\begin{bmatrix}1&0\\\\0&0\\end{bmatrix}+b\\begin{bmatrix}0&1\\\\1&0\\end{bmatrix}+c\\begin{bmatrix}0&0\\\\0&1\\end{bmatrix}",
+ "dimS": "\\dim S=3"
+}

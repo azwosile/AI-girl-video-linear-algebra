@@ -1,0 +1,19 @@
+{
+ "A1r": "A=\\begin{bmatrix}\\class{r1}{1}&\\class{r1}{0}&\\class{r1}{0}\\\\\\class{r2}{0}&\\class{r2}{1}&\\class{r2}{0}\\end{bmatrix}",
+ "A1c": "A=\\begin{bmatrix}\\class{c1}{1}&\\class{c2}{0}&\\class{c3}{0}\\\\\\class{c1}{0}&\\class{c2}{1}&\\class{c3}{0}\\end{bmatrix}",
+ "row1": "\\{(\\alpha,\\beta,0)\\}",
+ "col1": "\\mathbb{R}^2",
+ "A2": "A=\\begin{bmatrix}1&-2&3\\\\2&-5&1\\\\1&-4&-7\\end{bmatrix}",
+ "U2": "U=\\begin{bmatrix}1&-2&3\\\\0&1&5\\\\\\class{z}{0}&\\class{z}{0}&\\class{z}{0}\\end{bmatrix}",
+ "rk2": "\\operatorname{rank}(A)=2",
+ "Ax": "A\\mathbf{x}=x_1\\mathbf{a}_1+x_2\\mathbf{a}_2+\\cdots+x_n\\mathbf{a}_n",
+ "th2": "A\\mathbf{x}=\\mathbf{b}",
+ "A3": "A=\\begin{bmatrix}\\class{c1}{1}&\\class{c2}{2}&\\class{c3}{-1}&\\class{c4}{1}\\\\\\class{c1}{2}&\\class{c2}{4}&\\class{c3}{-3}&\\class{c4}{0}\\\\\\class{c1}{1}&\\class{c2}{2}&\\class{c3}{1}&\\class{c4}{5}\\end{bmatrix}",
+ "U3": "U=\\begin{bmatrix}\\class{c1}{1}&\\class{c2}{2}&\\class{c3}{0}&\\class{c4}{3}\\\\\\class{c1}{0}&\\class{c2}{0}&\\class{c3}{1}&\\class{c4}{2}\\\\\\class{c1}{0}&\\class{c2}{0}&\\class{c3}{0}&\\class{c4}{0}\\end{bmatrix}",
+ "rel3u": "\\mathbf{u}_2=2\\mathbf{u}_1,\\quad\\mathbf{u}_4=3\\mathbf{u}_1+2\\mathbf{u}_3",
+ "rel3a": "\\mathbf{a}_2=2\\mathbf{a}_1,\\quad\\mathbf{a}_4=3\\mathbf{a}_1+2\\mathbf{a}_3",
+ "same": "A\\mathbf{x}=\\mathbf{0}\\iff U\\mathbf{x}=\\mathbf{0}",
+ "A4": "A=\\begin{bmatrix}\\class{c1}{1}&\\class{c2}{-2}&\\class{c3}{1}&\\class{c4}{1}&\\class{c5}{2}\\\\\\class{c1}{-1}&\\class{c2}{3}&\\class{c3}{0}&\\class{c4}{2}&\\class{c5}{-2}\\\\\\class{c1}{0}&\\class{c2}{1}&\\class{c3}{1}&\\class{c4}{3}&\\class{c5}{4}\\\\\\class{c1}{1}&\\class{c2}{2}&\\class{c3}{5}&\\class{c4}{13}&\\class{c5}{5}\\end{bmatrix}",
+ "U4": "U=\\begin{bmatrix}\\class{c1}{1}&\\class{c2}{-2}&\\class{c3}{1}&\\class{c4}{1}&\\class{c5}{2}\\\\\\class{c1}{0}&\\class{c2}{1}&\\class{c3}{1}&\\class{c4}{3}&\\class{c5}{0}\\\\\\class{c1}{0}&\\class{c2}{0}&\\class{c3}{0}&\\class{c4}{0}&\\class{c5}{1}\\\\\\class{c1}{0}&\\class{c2}{0}&\\class{c3}{0}&\\class{c4}{0}&\\class{c5}{0}\\end{bmatrix}",
+ "b4": "\\mathbf{a}_1,\\ \\mathbf{a}_2,\\ \\mathbf{a}_5"
+}

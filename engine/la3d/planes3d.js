@@ -70,10 +70,11 @@ export class Planes3D {
     this.pts.forEach(p => { p.visible = false; });
     this.axesA = 1; return this;
   }
-  /** 平面 n·x = 0（只做过原点的平面）。scale 0..1 圆片从原点长出；tilt 0..1 从水平面转到目标姿态 */
-  setPlane(i, n, { color = C.i, alpha = 0.42, scale = 1, tilt = 1 } = {}) {
+  /** 平面 n·x = d（默认 d = 0，过原点）。scale 0..1 圆片从原点长出；tilt 0..1 从水平面转到目标姿态 */
+  setPlane(i, n, { color = C.i, alpha = 0.42, scale = 1, tilt = 1, d = 0 } = {}) {
     const p = this.planes[i]; if (alpha <= 0.003 || scale <= 0.003) return this;
     const N = new THREE.Vector3(...n).normalize();
+    p.grp.position.copy(N.clone().multiplyScalar(d / Math.hypot(...n)));   // d ≠ 0：平面 n·x = d（第三章「推离原点」）
     const q = new THREE.Quaternion().setFromUnitVectors(UP, N);
     p.grp.quaternion.copy(new THREE.Quaternion().slerp(q, tilt));
     p.grp.scale.setScalar(scale); p.grp.visible = true;

@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>AI娘线性代数课 · 第三章 复习（上）判断题</title>
+<script type="importmap">
+{ "imports": { "three": "../../engine/vendor/three/build/three.module.js", "three/addons/": "../../engine/vendor/three/addons/" } }
+</script>
+<style>
+  html, body { margin: 0; background: #0b0a09; }
+  canvas { display: block; width: 100vw; max-width: calc(100vh * 16 / 9); margin: 0 auto; }
+  body.render canvas { width: 1920px; max-width: none; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1920" height="1080"></canvas>
+<script type="module">
+  if (location.search.includes('render')) document.body.classList.add('render');
+  import { boot } from '../../engine/core/boot.js';
+  import * as scene from './scene.js';
+  boot(scene, './').catch(e => { document.title = 'ERROR ' + e.message; console.error(e); window.__error = String(e.stack || e); });
+</script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+# -*- coding: utf-8 -*-
+"""第 3 章 3.4 基与维数（Leon 9th §3.4：定义、例 1–4、定理 3.4.1、推论 3.4.2、定理 3.4.3 / 3.4.4；Test B 6 对称矩阵）台词源（唯一真源）。
+数值：例 4 det[(1,2,3),(−2,1,0),(1,0,1)] = 2；对称 2×2 矩阵 dim = 3。
+运行：python lines.py → script.json / lines.json
+"""
+import json
+from pathlib import Path
+
+LINES = [
+    dict(id='C01', pose='claude_smile', sub='上一节结尾，大肥鱼问：又能张成、又不多余的向量组，是不是最好的？答案是：是，它叫“基”。', read='上一节结尾，大肥鱼问：又能张成，又不多余的向量组，是不是最好的？答案是：是。它叫作基。'),
+    dict(id='C02', pose='claude_explain', sub='定义：V 中的一组向量，线性无关，并且张成 V，就叫 V 的一组基。', read='定义：向量空间V中的一组向量，如果线性无关，并且张成V，就叫作V的一组基。'),
+    dict(id='C03', pose='claude_point', sub='张成：保证够用，每个向量都凑得出来；线性无关：保证不浪费，一个都不多。', read='张成，保证够用：每个向量都凑得出来。线性无关，保证不浪费：一个都不多。'),
+    dict(id='C04', pose='claude_explain', sub='最熟悉的是 ℝ³ 的标准基 e₁、e₂、e₃。但基远不止这一组。', read='最熟悉的，是R三的标准基：e一、e二、e三。但基远远不止这一组。'),
+    dict(id='C05', pose='claude_point', sub='上上节的 (1, 1, 1)ᵀ、(1, 1, 0)ᵀ、(1, 0, 0)ᵀ 也张成 ℝ³，而且线性无关，也是一组基。', read='上上节的一、一、一；一、一、零；一、零、零，也能张成R三，而且线性无关，所以也是一组基。'),
+    dict(id='C06', pose='claude_explain', sub='2×2 矩阵空间：E₁₁、E₁₂、E₂₁、E₂₂，每个恰好一个位置是 1。它们是一组基。', read='矩阵空间R二乘二也有基：E一一、E一二、E二一、E二二，每个矩阵恰好有一个位置是一，其余都是零。它们是一组基。'),
+    dict(id='D01', mood='think', pose='ds_think', sub='基有这么多组，那有没有什么是不变的？'),
+    dict(id='C07', pose='claude_smile', sub='有：个数。同一个空间的任何两组基，向量个数都一样。', read='有：个数。同一个空间的任何两组基，向量的个数都一样。'),
+    dict(id='C08', pose='claude_explain', sub='关键是定理 3.4.1：若 n 个向量张成 V，那么 V 中任意多于 n 个的向量，一定线性相关。', read='关键是定理三点四点一：如果n个向量张成V，那么V中任意多于n个的向量，一定线性相关。'),
+    dict(id='C09', pose='claude_point', sub='画面：两个向量张成一张平面，在平面里取三个向量，第三个一定能被前两个表示。', read='看画面：两个向量张成一张平面。在这张平面里取三个向量，第三个一定能被前两个表示出来。'),
+    dict(id='C10', pose='claude_explain', sub='于是：一组基有 n 个，另一组有 m 个。互相用定理，m 不能超过 n，n 也不能超过 m，只能相等。', read='于是：一组基有n个向量，另一组有m个。互相用一次这个定理，m不能超过n，n也不能超过m，所以两者相等。'),
+    dict(id='C11', pose='claude_point', sub='这个共同的个数，叫 V 的维数，记作 dim V。', read='这个共同的个数，就叫作V的维数，记作dim V。'),
+    dict(id='C12', pose='claude_explain', sub='dim ℝⁿ = n；dim(2×2 矩阵) = 4；dim Pₙ = n，基是 1、x、…、xⁿ⁻¹；零子空间的维数规定为 0。', read='R n的维数是n；二乘二矩阵空间的维数是四；P n的维数是n，基可以取一、x、一直到x的n减一次方；零子空间的维数，规定为零。'),
+    dict(id='D02', mood='think', pose='ds_ask', sub='有没有一个空间，基怎么找都找不完？'),
+    dict(id='C13', pose='claude_explain', sub='有。全体多项式 P：假如它是 n 维的，可 1、x、…、xⁿ 这 n + 1 个是线性无关的，矛盾。', read='有。全体多项式组成的空间P：假如它是n维的，可是一、x、一直到x的n次方，这n加一个多项式线性无关，就矛盾了。'),
+    dict(id='C14', pose='claude_point', sub='所以 P 是无穷维的。C[a, b] 也是。', read='所以P是无穷维的。连续函数空间C a b，也是无穷维的。'),
+    dict(id='C15', pose='claude_explain', sub='回到 ℝ³，它的子空间按维数排：0 维是原点，1 维是过原点的直线，2 维是过原点的平面，3 维是 ℝ³ 自己。', read='回到R三，它的子空间按维数排一排：零维是原点，一维是过原点的直线，二维是过原点的平面，三维是R三自己。'),
+    dict(id='G01', pose='gpt_point', sub='没有第五种。ℝ³ 的子空间就这四类。', read='没有第五种。R三的子空间，就是这四类。'),
+    dict(id='C16', pose='claude_explain', sub='知道维数，判断基就省事了。定理 3.4.3：在 n 维空间里，n 个向量 ——', read='知道了维数，判断基就省事了。定理三点四点三：在n维空间里，如果恰好有n个向量，'),
+    dict(id='C17', pose='claude_point', sub='线性无关 ⇒ 自动张成；张成 ⇒ 自动线性无关。数量对了，查一条就够。', read='那么，线性无关，就自动张成；张成，也就自动线性无关。数量对了，查一条就够。'),
+    dict(id='C18', pose='claude_explain', sub='例 4：(1, 2, 3)ᵀ、(−2, 1, 0)ᵀ、(1, 0, 1)ᵀ 是不是 ℝ³ 的基？三个向量，正好三维，算行列式。', read='教材例四：一、二、三；负二、一、零；一、零、一，是不是R三的一组基？三个向量，正好三维，算一下行列式。'),
+    dict(id='C19', pose='claude_point', sub='det = 2 ≠ 0，线性无关，所以是一组基。', read='行列式等于二，不是零，线性无关，所以是一组基。'),
+    dict(id='C20', pose='claude_explain', sub='定理 3.4.4 再补三句：少于 n 个，一定张不成；无关组可以扩充成基；张成集可以删减成基。', read='定理三点四点四，再补三句：少于n个向量，一定张不成；线性无关的向量组，可以扩充成一组基；张成集，可以删减成一组基。'),
+    dict(id='D03', mood='easy', pose='ds_proud', sub='我来试试！所有 2×2 对称矩阵，找一组基！', read='我来试试！所有二乘二的对称矩阵，找一组基！'),
+    dict(id='C21', pose='claude_smile', sub='好，这是教材第三章 Test B 第 6 题。先确认它是子空间。', read='好，这是教材第三章测验B的第六题。先确认它是一个子空间。'),
+    dict(id='D04', mood='think', pose='ds_think', sub='对称矩阵相加还是对称的，乘一个数也还是对称的。是子空间！'),
+    dict(id='C22', pose='claude_explain', sub='对。对称矩阵左上 a、右下 c，两个副对角位置都是 b。拆开：a、b、c 各乘一个固定矩阵。', read='对。对称矩阵，左上是a，右下是c，两个副对角的位置都是b。把它拆开：a、b、c各自乘一个固定的矩阵。'),
+    dict(id='D05', mood='easy', pose='ds_happy', sub='那就是三个矩阵！第二个的两个 1 必须绑在一起！', read='那就是三个矩阵！第二个矩阵的两个一，必须绑在一起！'),
+    dict(id='C23', pose='claude_point', sub='完全正确。三个矩阵张成 S，又线性无关，所以是一组基，dim S = 3。', read='完全正确。这三个矩阵张成S，又线性无关，所以是一组基，S的维数是三。'),
+    dict(id='G02', pose='gpt_explain', sub='同济对照：同济讲“极大线性无关组”，个数叫“向量组的秩”。它就是张成子空间的基和维数。', read='同济对照：同济讲的极大线性无关组，个数叫作向量组的秩。它就是这个向量组张成的子空间的基，和维数。'),
+    dict(id='C24', pose='claude_smile', sub='有了基，每个向量就有了一组坐标。可基一换，坐标也跟着变。下一节：换基。', read='有了基，每个向量就有了一组坐标。可是基一换，坐标也跟着变。下一节，我们来讲换基。'),
+]
+
+
+if __name__ == '__main__':
+    here = Path(__file__).resolve().parent
+    for l in LINES:
+        l.setdefault('read', l['sub'])
+        l.setdefault('mood', None)
+    ids = [l['id'] for l in LINES]; assert len(ids) == len(set(ids)), '台词 id 重复'
+    (here / 'script.json').write_text(json.dumps({l['id']: [l['read'], l['mood']] for l in LINES}, ensure_ascii=False, indent=1), encoding='utf-8')
+    (here / 'lines.json').write_text(json.dumps(LINES, ensure_ascii=False, indent=1), encoding='utf-8')
+    print(len(LINES), 'lines,', sum(len(l['read']) for l in LINES), 'chars')

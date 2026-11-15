@@ -197,6 +197,40 @@ for name, S in (DS.items() if isinstance(DS, dict) else []):
     if 'sign' in S: chk(sign == S['sign'], f'detsteps.{name}: 交换次数的符号应为 {sign}')
     if 'diag' in S: chk([cur[i, i] for i in range(cur.rows)] == [Q(v) for v in S['diag']] and sp.prod([cur[i, i] for i in range(cur.rows)]) * sign / scale == D0, f'detsteps.{name}: 对角元 {[cur[i,i] for i in range(cur.rows)]}')
 
+# ── 第三章：向量空间 ──
+#   nulls[] {A, basis}        — basis 每个向量都在 N(A) 里、个数 = n − rank、彼此无关
+#   ranks[] {A, rank}
+#   indep[] {vecs, indep}     — vecs 为向量列表（按列拼成矩阵判秩）
+#   coords[] {basis, x, c}    — x = Σ c_i b_i
+#   trans[] {U, V, S}         — Leon 记法：从 {u} 到 {v} 的过渡矩阵 S = V⁻¹U，[x]_v = S[x]_u
+#   inspan[] {vecs, x, in, c?}— x 是否属于 Span(vecs)；给了 c 就核对 x = Σ c_i v_i
+#   colbasis[] {A, cols}      — 主元列号（1 起）；rowbasis[] {A, rows} 非零行（RREF 的行）
+cols = lambda vs: sp.Matrix.hstack(*[MxS([[q] for q in v]) for v in vs])
+for k, nl in enumerate(M.get('nulls', [])):
+    A = MxS(nl['A']); B = [MxS([[q] for q in v]) for v in nl['basis']]
+    chk(all(A * b == sp.zeros(A.rows, 1) for b in B), f'nulls[{k}] {nl.get("desc","")}: 有向量不在 N(A) 里')
+    chk(len(B) == A.cols - A.rank() and (not B or cols(nl['basis']).rank() == len(B)), f'nulls[{k}]: 零化度 = {A.cols - A.rank()}，给了 {len(B)} 个')
+for k, rk in enumerate(M.get('ranks', [])):
+    chk(MxS(rk['A']).rank() == rk['rank'], f'ranks[{k}] {rk.get("desc","")}: rank = {MxS(rk["A"]).rank()}')
+for k, ind in enumerate(M.get('indep', [])):
+    r = cols(ind['vecs']).rank(); chk((r == len(ind['vecs'])) == ind['indep'], f'indep[{k}] {ind.get("desc","")}: 秩 {r} / {len(ind["vecs"])} 个')
+for k, co in enumerate(M.get('coords', [])):
+    Bm = cols(co['basis']); x = MxS([[q] for q in co['x']]); c = MxS([[q] for q in co['c']])
+    chk(Bm * c == x, f'coords[{k}] {co.get("desc","")}: Σc·b = {list(Bm*c)}，应为 {co["x"]}（正确坐标 {list(Bm.solve(x)) if Bm.is_square and Bm.det()!=0 else "?"}）')
+for k, tr in enumerate(M.get('trans', [])):
+    U = cols(tr['U']); V = cols(tr['V']); S = V.inv() * U
+    chk(S == MxS(tr['S']), f'trans[{k}] {tr.get("desc","")}: S = V⁻¹U = {S.tolist()}')
+for k, isp in enumerate(M.get('inspan', [])):
+    Vm = cols(isp['vecs']); x = MxS([[q] for q in isp['x']])
+    chk((sp.Matrix.hstack(Vm, x).rank() == Vm.rank()) == isp['in'], f'inspan[{k}] {isp.get("desc","")}: 属于 = {sp.Matrix.hstack(Vm, x).rank() == Vm.rank()}')
+    if 'c' in isp: chk(Vm * MxS([[q] for q in isp['c']]) == x, f'inspan[{k}]: Σc·v = {list(Vm*MxS([[q] for q in isp["c"]]))}')
+for k, cb in enumerate(M.get('colbasis', [])):
+    A = MxS(cb['A']); piv = [i + 1 for i in A.rref()[1]]
+    chk(piv == cb['cols'], f'colbasis[{k}] {cb.get("desc","")}: 主元列 = {piv}')
+for k, rb in enumerate(M.get('rowbasis', [])):
+    R = MxS(rb['A']).rref()[0]; nz = [list(R.row(i)) for i in range(R.rows) if any(R.row(i))]
+    chk(nz == [[Q(q) for q in r] for r in rb['rows']], f'rowbasis[{k}] {rb.get("desc","")}: RREF 非零行 = {[[str(q) for q in r] for r in nz]}')
+
 for k, ev in enumerate(M.get('evals', [])):                         # 通用数值 {expr, val[, approx]}：sympy 精确比较；approx=True 时相对误差 < 1%
     got = sp.sympify(ev['expr']); want = sp.sympify(str(ev['val']))
     okv = abs(float(got) - float(want)) <= 0.01 * abs(float(want)) if ev.get('approx') else sp.simplify(got - want) == 0
@@ -209,6 +243,23 @@ for k, cx in enumerate(M.get('cross', [])):                         # 叉积 {x,
     if 'w' in cx:
         w = Mx(cx['w']).reshape(3, 1); dv = sp.Matrix.hstack(w, x, y).T.det()
         chk(w.dot(xy) == dv == Q(cx['wxy']), f'cross[{k}] w·(x×y) = {w.dot(xy)}, det = {dv}')
+
+# —— 第四章 ——
+#   lintrans[] {A, x, Lx}        — 线性变换的矩阵：A·x = L(x)（元素可写 "sqrt(3)/2" 等字符串）
+#   stdmat[]  {images, A}        — 标准矩阵：A 的第 j 列 = L(e_j)（images 按 j 顺序给出）
+#   similar[] {A, S, B}          — B = S⁻¹AS；同时自动校验 tr、det 相同
+for k, lt in enumerate(M.get('lintrans', [])):
+    A = MxS(lt['A']); x = MxS([[q] for q in lt['x']]); y = MxS([[q] for q in lt['Lx']])
+    chk(sp.simplify(A * x - y) == sp.zeros(*y.shape), f'lintrans[{k}] {lt.get("desc","")}: Ax = {list(sp.simplify(A*x))}')
+for k, sm in enumerate(M.get('stdmat', [])):
+    A = MxS(sm['A']); cols_ = sp.Matrix.hstack(*[MxS([[q] for q in im]) for im in sm['images']])
+    chk(sp.simplify(A - cols_) == sp.zeros(*A.shape), f'stdmat[{k}] {sm.get("desc","")}: 列应为 {cols_.tolist()}')
+for k, si in enumerate(M.get('similar', [])):
+    A, S, Bm = MxS(si['A']), MxS(si['S']), MxS(si['B'])
+    chk(S.det() != 0, f'similar[{k}] S 奇异')
+    if S.det() != 0:
+        chk(sp.simplify(S.inv() * A * S - Bm) == sp.zeros(*A.shape), f'similar[{k}] {si.get("desc","")}: S⁻¹AS = {sp.simplify(S.inv()*A*S).tolist()}')
+    chk(sp.simplify(A.trace() - Bm.trace()) == 0 and sp.simplify(A.det() - Bm.det()) == 0, f'similar[{k}] 迹 / 行列式不同')
 
 for m in bad: print('✗', m)
 print(f'{ok} 项通过')

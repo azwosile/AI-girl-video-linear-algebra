@@ -1,7 +1,7 @@
 // 打印每句台词的起止（真实时长），方便挑测试帧：node pipeline/test/times.mjs ch01/s1_1
 import fs from 'fs'; import path from 'path'; import { pathToFileURL } from 'url';
 const seg = path.resolve(process.argv[2]);
-globalThis.document = { createElement: () => ({ getContext: () => new Proxy({}, { get: () => () => {} }) }) }; globalThis.Path2D = class {};
+globalThis.document = { createElement: () => ({ getContext: () => new Proxy({}, { get: () => () => {} }) }) }; globalThis.Path2D = class { rect() {} };
 const J = f => { try { return JSON.parse(fs.readFileSync(path.join(seg, f), 'utf8')); } catch { return {}; } };
 const { TexBank } = await import(pathToFileURL(path.resolve('engine/tex/tex.js')));
 const scene = await import(pathToFileURL(path.join(seg, 'scene.js')));

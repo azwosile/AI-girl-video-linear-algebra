@@ -1,0 +1,52 @@
+# -*- coding: utf-8 -*-
+"""第 4 章 4.2b 任意基下的矩阵（Leon 9th §4.2 定理 4.2.2 四角交换图；例 3、例 4、例 5 D: P₃ → P₂；
+定理 4.2.3、推论 4.2.4；例 6 增广阵行化简 → A = [[−1,−3],[4,2],[−1,2]]）台词源（唯一真源）。
+画面：四角交换图逐条点亮，两条路终点重合。
+运行：python lines.py → script.json / lines.json
+"""
+import json
+from pathlib import Path
+
+LINES = [
+    dict(id='C01', pose='claude_smile', sub='标准矩阵靠的是标准基。可是一个空间的基有无穷多组，多项式空间里甚至没有现成的箭头。', read='标准矩阵，靠的是标准基。可是一个空间的基，有无穷多组；多项式空间里，甚至没有现成的箭头。'),
+    dict(id='C02', pose='claude_explain', sub='办法：先取坐标。V 里选基 E，W 里选基 F，每个向量都换成坐标，问题就搬回了 ℝⁿ 和 ℝᵐ。', read='办法是：先取坐标。在V里选一组基E，在W里选一组基F，每个向量都换成坐标，问题就搬回了R n和R m。'),
+    dict(id='C03', pose='claude_point', sub='看这张四角图：左上是 v，右上是 L(v)；往下走，是它们的坐标：v 的 E 坐标，L(v) 的 F 坐标。', read='看这张四角图：左上角是v，右上角是L v；往下走，是它们各自的坐标：v在E下的坐标，和L v在F下的坐标。'),
+    dict(id='C04', pose='claude_explain', sub='定理 4.2.2：存在 m×n 矩阵 A，使 L(v) 的 F 坐标 = A ×（v 的 E 坐标）。上面走 L，下面走 A，两条路终点重合。', read='定理四点二点二：存在一个m行n列的矩阵A，使得L v的F坐标，等于A乘v的E坐标。上面走L，下面走A，两条路的终点重合。'),
+    dict(id='C05', pose='claude_point', sub='A 的第 j 列，是 L(vⱼ) 在 F 下的坐标。还是老套路：看基向量落在哪，再用新基读坐标。', read='A的第j列，是v j的像，在F下的坐标。还是老套路：先看基向量落在哪里，再用新基读出坐标。'),
+    dict(id='D01', mood='think', pose='ds_think', sub='所以多了一步：落点还要用 F 翻译成坐标。', read='所以多了一步：落点，还要用F翻译成坐标。'),
+    dict(id='C06', pose='claude_smile', sub='正是。例 3：L(x) = x₁b₁ + (x₂ + x₃)b₂，b₁ = (1, 1)ᵀ，b₂ = (−1, 1)ᵀ。输入用标准基，输出用 {b₁, b₂}。', read='正是。例三：L x 等于x一倍的b一，加上x二加x三倍的b二，其中b一是一、一，b二是负一、一。输入用标准基，输出用b一、b二。'),
+    dict(id='C07', pose='claude_explain', sub='L(e₁) = 1b₁ + 0b₂，L(e₂) = 0b₁ + 1b₂，L(e₃) 也是 0b₁ + 1b₂。坐标排成列：A = [[1, 0, 0], [0, 1, 1]]。', read='e一的像，是一倍b一加零倍b二；e二的像，是零倍b一加一倍b二；e三的像也一样。把坐标排成列，就得到A。'),
+    dict(id='C08', pose='claude_point', sub='例 4：L 把 b₁ 送到 b₁，把 b₂ 送到 b₁ + 2b₂。输入输出都用 {b₁, b₂}。', read='例四：L把b一送到b一，把b二送到b一加两倍b二。输入和输出，都用b一、b二这组基。'),
+    dict(id='C09', pose='claude_explain', sub='读坐标：L(b₁) 是 (1, 0)ᵀ，L(b₂) 是 (1, 2)ᵀ。所以 A = [[1, 1], [0, 2]]。', read='读出坐标：b一的像是一、零，b二的像是一、二。所以A的两列，就是它们。'),
+    dict(id='C10', pose='claude_point', sub='例 5：求导 D: P₃ → P₂，基分别取 [x², x, 1] 和 [x, 1]。', read='例五：求导，从P三到P二，两边的基，分别取x方、x、一，和x、一。'),
+    dict(id='C11', pose='claude_explain', sub='D(x²) = 2x，坐标 (2, 0)ᵀ；D(x) = 1，坐标 (0, 1)ᵀ；D(1) = 0，坐标 (0, 0)ᵀ。A = [[2, 0, 0], [0, 1, 0]]。', read='x方求导得二x，坐标是二、零；x求导得一，坐标是零、一；一求导得零，坐标是零、零。三列拼起来，就是A。'),
+    dict(id='C12', pose='claude_point', sub='验证：p = ax² + bx + c，坐标 (a, b, c)ᵀ；A 乘它得 (2a, b)ᵀ，翻译回来是 2ax + b。正是导数！', read='验证一下：p等于a x方加b x加c，坐标是a、b、c；A乘它，得到二a、b，翻译回来，就是二a x加b。正是p的导数！'),
+    dict(id='D02', mood='panic', pose='ds_shock', sub='求导变成了矩阵乘法？！', read='求导，变成了矩阵乘法？'),
+    dict(id='C13', pose='claude_smile', sub='对。选好基，有限维空间里的线性变换，统统可以变成矩阵乘法。', read='对。选好了基，有限维空间里的线性变换，统统可以变成矩阵乘法。'),
+    dict(id='C14', pose='claude_explain', sub='回到 ℝⁿ → ℝᵐ：E = {u₁, …, uₙ}，F = {b₁, …}，B 是 b 们排成的矩阵。第 j 列满足 L(uⱼ) = Baⱼ。', read='回到R n到R m：输入的基是u一到u n，输出的基是b一到b m，B是这些b排成的矩阵。A的第j列a j，满足B乘a j，等于u j的像。'),
+    dict(id='C15', pose='claude_point', sub='定理 4.2.3：aⱼ = B⁻¹L(uⱼ)，也就是解方程组 Bx = L(uⱼ)。', read='定理四点二点三：a j等于B逆乘u j的像，也就是解方程组：B x 等于u j的像。'),
+    dict(id='C16', pose='claude_explain', sub='推论 4.2.4 更省事：把 B 和所有 L(uⱼ) 拼成增广矩阵，行化简成 (I | A)，右半边就是答案。', read='推论四点二点四更省事：把B和所有的像，拼成一个增广矩阵，行化简成I和A，右半边就是答案。'),
+    dict(id='C17', pose='claude_point', sub='例 6：L(x) = (x₂, x₁ + x₂, x₁ − x₂)ᵀ，u₁ = (1, 2)ᵀ，u₂ = (3, 1)ᵀ；b₁、b₂、b₃ 如图。', read='例六：L x 有三个分量：x二，x一加x二，还有x一减x二。u一是一、二，u二是三、一；b一、b二、b三如图。'),
+    dict(id='C18', pose='claude_explain', sub='先算像：L(u₁) = (2, 3, −1)ᵀ，L(u₂) = (1, 4, 2)ᵀ。', read='先算像：u一的像是二、三、负一；u二的像是一、四、二。'),
+    dict(id='C19', pose='claude_point', sub='拼成 (b₁ b₂ b₃ | L(u₁) L(u₂))。第一行减第二行，第二行减第三行。', read='拼成增广矩阵：左边是三个b，右边是两个像。然后，第一行减第二行，第二行减第三行。'),
+    dict(id='C20', pose='claude_explain', sub='左边变成单位矩阵，右边就是 A = [[−1, −3], [4, 2], [−1, 2]]。', read='左边变成了单位矩阵，右边就是A：第一列负一、四、负一；第二列负三、二、二。'),
+    dict(id='D03', mood='think', pose='ds_think', sub='怎么验证没算错？', read='怎么验证，有没有算错？'),
+    dict(id='C21', pose='claude_smile', sub='验第一列：−1·b₁ + 4·b₂ − 1·b₃ = (2, 3, −1)ᵀ，正好是 L(u₁)。', read='验第一列：负一倍b一，加四倍b二，减一倍b三，等于二、三、负一，正好是u一的像。'),
+    dict(id='C22', pose='claude_point', sub='在交换图上走一遍：u₁ 的 E 坐标是 (1, 0)ᵀ，A 乘它得第一列；用 F 翻译回去，就是 L(u₁)。两条路重合。', read='在交换图上走一遍：u一的E坐标是一、零；A乘它，得到第一列；再用F翻译回去，就是u一的像。两条路重合。'),
+    dict(id='G01', pose='gpt_explain', sub='同济对照：第六章第 4 节 写成 T(α₁, …, αₙ) = (α₁, …, αₙ)A。A 的第 j 列，是 T(αⱼ) 在这组基下的坐标。', read='同济对照：同济第六章第四节，写成T作用在一组基上，等于这组基右乘A。A的第j列，同样是第j个基向量的像，在这组基下的坐标。'),
+    dict(id='G02', pose='gpt_point', sub='区别：同济仅讲空间到自身、同一组基；英文教材允许输入输出用两组不同的基，更一般。', read='区别在于：同济仅讨论空间到自身，用同一组基；英文教材允许输入和输出，用两组不同的基，更一般。'),
+    dict(id='C23', pose='claude_explain', sub='小结：任意基下，A 的第 j 列 = L(vⱼ) 的 F 坐标；在 ℝⁿ 里，行化简 (B | 像) 得到 (I | A)。', read='小结：任意基下，A的第j列，就是v j的像在F下的坐标；在R n里，把B和像拼起来行化简，就得到I和A。'),
+    dict(id='D04', mood='easy', pose='ds_happy', sub='以后我可以把求导写成矩阵了！', read='以后，我可以把求导写成矩阵了！'),
+    dict(id='C24', pose='claude_point', sub='下一节轻松一点：看矩阵怎样让电脑里的图形动起来。', read='下一节轻松一点：看矩阵，怎样让电脑里的图形动起来。'),
+]
+
+
+if __name__ == '__main__':
+    here = Path(__file__).resolve().parent
+    for l in LINES:
+        l.setdefault('read', l['sub'])
+        l.setdefault('mood', None)
+    ids = [l['id'] for l in LINES]; assert len(ids) == len(set(ids)), '台词 id 重复'
+    (here / 'script.json').write_text(json.dumps({l['id']: [l['read'], l['mood']] for l in LINES}, ensure_ascii=False, indent=1), encoding='utf-8')
+    (here / 'lines.json').write_text(json.dumps(LINES, ensure_ascii=False, indent=1), encoding='utf-8')
+    print(len(LINES), 'lines,', sum(len(l['read']) for l in LINES), 'chars')

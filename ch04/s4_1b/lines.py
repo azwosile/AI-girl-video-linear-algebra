@@ -1,0 +1,56 @@
+# -*- coding: utf-8 -*-
+"""第 4 章 4.1b 从 ℝⁿ 到 ℝᵐ，核与像（Leon 9th §4.1 后半：例 5、例 7 与 L_A(x) = Ax；性质 (i)–(iii)；
+例 8 恒等、例 9 积分、例 10 求导；核与像的定义、定理 4.1.1；例 11、例 12、例 13）台词源（唯一真源）。
+3B1B 画面：ℝ³ → ℝ² 压扁（planes3d），核直线缩成一个点；对照第三章 N(A) / 列空间。
+数值：例 12 L(x) = (x₁ + x₂, x₂ + x₃)ᵀ → ker = Span{(1, −1, 1)ᵀ}，L(S) = ℝ²。
+运行：python lines.py → script.json / lines.json
+"""
+import json
+from pathlib import Path
+
+LINES = [
+    dict(id='C01', pose='claude_smile', sub='上一节的变换，输入输出都在同一张平面里。这一节，它们可以不在同一个空间。', read='上一节的变换，输入和输出都在同一张平面里。这一节，它们可以不在同一个空间。'),
+    dict(id='C02', pose='claude_explain', sub='例 5：L(x) = x₁ + x₂，从 ℝ² 到 ℝ¹。吃进一个平面向量，吐出一个标量。', read='例五：L x 等于x一加x二，从R二到R一。吃进一个平面向量，吐出一个标量。'),
+    dict(id='C03', pose='claude_point', sub='画面上，整张平面被压到一条直线上；x₁ + x₂ = 0 这条斜线上的点，全落到了原点。', read='画面上，整张平面，被压到了一条直线上；x一加x二等于零的这条斜线，上面所有的点，全落到了原点。'),
+    dict(id='C04', pose='claude_explain', sub='例 7：L(x) = (x₂, x₁, x₁ + x₂)ᵀ，从 ℝ² 到 ℝ³，把平面送进了空间。', read='例七：L x 有三个分量：x二，x一，还有x一加x二。它从R二到R三，把一张平面，送进了三维空间。'),
+    dict(id='C05', pose='claude_point', sub='注意：它可以写成 Ax，A 是这个 3×2 矩阵。', read='注意：它可以写成A乘x，A是这个三行两列的矩阵。'),
+    dict(id='C06', pose='claude_explain', sub='反过来，任何 m×n 矩阵 A 都定义一个线性变换 L(x) = Ax，从 ℝⁿ 到 ℝᵐ。', read='反过来，任何一个m行n列的矩阵A，都定义了一个线性变换：L A x 等于A x，它的输入在R n里，输出在R m里。'),
+    dict(id='C07', pose='claude_point', sub='因为矩阵乘法本来就满足 A(αx + βy) = αAx + βAy。', read='因为矩阵乘法，本来就满足分配律，标量也能提到前面。'),
+    dict(id='D01', mood='think', pose='ds_think', sub='每个矩阵都是一个线性变换……那反过来，每个线性变换都是矩阵吗？', read='每个矩阵，都是一个线性变换；那反过来，每个线性变换，都是一个矩阵吗？'),
+    dict(id='C08', pose='claude_smile', sub='好问题，下一节回答：从 ℝⁿ 到 ℝᵐ，答案是肯定的。', read='好问题，下一节回答：从R n到R m，答案是肯定的。'),
+    dict(id='C09', pose='claude_explain', sub='先看一般的 L: V → W。三条性质：(i) L 把零向量送到零向量。', read='先看一般的，从V到W的线性变换。它有三条性质：第一，L把零向量，送到零向量。'),
+    dict(id='C10', pose='claude_point', sub='(ii) 保持任意多个向量的线性组合；(iii) L(−v) = −L(v)。', read='第二，保持任意多个向量的线性组合；第三，负v的像，等于L v的相反向量。'),
+    dict(id='C11', pose='claude_explain', sub='第 (i) 条最实用：L(0) ≠ 0，立刻判定不是线性变换。上一节的平移就这样出局。', read='第一条最实用：一旦L零不等于零，立刻判定，它不是线性变换。上一节的平移，就是这样出局的。'),
+    dict(id='C12', pose='claude_point', sub='线性变换不限于 ℝⁿ。例 8：恒等变换 I(v) = v，什么也不做，当然线性。', read='线性变换，也不限于R n。例八：恒等变换，I v 等于v，什么也不做，当然是线性的。'),
+    dict(id='C13', pose='claude_explain', sub='例 9：L(f) = f 在 [a, b] 上的定积分，把连续函数送到一个实数。积分保持加法和标量乘法，线性。', read='例九：L f 等于f从a到b的积分，把一个连续函数，送到一个实数。积分保持加法和标量乘法，所以是线性的。'),
+    dict(id='C14', pose='claude_point', sub='例 10：D(f) = f′，求导。和的导数等于导数的和，常量可以提出来，也是线性的。', read='例十：D f 等于f的导数。和的导数，等于导数的和，常量也能提出来，所以也是线性的。'),
+    dict(id='D02', mood='easy', pose='ds_happy', sub='微积分里的积分和求导，原来都是线性变换！', read='微积分里的积分和求导，原来都是线性变换！'),
+    dict(id='C15', pose='claude_smile', sub='对。接下来是两个新名词。核：被 L 送到零向量的所有输入，记作 ker(L)。', read='对。接下来，是两个新名词。第一个，核：被L送到零向量的所有输入，组成L的核。'),
+    dict(id='C16', pose='claude_explain', sub='像：子空间 S 里每个向量变换后的结果，合起来记作 L(S)；整个 V 的像 L(V)，叫值域。', read='第二个，像：子空间S里，每个向量变换以后的结果，合起来，叫S的像；整个V的像，叫L的值域。'),
+    dict(id='C17', pose='claude_point', sub='定理 4.1.1：核是 V 的子空间，像 L(S) 是 W 的子空间。', read='定理四点一点一：核，是V的子空间；S的像，是W的子空间。'),
+    dict(id='C18', pose='claude_explain', sub='证明核对加法封闭：L(v₁ + v₂) = 0 + 0 = 0；对标量乘法封闭：L(αv) = α·0 = 0。', read='证明核对加法封闭：v一加v二的像，等于零加零，还是零；对标量乘法也封闭：阿尔法乘零，还是零。'),
+    dict(id='C19', pose='claude_point', sub='例 11：L(x) = (x₁, 0)ᵀ，投影到 x₁ 轴。核是 x₂ 轴，值域是 x₁ 轴，各占一维。', read='例十一：L x 等于x一、零，投影到x一轴。核是x二轴，值域是x一轴，各占一维。'),
+    dict(id='C20', pose='claude_explain', sub='例 12：L: ℝ³ → ℝ²，L(x) = (x₁ + x₂, x₂ + x₃)ᵀ。求核，就是解两个方程等于零。', read='例十二：从R三到R二，L x 等于x一加x二、x二加x三。求核，就是让这两个分量都等于零。'),
+    dict(id='C21', pose='claude_point', sub='自由变量 x₃ = a，得 x₂ = −a，x₁ = a。核是一条直线：Span{(1, −1, 1)ᵀ}。', read='取自由变量x三等于a，解出x二等于负a，x一等于a。核是一条直线：一、负一、一张成的直线。'),
+    dict(id='C22', pose='claude_explain', sub='再取 S = Span{e₁, e₃}：x = (a, 0, b)ᵀ 被送到 (a, b)ᵀ，S 的像就是整个 ℝ²。', read='再取S为e一、e三张成的平面：其中的向量a、零、b，被送到a、b，所以S的像，就是整个R二。'),
+    dict(id='C23', pose='claude_point', sub='看 3D 画面：整个 ℝ³ 被压到平面上，那条核直线，缩成了原点一个点。', read='看三维画面：整个R三被压到平面上，那条核直线，缩成了原点这一个点。'),
+    dict(id='D03', mood='think', pose='ds_think', sub='等等，这不就是第三章的零空间和列空间吗？', read='等等，这不就是第三章的零空间，和列空间吗？'),
+    dict(id='C24', pose='claude_smile', sub='就是它们。L(x) = Ax 时，核就是 N(A)，值域就是 A 的列空间。', read='就是它们。当L x 等于A x，核就是A的零空间，值域就是A的列空间。'),
+    dict(id='C25', pose='claude_explain', sub='秩–零化度定理也换个说法：核的维数 + 值域的维数 = 输入空间的维数。例 12：1 + 2 = 3。', read='秩零化度定理，也换个说法：核的维数，加值域的维数，等于输入空间的维数。例十二里，一加二，正好等于三。'),
+    dict(id='C26', pose='claude_point', sub='例 13：求导 D: P₃ → P₃。常量求导是 0，核是 P₁；导数次数都不超过 1，值域是 P₂。', read='例十三：在P三上求导。常量求导得零，所以核是P一；导数的次数都不超过一，所以值域是P二。'),
+    dict(id='D04', mood='easy', pose='ds_proud', sub='我验一下：核一维，值域二维，1 + 2 = 3，正好是 P₃ 的维数！', read='我验一下：核一维，值域二维，一加二等于三，正好是P三的维数！'),
+    dict(id='G01', pose='gpt_explain', sub='同济对照：核，同济写作 T⁻¹(0)；值域叫“像空间”，写作 T(Vₙ)。名字不同，内容一样。', read='同济对照：核，同济写作T逆零；值域，同济叫像空间，写作T V n。名字不同，内容一样。'),
+    dict(id='C27', pose='claude_smile', sub='小结：核是被压没的部分，值域是剩下撑开的部分，两者维数加起来，等于输入空间的维数。', read='小结：核，是被压没的那部分；值域，是剩下撑开的那部分。两者维数加起来，等于输入空间的维数。'),
+    dict(id='C28', pose='claude_explain', sub='下一节回答大肥鱼的问题：每个线性变换，怎样写成一个矩阵。', read='下一节，回答大肥鱼的问题：每个线性变换，怎样写成一个矩阵。'),
+]
+
+
+if __name__ == '__main__':
+    here = Path(__file__).resolve().parent
+    for l in LINES:
+        l.setdefault('read', l['sub'])
+        l.setdefault('mood', None)
+    ids = [l['id'] for l in LINES]; assert len(ids) == len(set(ids)), '台词 id 重复'
+    (here / 'script.json').write_text(json.dumps({l['id']: [l['read'], l['mood']] for l in LINES}, ensure_ascii=False, indent=1), encoding='utf-8')
+    (here / 'lines.json').write_text(json.dumps(LINES, ensure_ascii=False, indent=1), encoding='utf-8')
+    print(len(LINES), 'lines,', sum(len(l['read']) for l in LINES), 'chars')

@@ -1,0 +1,21 @@
+{
+ "def": "L(\\alpha\\mathbf v_1+\\beta\\mathbf v_2)=\\alpha L(\\mathbf v_1)+\\beta L(\\mathbf v_2)",
+ "add": "L(\\mathbf v_1+\\mathbf v_2)=L(\\mathbf v_1)+L(\\mathbf v_2)",
+ "hom": "L(\\alpha\\mathbf v)=\\alpha L(\\mathbf v)",
+ "map": "L:V\\to W",
+ "op": "L:V\\to V",
+ "e1": "L(\\mathbf x)=3\\mathbf x",
+ "e2": "L(\\mathbf x)=x_1\\mathbf e_1",
+ "e3": "L(\\mathbf x)=(x_1,\\,-x_2)^T",
+ "e4": "L(\\mathbf x)=(-x_2,\\,x_1)^T",
+ "lin1": "3(\\alpha\\mathbf x+\\beta\\mathbf y)=\\alpha(3\\mathbf x)+\\beta(3\\mathbf y)",
+ "e6": "M(\\mathbf x)=\\|\\mathbf x\\|=\\sqrt{x_1^2+x_2^2}",
+ "e6b": "M(-\\mathbf x)=\\|\\mathbf x\\|\\;\\ne\\;-\\|\\mathbf x\\|=-M(\\mathbf x)",
+ "b1": "L(\\mathbf x)=(x_1x_2,\\;x_1)^T",
+ "b1b": "L(2\\mathbf x)=(\\class{q}{4x_1x_2},\\;2x_1)^T\\ne 2L(\\mathbf x)",
+ "tr": "L(\\mathbf x)=\\mathbf x+\\mathbf a",
+ "L0": "L(\\mathbf 0)=L(0\\cdot\\mathbf 0)=0\\cdot L(\\mathbf 0)=\\mathbf 0",
+ "L0a": "L(\\mathbf 0)=\\mathbf a\\ne\\mathbf 0",
+ "Mq": "\\begin{bmatrix}2&1\\\\1&3\\end{bmatrix}\\;?",
+ "tjT": "T(\\alpha\\mathbf a+\\beta\\mathbf b)=\\alpha T(\\mathbf a)+\\beta T(\\mathbf b)"
+}

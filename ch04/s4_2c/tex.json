@@ -1,0 +1,19 @@
+{
+ "T0": "T=\\begin{bmatrix}0&1&1\\\\0&1&-1\\end{bmatrix}",
+ "T1": "T=\\begin{bmatrix}0&1&1&{\\color{#E06A3A}0}\\\\0&1&-1&{\\color{#E06A3A}0}\\end{bmatrix}",
+ "AT": "A\\,T=\\big(A\\mathbf t_1,\\;A\\mathbf t_2,\\;\\dots\\big)",
+ "dil": "L(\\mathbf x)=c\\,\\mathbf x,\\quad A=cI=\\begin{bmatrix}1.5&0\\\\0&1.5\\end{bmatrix}",
+ "ref": "A=\\begin{bmatrix}-1&0\\\\0&1\\end{bmatrix}",
+ "rot": "A=\\begin{bmatrix}\\tfrac12&-\\tfrac{\\sqrt3}{2}\\\\\\tfrac{\\sqrt3}{2}&\\tfrac12\\end{bmatrix}",
+ "tr": "L(\\mathbf x)=\\mathbf x+\\mathbf a",
+ "tr0": "L(\\mathbf 0)=\\mathbf a\\ne\\mathbf 0",
+ "hom": "\\begin{bmatrix}x_1\\\\x_2\\end{bmatrix}\\;\\longmapsto\\;\\begin{bmatrix}x_1\\\\x_2\\\\{\\color{#E06A3A}1}\\end{bmatrix}",
+ "Ta": "\\begin{bmatrix}1&0&{\\color{#E06A3A}6}\\\\0&1&{\\color{#E06A3A}2}\\\\0&0&1\\end{bmatrix}",
+ "Tax": "\\begin{bmatrix}1&0&6\\\\0&1&2\\\\0&0&1\\end{bmatrix}\\begin{bmatrix}x_1\\\\x_2\\\\1\\end{bmatrix}=\\begin{bmatrix}x_1+6\\\\x_2+2\\\\1\\end{bmatrix}",
+ "emb": "\\begin{bmatrix}A&\\mathbf 0\\\\\\mathbf 0^T&1\\end{bmatrix}",
+ "d3": "\\begin{bmatrix}3&0&0\\\\0&3&0\\\\0&0&1\\end{bmatrix}",
+ "comp": "\\begin{bmatrix}1&0&6\\\\0&1&2\\\\0&0&1\\end{bmatrix}\\begin{bmatrix}1.5&0&0\\\\0&1.5&0\\\\0&0&1\\end{bmatrix}=\\begin{bmatrix}1.5&0&6\\\\0&1.5&2\\\\0&0&1\\end{bmatrix}",
+ "b7": "\\begin{bmatrix}1&0&2\\\\0&1&5\\\\0&0&1\\end{bmatrix}",
+ "b7x": "\\begin{bmatrix}1&0&2\\\\0&1&5\\\\0&0&1\\end{bmatrix}\\begin{bmatrix}x_1\\\\x_2\\\\1\\end{bmatrix}=\\begin{bmatrix}x_1+2\\\\x_2+5\\\\1\\end{bmatrix}",
+ "q": "\\left\\{\\begin{bmatrix}x\\\\y\\\\1\\end{bmatrix}\\right\\}\\subseteq\\mathbb R^3\\;?"
+}

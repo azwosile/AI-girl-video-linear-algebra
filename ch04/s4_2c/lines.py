@@ -1,0 +1,50 @@
+# -*- coding: utf-8 -*-
+"""第 4 章 4.2c 应用：计算机图形学（Leon 9th §4.2 Application 1：顶点矩阵 T；伸缩 1.5 倍、关于 y 轴反射、旋转 60°；
+平移不是线性 → 齐次坐标 3×3；a = (6, 2)ᵀ 例；Test B 7 → [[1,0,2],[0,1,5],[0,0,1]]；复合：先放大再平移）台词源（唯一真源）。
+画面：构成主义三角形逐帧乘矩阵；齐次坐标 = 把平面抬到 z = 1，平移变成三维剪切。
+运行：python lines.py → script.json / lines.json
+"""
+import json
+from pathlib import Path
+
+LINES = [
+    dict(id='C01', pose='claude_smile', sub='这一节看应用：电脑游戏和动画里，图形是怎么动起来的。', read='这一节看个应用：电脑游戏和动画里，图形是怎么动起来的。'),
+    dict(id='C02', pose='claude_explain', sub='电脑存图形，存的是顶点。三角形的顶点 (0, 0)、(1, 1)、(1, −1)，按列放进一个 2×n 矩阵 T。', read='电脑存图形，存的是顶点。三角形的三个顶点：零、零，一、一，一、负一，按列放进一个两行的矩阵T。'),
+    dict(id='C03', pose='claude_point', sub='最后再抄一遍 (0, 0)，画线时才能首尾相连，回到起点。', read='最后，再抄一遍零、零，这样画线的时候，才能首尾相连，回到起点。'),
+    dict(id='D01', mood='think', pose='ds_think', sub='那要让三角形动起来，就得改每个顶点？', read='那要让三角形动起来，就要一个个改顶点？'),
+    dict(id='C04', pose='claude_smile', sub='一次乘法全搞定：变换的矩阵乘 T，每一列同时被变换。逐帧乘下去，就是动画。', read='一次乘法全搞定：用变换的矩阵去乘T，每一列同时被变换。一帧一帧乘下去，就是动画。'),
+    dict(id='C05', pose='claude_explain', sub='第一种：伸缩。L(x) = cx，矩阵是 cI。c > 1 放大，0 < c < 1 缩小。画面是放大 1.5 倍。', read='第一种：伸缩。L x 等于c x，矩阵是c倍的单位矩阵。c大于一就放大，c在零和一之间就缩小。画面里，是放大一点五倍。'),
+    dict(id='C06', pose='claude_point', sub='第二种：关于坐标轴反射。关于 y 轴：e₁ 翻成 −e₁，e₂ 不动，矩阵 [[−1, 0], [0, 1]]。', read='第二种：关于坐标轴反射。关于y轴反射，e一翻成负e一，e二不动，两列一拼就是它的矩阵。'),
+    dict(id='C07', pose='claude_explain', sub='第三种：旋转。上一节的旋转矩阵，代入 60°，三角形绕原点逆时针转 60°。', read='第三种：旋转。把上一节的旋转矩阵，代入六十度，三角形就绕着原点，逆时针转六十度。'),
+    dict(id='C08', pose='claude_point', sub='第四种：平移，L(x) = x + a。麻烦来了：a ≠ 0 时它不是线性的，没有 2×2 矩阵能做到。', read='第四种：平移，L x 等于x加a。麻烦来了：a不是零的时候，它不是线性变换，没有哪个二阶矩阵能做到。'),
+    dict(id='D02', mood='sigh', pose='ds_confused', sub='4.1 节埋的坑来了……那游戏里的角色怎么走路？', read='四点一节埋的坑来了。那游戏里的角色，怎么走路？'),
+    dict(id='C09', pose='claude_smile', sub='图形学的妙招：齐次坐标。给每个平面向量 (x₁, x₂)ᵀ 补一个 1，变成 (x₁, x₂, 1)ᵀ。', read='图形学的妙招：齐次坐标。给每个平面向量，补上一个一，从x一、x二，变成x一、x二、一。'),
+    dict(id='C10', pose='claude_explain', sub='画图时把第三个分量忽略，照旧画 (x₁, x₂)。', read='画图的时候，把第三个分量忽略掉，照旧画x一、x二。'),
+    dict(id='C11', pose='claude_point', sub='平移 a = (6, 2)ᵀ：取 3×3 单位矩阵，把第三列的前两个元素换成 6 和 2。', read='平移a等于六、二：取三阶单位矩阵，把第三列的前两个元素，换成六和二。'),
+    dict(id='C12', pose='claude_explain', sub='乘一下：第一行给出 x₁ + 6，第二行给出 x₂ + 2，第三行还是 1。平移变成了矩阵乘法！', read='乘一下：第一行给出x一加六，第二行给出x二加二，第三行还是一。平移，变成了矩阵乘法！'),
+    dict(id='D03', mood='think', pose='ds_ask', sub='可平移明明不是线性的，怎么能写成矩阵？', read='可平移明明不是线性的，怎么能写成矩阵？'),
+    dict(id='C13', pose='claude_smile', sub='看 3D 画面：齐次坐标把整张平面抬到 z = 1 的高度。', read='看三维画面：齐次坐标，把整张平面，抬到了z等于一的高度。'),
+    dict(id='C14', pose='claude_explain', sub='这个 3×3 矩阵在三维里是一个剪切：越高的地方推得越远。z = 1 这一层，恰好整体平移了 a。', read='这个三阶矩阵，在三维空间里是一个剪切：越高的地方，推得越远。z等于一这一层，恰好整体平移了a。'),
+    dict(id='C15', pose='claude_point', sub='三维里原点没动，是线性的；我们站在 z = 1 那一层上看，看到的就是平移。', read='在三维里，原点没动，它是线性的；我们站在z等于一这一层上看，看到的，就是平移。'),
+    dict(id='C16', pose='claude_explain', sub='原来的线性变换也升级成 3×3：2×2 矩阵放左上角，再补上单位矩阵的第三行、第三列。', read='原来的线性变换，也升级成三阶：二阶矩阵放在左上角，再补上单位矩阵的第三行和第三列。'),
+    dict(id='C17', pose='claude_point', sub='比如放大 3 倍：[[3, 0, 0], [0, 3, 0], [0, 0, 1]]。', read='比如，放大三倍，就是对角线上三、三、一。'),
+    dict(id='C18', pose='claude_explain', sub='好处：所有动作都是矩阵乘法，可以先乘成一个矩阵。先放大 1.5 倍再平移 (6, 2)，两个矩阵一乘就是 [[1.5, 0, 6], [0, 1.5, 2], [0, 0, 1]]。', read='好处是：所有动作都是矩阵乘法，可以先乘成一个矩阵。先放大一点五倍，再平移六、二，两个矩阵一乘，就合成了一个。'),
+    dict(id='C19', pose='claude_point', sub='注意顺序：先放大，放大矩阵写在右边。上一节的规矩，在这里一样管用。', read='注意顺序：先放大，所以放大矩阵写在右边。上一节的规矩，在这里一样管用。'),
+    dict(id='D04', mood='easy', pose='ds_proud', sub='我来 Test B 第 7 题：平移 a = (2, 5)ᵀ，矩阵是 [[1, 0, 2], [0, 1, 5], [0, 0, 1]]！', read='我来测验B第七题：平移a等于二、五，就是单位矩阵的第三列，换成二、五、一！'),
+    dict(id='C20', pose='claude_smile', sub='完全正确。验一下：(x₁, x₂, 1)ᵀ 乘过去，得到 (x₁ + 2, x₂ + 5, 1)ᵀ。', read='完全正确。验一下：x一、x二、一乘过去，得到x一加二、x二加五、一。'),
+    dict(id='C21', pose='claude_explain', sub='再留个思考题：所有形如 (x, y, 1)ᵀ 的向量，构成 ℝ³ 的子空间吗？复习课揭晓。', read='再留个思考题：所有形如x、y、一的向量，构成R三的子空间吗？复习课揭晓。'),
+    dict(id='C22', pose='claude_point', sub='小结：图形 = 顶点矩阵；伸缩、反射、旋转是左乘 2×2 矩阵；平移靠齐次坐标，变成 3×3 矩阵。', read='小结：图形就是顶点矩阵；伸缩、反射、旋转，是左乘二阶矩阵；平移靠齐次坐标，变成三阶矩阵。'),
+    dict(id='D05', mood='easy', pose='ds_happy', sub='原来游戏引擎里全是矩阵！', read='原来，游戏引擎里全是矩阵！'),
+    dict(id='C23', pose='claude_smile', sub='下一节回到理论：同一个变换，换一组基，矩阵怎么变？这就是相似。', read='下一节回到理论：同一个变换，换一组基，矩阵会怎么变？这就是相似。'),
+]
+
+
+if __name__ == '__main__':
+    here = Path(__file__).resolve().parent
+    for l in LINES:
+        l.setdefault('read', l['sub'])
+        l.setdefault('mood', None)
+    ids = [l['id'] for l in LINES]; assert len(ids) == len(set(ids)), '台词 id 重复'
+    (here / 'script.json').write_text(json.dumps({l['id']: [l['read'], l['mood']] for l in LINES}, ensure_ascii=False, indent=1), encoding='utf-8')
+    (here / 'lines.json').write_text(json.dumps(LINES, ensure_ascii=False, indent=1), encoding='utf-8')
+    print(len(LINES), 'lines,', sum(len(l['read']) for l in LINES), 'chars')

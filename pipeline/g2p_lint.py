@@ -40,10 +40,13 @@ HARD = [('行', r'^x', '行 读成 xíng（不在 xing_words 白名单里）'),
         ('几', r'1$', '几 读成 jī（几个 / 取几 应读 jǐ）'),
         ('当', r'4$', '当 读成 dàng（若尔当 / 当时 应读 dāng；当成 / 当作 读 dàng 是对的，已放行）'),
         ('乘', r'^sh', '乘 读成 shèng'),
+        ('奇', r'^j', '奇 读成 jī（奇异 / 奇迹 应读 qí；奇数 / 奇偶 / 奇次 读 jī 是对的，已放行）'),
         ('模', r'^m.*o', '模 读成 mó（模样 / 一模一样 应读 mú；模长 读 mó 可忽略）')]
 # 只在这些上下文里才算错（值得 / 觉得 / 记得 读轻声是对的）
 CTX = {'得': lambda prev, nxt: nxt == '到' or (prev != '' and prev in '入出求解'),
-       '当': lambda prev, nxt: nxt == '' or nxt not in '成作做'}
+       '当': lambda prev, nxt: nxt == '' or nxt not in '成作做',
+       '奇': lambda prev, nxt: nxt == '' or nxt not in '数偶次',          # 奇数 jī 是对的
+       '数': lambda prev, nxt: nxt == '' or nxt not in '过一出清'}        # 动词「数过 / 数一数」读 shǔ 是对的
 
 
 def ctx_ok(cs, i, c):
@@ -54,7 +57,7 @@ def ctx_ok(cs, i, c):
     return f(prev[-1:] if prev else '', nxt[:1] if nxt else '')
 
 
-SOFT = set('转和重为调长差处似角降朝藏传空曲省率占着了还只相种便')
+SOFT = set('转和重为调长差处似角降朝藏传空曲省率占着了还只相种便叉')
 
 
 def lint(seg):

@@ -127,7 +127,8 @@ def MxS(X):
     for row in X:
         r = []
         for v in row:
-            if isinstance(v, str) and v[:1].isalpha(): SY.setdefault(v, sp.Symbol(v)); r.append(SY[v])
+            if isinstance(v, str) and v.isidentifier(): SY.setdefault(v, sp.Symbol(v)); r.append(SY[v])
+            elif isinstance(v, str) and any(ch.isalpha() for ch in v): r.append(sp.sympify(v, locals=SY))   # 表达式，如 'a+p'
             else: r.append(Q(v))
         out.append(r)
     return sp.Matrix(out)
@@ -152,6 +153,62 @@ for k, bl in enumerate(M.get('blocks', [])):
         for c0, c1 in C2:
             blk[r0:r1, c0:c1] = sum((A[r0:r1, k0:k1] * B[k0:k1, c0:c1] for k0, k1 in K), sp.zeros(r1 - r0, c1 - c0))
     chk(blk == A * B, f'blocks[{k}] {d}: 按块相乘与直接相乘不一致')
+
+# ── 第二章：行列式 ──
+#   dets[] {A, det}            — det(A)（A 可含符号，det 写成字符串表达式）
+#   cofactors[] {A, i, j, minor, cof}  — 第 i 行第 j 列（从 1 起）的余子式 det(M_ij) 与代数余子式 A_ij
+#   expand[] {A, along: 'row'|'col', k, terms: [..], det}  — 按第 k 行 / 列展开的每一项 a·A
+#   adjs[] {A, adj}            — 伴随矩阵
+#   cramer[] {A, b, dets: [det A1..], det, x}
+#   detsteps {A, ops, steps, sign, diag, det}  — 消元求行列式：ops 逐步，最后 det = sign · ∏diag
+for k, mm in enumerate(M.get('matmul', [])):                       # 矩阵乘积 {A, B, AB}
+    chk(Mx(mm['A']) * Mx(mm['B']) == Mx(mm['AB']), f'matmul[{k}] {mm.get("desc","")}: AB = {(Mx(mm["A"]) * Mx(mm["B"])).tolist()}')
+for k, dd in enumerate(M.get('dets', [])):
+    A = MxS(dd['A']); want = sp.sympify(dd['det'], locals=SY) if isinstance(dd['det'], str) else dd['det']
+    chk(sp.simplify(A.det() - want) == 0, f'dets[{k}] {dd.get("desc","")}: det = {sp.factor(A.det())}，写的是 {dd["det"]}')
+for k, cf in enumerate(M.get('cofactors', [])):
+    A = MxS(cf['A']); i, j = cf['i'] - 1, cf['j'] - 1; mn = A.minor_submatrix(i, j).det()
+    if 'minor' in cf: chk(mn == Q(cf['minor']), f'cofactors[{k}] {cf.get("desc","")}: M{i+1}{j+1} = {mn}')
+    if 'cof' in cf: chk(A.cofactor(i, j) == Q(cf['cof']), f'cofactors[{k}] {cf.get("desc","")}: A{i+1}{j+1} = {A.cofactor(i, j)}')
+for k, ex in enumerate(M.get('expand', [])):
+    A = MxS(ex['A']); kk = ex['k'] - 1; n = A.rows
+    terms = [A[kk, j] * A.cofactor(kk, j) for j in range(n)] if ex['along'] == 'row' else [A[i, kk] * A.cofactor(i, kk) for i in range(n)]
+    chk([sp.simplify(a - Q(b)) == 0 for a, b in zip(terms, ex['terms'])] == [True] * n, f'expand[{k}] {ex.get("desc","")}: 各项 = {terms}')
+    chk(sum(terms) == Q(ex['det']) == A.det(), f'expand[{k}] {ex.get("desc","")}: 和 = {sum(terms)}，det = {A.det()}')
+for k, ad in enumerate(M.get('adjs', [])):
+    A = MxS(ad['A']); chk(A.adjugate() == MxS(ad['adj']), f'adjs[{k}] {ad.get("desc","")}: adj = {A.adjugate().tolist()}')
+    chk(A * A.adjugate() == A.det() * sp.eye(A.rows), f'adjs[{k}]: A·adj A ≠ det(A) I')
+for k, cr in enumerate(M.get('cramer', [])):
+    A = Mx(cr['A']); b = Mx(cr['b']); n = A.rows; dA = A.det()
+    chk(dA == Q(cr['det']), f'cramer[{k}] {cr.get("desc","")}: det A = {dA}')
+    for i in range(n):
+        Ai = A.copy(); Ai[:, i] = b; chk(Ai.det() == Q(cr['dets'][i]), f'cramer[{k}]: det A{i+1} = {Ai.det()}')
+    chk(list(A.solve(b)) == [Q(v) for v in cr['x']], f'cramer[{k}]: x = {list(A.solve(b))}')
+DS = M.get('detsteps', {})
+for name, S in (DS.items() if isinstance(DS, dict) else []):
+    cur = sp.Matrix([[sp.nsimplify(v) for v in r] for r in S['A']]); sign = 1; scale = 1
+    for kk, (op, *args) in enumerate(S['ops']):
+        if op == 'add': d, s_, c = args; cur[d, :] = cur[d, :] + sp.nsimplify(c) * cur[s_, :]
+        elif op == 'swap': i, j = args; cur.row_swap(i, j); sign = -sign
+        elif op == 'scale': i, c = args; cur[i, :] = sp.nsimplify(c) * cur[i, :]; scale *= sp.nsimplify(c)
+        chk(cur == sp.Matrix([[sp.nsimplify(v) for v in r] for r in S['steps'][kk]]), f'detsteps.{name}: 第 {kk+1} 步 {op}{args} 得 {cur.tolist()}')
+    D0 = sp.Matrix([[sp.nsimplify(v) for v in r] for r in S['A']]).det()
+    if 'det' in S: chk(D0 == Q(S['det']), f'detsteps.{name}: det = {D0}')
+    if 'sign' in S: chk(sign == S['sign'], f'detsteps.{name}: 交换次数的符号应为 {sign}')
+    if 'diag' in S: chk([cur[i, i] for i in range(cur.rows)] == [Q(v) for v in S['diag']] and sp.prod([cur[i, i] for i in range(cur.rows)]) * sign / scale == D0, f'detsteps.{name}: 对角元 {[cur[i,i] for i in range(cur.rows)]}')
+
+for k, ev in enumerate(M.get('evals', [])):                         # 通用数值 {expr, val[, approx]}：sympy 精确比较；approx=True 时相对误差 < 1%
+    got = sp.sympify(ev['expr']); want = sp.sympify(str(ev['val']))
+    okv = abs(float(got) - float(want)) <= 0.01 * abs(float(want)) if ev.get('approx') else sp.simplify(got - want) == 0
+    chk(okv, f'evals[{k}] {ev.get("desc","")}: {ev["expr"]} = {got}，写的是 {ev["val"]}')
+
+for k, cx in enumerate(M.get('cross', [])):                         # 叉积 {x, y, xy[, w, wxy]}：xy = x × y；可选 w·(x×y) = det(w;x;y) = wxy
+    x, y = Mx(cx['x']).reshape(3, 1), Mx(cx['y']).reshape(3, 1); xy = x.cross(y)
+    chk(xy == Mx(cx['xy']).reshape(3, 1), f'cross[{k}] {cx.get("desc","")}: x×y = {list(xy)}')
+    chk(x.dot(xy) == 0 and y.dot(xy) == 0, f'cross[{k}] 不垂直')
+    if 'w' in cx:
+        w = Mx(cx['w']).reshape(3, 1); dv = sp.Matrix.hstack(w, x, y).T.det()
+        chk(w.dot(xy) == dv == Q(cx['wxy']), f'cross[{k}] w·(x×y) = {w.dot(xy)}, det = {dv}')
 
 for m in bad: print('✗', m)
 print(f'{ok} 项通过')

@@ -1,0 +1,63 @@
+# -*- coding: utf-8 -*-
+"""第 2 章 §2.2（上）行变换怎样改变行列式（Leon 9th §2.2：Lemma 2.2.1、Row Operation I / II / III、汇总式 (2)
+det(EA) = det(E)det(A)、列变换同理、Note：一行是另一行的倍数 ⇒ 0；同济第六版 第一章 §4 性质 2–6）台词源（唯一真源）。
+3B1B 视角：两行围成的平行四边形——交换 = 翻面，倍乘 = 一条边拉长，倍加 = 剪切（同底等高）。
+运行：python lines.py → script.json / lines.json
+"""
+import json
+from pathlib import Path
+
+LINES = [
+    dict(id='D01', mood='think', pose='ds_think', sub='余子式展开，四阶要算二十四项、五阶一百二十项……就没有更快的？'),
+    dict(id='C01', pose='claude_smile', sub='有，就是消元。上一章我们靠三种行变换把矩阵化成三角形；三角形的行列式，看对角线就行。', read='有，就是消元。上一章我们靠三种行变换，把矩阵化成三角形；三角矩阵的行列式，看对角线就行。'),
+    dict(id='C02', pose='claude_explain', sub='就剩最后一件事：每种行变换，会把行列式变成多少？这一节就回答它。', read='就剩最后一件事：每一种行变换，会把行列式变成多少？这一节就回答它。'),
+    dict(id='C03', pose='claude_point', sub='这次画“行”：A = (3, 0; 1, 2) 的两行，是两个向量 (3, 0) 和 (1, 2)，它们围成的面积就是 det A = 6。', read='这次画行：A的两行，是两个向量，三、零，和一、二。它们围成的面积，就是A的行列式，等于六。'),
+    dict(id='C04', pose='claude_explain', sub='上一节说过，转置不改变行列式，所以用行来画，和用列来画，结果一样。', read='上一节说过，转置不改变行列式，所以用行来画，和用列来画，结果一样。'),
+    # —— I 交换
+    dict(id='C05', pose='claude_explain', sub='第一种：交换两行。两个向量还是那两个，面积也没变，可是先后顺序反了。', read='第一种：交换两行。两个向量还是那两个，面积也没变，可是先后顺序反了。'),
+    dict(id='C06', pose='claude_point', sub='第一行转到第二行，原来是逆时针，现在变成顺时针，翻面了。所以 det 变成 −6。', read='从第一行转到第二行，原来是逆时针，现在变成顺时针，翻面了。所以行列式变成负六。'),
+    dict(id='C07', pose='claude_explain', sub='2 阶直接验证：交换后是 a₂₁a₁₂ − a₂₂a₁₁，正好是 −det A。n 阶对阶数归纳即可。', read='二阶直接验证：交换以后是a二一乘a一二，减a二二乘a一一，正好是负的A的行列式。n阶对阶数归纳就行。'),
+    dict(id='D02', mood='think', pose='ds_ask', sub='那两行相同的矩阵，交换它们，矩阵没变，行列式却要变号……'),
+    dict(id='C08', pose='claude_smile', sub='好问题！det = −det，只能是 0。上一节欠的证明，就这样补上了。', read='好问题！行列式等于它自己的相反数，那只能是零。上一节欠的证明，就这样补上了。'),
+    # —— II 倍乘
+    dict(id='C09', pose='claude_explain', sub='第二种：某一行乘 α。第二行乘 2，那条边拉长 2 倍，底不变、高翻倍，面积变成 12。', read='第二种：某一行乘阿尔法。第二行乘二，那条边拉长两倍，底不变，高翻倍，面积变成十二。'),
+    dict(id='C10', pose='claude_point', sub='代数上：沿这一行展开，每一项都多了一个 α，提出来就是 α det A。', read='代数上：沿着这一行展开，每一项都多了一个阿尔法，提出来，就是阿尔法乘A的行列式。'),
+    dict(id='C11', pose='claude_think', sub='注意，只乘了一行。整个矩阵乘 α，是每一行都乘，那就不是乘 α 了。下一节细说。', read='注意，只乘了一行。整个矩阵乘阿尔法，是每一行都乘，那就不是乘阿尔法了。下一节细说。'),
+    # —— III 倍加
+    dict(id='C12', pose='claude_explain', sub='第三种：把第一行的 c 倍加到第二行。看第二个向量：它沿着第一行的方向滑动。', read='第三种：把第一行的c倍，加到第二行。看第二个向量：它沿着第一行的方向滑动。'),
+    dict(id='C13', pose='claude_point', sub='底是第一行，没动；高是到底边的距离，也没动。同底等高，面积不变，还是 6。', read='底是第一行，没动；高是到底边的距离，也没动。同底等高，面积不变，还是六。'),
+    dict(id='C14', pose='claude_smile', sub='再一直往回滑，滑到第二行变成 (0, 2)：矩阵成了对角的，3 × 2 = 6。这就是消元求行列式的雏形。', read='再一直往回滑，滑到第二行变成零、二：矩阵成了对角矩阵，三乘二，等于六。这就是消元求行列式的雏形。'),
+    dict(id='D03', mood='think', pose='ds_confused', sub='几何我信了。可代数上，为什么加了一行就不变？'),
+    # —— Lemma 2.2.1
+    dict(id='C15', pose='claude_explain', sub='要先讲一个引理，Lemma 2.2.1：用第 i 行的元素，去乘第 j 行的代数余子式，i ≠ j 时，加起来等于 0。', read='要先讲一个引理，引理二点二点一：用第i行的元素，去乘第j行的代数余子式，i不等于j的时候，加起来等于零。'),
+    dict(id='C16', pose='claude_point', sub='拿上一节的 A 试试：第一行 2、5、4，配第二行的代数余子式 −14、−8、17。', read='拿上一节的A试试：第一行是二、五、四，配第二行的代数余子式，负十四、负八、十七。'),
+    dict(id='C17', pose='claude_point', sub='2 × (−14) + 5 × (−8) + 4 × 17 = −28 − 40 + 68 = 0。真的是 0。', read='二乘负十四，加五乘负八，加四乘十七，等于负二十八减四十加六十八，等于零。真的是零。'),
+    dict(id='C18', pose='claude_explain', sub='为什么？把 A 的第二行换成第一行的抄本。这个新矩阵有两行相同，行列式为 0。', read='为什么？把A的第二行，换成第一行的抄本。这个新矩阵有两行相同，行列式为零。'),
+    dict(id='C19', pose='claude_point', sub='再沿第二行展开它：第二行的代数余子式根本不看第二行，和 A 的一模一样。展开式正好就是刚才那个和。', read='再沿第二行展开它：第二行的代数余子式，根本不看第二行，和A的一模一样。展开式，正好就是刚才那个和。'),
+    dict(id='C20', pose='claude_smile', sub='有了引理，倍加就简单了：沿新的第二行展开，拆成两块，一块是 det A，另一块是 c 乘 0。', read='有了引理，倍加就简单了：沿新的第二行展开，拆成两块，一块是A的行列式，另一块是c乘零。'),
+    # —— 汇总
+    dict(id='G01', pose='gpt_point', sub='汇总：det(EA) = det(E) det(A)。交换的 det(E) = −1，倍乘是 α，倍加是 1。', read='汇总一下：E乘A的行列式，可以拆成两个行列式相乘。三种E各是多少？交换是负一，倍乘是阿尔法，倍加是一。'),
+    dict(id='C21', pose='claude_explain', sub='列变换也一样：A 右乘 E，转置一下就变成左乘 Eᵀ，Eᵀ 也是初等矩阵。', read='列变换也一样：A右乘E，转置一下，就变成左乘E转置，E转置也是初等矩阵。'),
+    dict(id='C22', pose='claude_point', sub='顺手一个推论：如果一行是另一行的倍数，减掉那个倍数，就出现零行，行列式为 0。', read='顺手一个推论：如果一行是另一行的倍数，减掉那个倍数，就出现零行，行列式为零。'),
+    # —— 速判
+    dict(id='C23', pose='claude_explain', sub='练一下：一个 3 阶矩阵 det A = 3。下面四步，各变成多少？先暂停想。', read='练一下：一个三阶矩阵，行列式等于三。下面四步，各变成多少？先暂停想一想。'),
+    dict(id='C24', pose='claude_point', sub='交换一、二行：−3。第二行乘 4：12。第三行减去第一行的 2 倍：还是 3。', read='交换一、二行：负三。第二行乘四：十二。第三行减去第一行的两倍：还是三。'),
+    dict(id='D04', mood='easy', pose='ds_happy', sub='最后一个 2A，我知道！每行都乘 2，是 2 × 2 × 2 × 3 = 24！', read='最后一个，二A，我知道！每一行都乘二，是二乘二乘二乘三，等于二十四！'),
+    dict(id='C25', pose='claude_smile', sub='完全正确，陷阱被你躲过去了。', read='完全正确，陷阱被你躲过去了。'),
+    # —— 同济
+    dict(id='G02', pose='gpt_explain', sub='同济把这些写成性质 2 到 6，记号是 rᵢ ↔ rⱼ、rᵢ × k、rᵢ + k rⱼ，列用 c。', read='同济把这些写成性质二到六，记号是r i换r j，r i乘k，r i加k倍的r j，列变换用c。'),
+    dict(id='G03', pose='gpt_point', sub='其中性质 5 很好用：某一行是两组数之和，行列式可以拆成两个行列式之和。注意，只拆那一行。', read='其中性质五很好用：某一行是两组数之和，行列式可以拆成两个行列式之和。注意，只拆那一行。'),
+    # —— 总结
+    dict(id='D05', mood='easy', pose='ds_proud', sub='我来总结！交换变号，倍乘乘 α，倍加不变。', read='我来总结！交换变号，倍乘乘阿尔法，倍加不变。'),
+    dict(id='C26', pose='claude_smile', sub='对。下一节用它们证明“奇异 ⇔ det = 0”，再看消元法到底快多少。', read='对。下一节用它们证明，奇异等价于行列式为零，再看看消元法到底快多少。'),
+]
+
+if __name__ == '__main__':
+    here = Path(__file__).resolve().parent
+    for l in LINES:
+        l.setdefault('read', l['sub'])
+        l.setdefault('mood', None)
+    ids = [l['id'] for l in LINES]; assert len(ids) == len(set(ids)), '台词 id 重复'
+    (here / 'script.json').write_text(json.dumps({l['id']: [l['read'], l['mood']] for l in LINES}, ensure_ascii=False, indent=1), encoding='utf-8')
+    (here / 'lines.json').write_text(json.dumps(LINES, ensure_ascii=False, indent=1), encoding='utf-8')
+    print(len(LINES), 'lines,', sum(len(l['read']) for l in LINES), 'chars')

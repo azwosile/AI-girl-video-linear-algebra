@@ -1,0 +1,54 @@
+# -*- coding: utf-8 -*-
+"""第 2 章 §2.3（下）应用：密码与叉积（Leon 9th §2.3 Application 1 Coded Messages（SEND MONEY、det = 1 的整数矩阵）、
+The Cross Product（行列式记号、wᵀ(x × y) = det、x ⊥ x × y）、Application 2 牛顿力学（副法向）；
+同济：线代教材不讲叉积，高等数学下册「向量代数与空间解析几何」用三阶行列式记号）台词源（唯一真源）。
+3B1B 视角（EoLA 第 10–11 集）：|x × y| = 平行四边形面积，方向垂直；det(w; x; y) = w·(x × y) = 平行六面体体积（对偶）。
+运行：python lines.py → script.json / lines.json
+"""
+import json
+from pathlib import Path
+
+LINES = [
+    dict(id='D01', mood='think', pose='ds_ask', sub='行列式能判奇异、求逆、解方程。除了这些，还有什么用？'),
+    dict(id='C01', pose='claude_smile', sub='这一节看教材的两个应用：用整数矩阵加密信息，和三维向量的叉积。', read='这一节看教材的两个应用：用整数矩阵加密信息，和三维向量的叉积。'),
+    # —— 密码
+    dict(id='C02', pose='claude_explain', sub='最朴素的密码：每个字母换成一个数。教材里 SEND MONEY 被编成 5, 8, 10, 21, 7, 2, 10, 8, 3。', read='最朴素的密码：每个字母换成一个数。教材里，send money这两个词，被编成五、八、十、二十一、七、二、十、八、三。'),
+    dict(id='C03', pose='claude_think', sub='弱点很明显：英文里 E 出现得最多。消息一长，出现最多的那个数，多半就是 E。', read='弱点很明显：英文里E出现得最多。消息一长，出现最多的那个数，多半就是E。'),
+    dict(id='C04', pose='claude_point', sub='用矩阵伪装：把这串数按列排成 3 行的矩阵 B，再左乘一个整数矩阵 A。', read='用矩阵伪装：把这串数按列排成三行的矩阵B，再左乘一个整数矩阵A。'),
+    dict(id='C05', pose='claude_point', sub='发出去的是 AB 的各列：31, 80, 54, 37, 83, 67, 29, 69, 50。两个 E 已经变成了不同的数。', read='发出去的是AB的各列：三十一、八十、五十四、三十七、八十三、六十七、二十九、六十九、五十。两个E已经变成了不同的数。'),
+    dict(id='D02', mood='think', pose='ds_think', sub='那收信的人怎么解开？'),
+    dict(id='C06', pose='claude_explain', sub='左乘 A⁻¹ 就还原了。但有个要求：A⁻¹ 最好也是整数矩阵，不然到处是分数，还有舍入误差。', read='左乘A逆就还原了。但有个要求：A逆最好也是整数矩阵，不然到处是分数，还有舍入误差。'),
+    dict(id='C07', pose='claude_point', sub='上一节的公式立刻回答：A⁻¹ = adj A / det A。A 是整数矩阵，adj A 也是；只要 det A = ±1，A⁻¹ 就全是整数。', read='上一节的公式立刻回答：A逆等于伴随矩阵除以A的行列式。A是整数矩阵，伴随矩阵也是；只要A的行列式是正负一，A逆就全是整数。'),
+    dict(id='C08', pose='claude_point', sub='这个 A 的行列式正好是 1，A⁻¹ = (1, −1, 1; 2, 0, −1; −4, 1, 1)。乘回去，SEND MONEY 原样出现。', read='这个A的行列式正好是一，A逆的三行是一、负一、一，二、零、负一，负四、一、一。乘回去，send money原样出现。'),
+    dict(id='C09', pose='claude_explain', sub='怎么造这种 A？从 I 出发，反复把一行的整数倍加到另一行。倍加不改行列式，det 永远是 1。', read='怎么造这种A？从I出发，反复把一行的整数倍，加到另一行。倍加不改变行列式，行列式永远是一。'),
+    dict(id='G01', pose='gpt_cross', sub='提醒：这是希尔密码的思路，教学用。真正的希尔密码要对 26 取余数来运算，现代加密更复杂，别拿它保护真秘密。', read='提醒一下：这是希尔密码的思路，教学用。真正的希尔密码要对二十六取余数来运算，现代加密更复杂，别拿它保护真正的秘密。'),
+    # —— 叉积
+    dict(id='C10', pose='claude_explain', sub='第二个应用：叉积。三维里两个向量 x、y，叉积 x × y 是第三个向量。', read='第二个应用：叉积。三维里的两个向量x和y，它们的叉积，是第三个向量。'),
+    dict(id='C11', pose='claude_point', sub='分量公式很难记：(x₂y₃ − y₂x₃, y₁x₃ − x₁y₃, x₁y₂ − y₁x₂)。', read='分量公式很难记：x二y三减y二x三，y一x三减x一y三，x一y二减y一x二。'),
+    dict(id='C12', pose='claude_smile', sub='用行列式记就简单了：第一行写 e₁、e₂、e₃，第二行写 x，第三行写 y，按第一行展开。', read='用行列式记就简单了：第一行写e一、e二、e三，第二行写x，第三行写y，按第一行展开。'),
+    dict(id='C13', pose='claude_point', sub='三个代数余子式，正好是三个分量。例：x = (1, 2, 3)，y = (4, 5, 6)，x × y = (−3, 6, −3)。', read='三个代数余子式，正好是三个分量。例如x是一、二、三，y是四、五、六，叉积是负三、六、负三。'),
+    dict(id='D03', mood='think', pose='ds_confused', sub='第一行放的是向量……这还算行列式吗？'),
+    dict(id='C14', pose='claude_explain', sub='它是个帮助记忆的形式记号。真正的含义是：第一行换成任意数字向量 w，展开就得到 w · (x × y)。', read='它是个帮助记忆的形式记号。真正的含义是：把第一行换成任意一个数字向量w，展开就得到w点乘x叉乘y。'),
+    dict(id='C15', pose='claude_point', sub='取 w = x，或 w = y：两行相同，行列式为 0。所以 x × y 同时垂直于 x 和 y。验证：(1, 2, 3) · (−3, 6, −3) = 0。', read='取w等于x，或者w等于y：两行相同，行列式为零。所以叉积同时垂直于x和y。验证一下：一、二、三，点乘负三、六、负三，等于零。'),
+    # —— 几何
+    dict(id='C16', pose='claude_explain', sub='几何上：x、y 围成一个平行四边形。x × y 垂直于它，长度等于它的面积。', read='几何上：x和y围成一个平行四边形。叉积垂直于它，长度等于它的面积。'),
+    dict(id='C17', pose='claude_point', sub='比如 x = (2, 0, 0)，y = (1, 1, 0)，面积是 2，x × y = (0, 0, 2)，竖直向上，长度正好是 2。', read='比如x是二、零、零，y是一、一、零，面积是二，叉积是零、零、二，竖直向上，长度正好是二。'),
+    dict(id='C18', pose='claude_point', sub='再拿第三个向量 w 当侧棱，围成平行六面体。体积 = 底面积 × 高 = w · (x × y)，也就是那个 3 阶行列式。', read='再拿第三个向量w当侧棱，围成平行六面体。体积等于底面积乘高，也就是w点乘叉积，也就是那个三阶行列式。'),
+    dict(id='C19', pose='claude_smile', sub='第一节说三阶行列式是体积，这里又从叉积回到了体积。3B1B 把这种对应叫“对偶”。', read='第一节说三阶行列式是体积，这里又从叉积回到了体积。3B1B把这种对应叫做对偶。'),
+    dict(id='C20', pose='claude_explain', sub='方向看右手定则：四指从 x 弯向 y，拇指指向 x × y。交换 x 和 y，叉积变号，就是行列式交换两行。', read='方向看右手定则：四指从x弯向y，拇指指向叉积的方向。交换x和y，叉积变号，就是行列式交换两行。'),
+    dict(id='G02', pose='gpt_point', sub='物理里，力矩、角动量、洛伦兹力都靠叉积。Leon 还提到，牛顿用它定义了副法向方向。', read='物理里，力矩、角动量、洛伦兹力，都靠叉积。Leon还提到，牛顿用它定义了副法向方向。'),
+    dict(id='G03', pose='gpt_explain', sub='同济线代不讲叉积，它在高数下册“向量代数与空间解析几何”里，也用三阶行列式来记。', read='同济的线代教材不讲叉积，它在高数下册，向量代数与空间解析几何那一章，也用三阶行列式来记。'),
+    # —— 总结
+    dict(id='D04', mood='easy', pose='ds_proud', sub='我来总结！det = ±1 的整数矩阵，逆也是整数，能加密；叉积 = 行列式记号，垂直、长度是面积。', read='我来总结！行列式是正负一的整数矩阵，逆矩阵也是整数，可以加密；叉积用行列式来记，垂直于两个向量，长度是面积。'),
+    dict(id='C21', pose='claude_smile', sub='好。第二章的新内容到此结束。下两节做复习：教材的判断题，和期中真题。', read='好。第二章的新内容到这里结束。下面两节做复习：教材的判断题，和期中真题。'),
+]
+
+if __name__ == '__main__':
+    here = Path(__file__).resolve().parent
+    for l in LINES:
+        l.setdefault('read', l['sub'])
+        l.setdefault('mood', None)
+    ids = [l['id'] for l in LINES]; assert len(ids) == len(set(ids)), '台词 id 重复'
+    (here / 'script.json').write_text(json.dumps({l['id']: [l['read'], l['mood']] for l in LINES}, ensure_ascii=False, indent=1), encoding='utf-8')
+    (here / 'lines.json').write_text(json.dumps(LINES, ensure_ascii=False, indent=1), encoding='utf-8')
+    print(len(LINES), 'lines,', sum(len(l['read']) for l in LINES), 'chars')

@@ -43,29 +43,56 @@ function parseTransform(s) {
   return M;
 }
 function pathBBox(d) {
-  const n = (d.match(/-?\d*\.?\d+(?:e-?\d+)?/g) || []).map(Number);
-  let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
-  for (let i = 0; i + 1 < n.length; i += 2) { x0 = Math.min(x0, n[i]); x1 = Math.max(x1, n[i]); y0 = Math.min(y0, n[i+1]); y1 = Math.max(y1, n[i+1]); }
+  // 按命令解析（MathJax 只用绝对坐标 M L H V Q T C S Z）；H/V 只带一个数，不能两两配对
+  let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9, cx = 0, cy = 0;
+  const add = (x, y) => { cx = x; cy = y; x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); };
+  for (const m of d.matchAll(/([MLHVQTCSZmlhvqtcsz])([^MLHVQTCSZmlhvqtcsz]*)/g)) {
+    const c = m[1].toUpperCase(), n = (m[2].match(/-?\d*\.?\d+(?:e-?\d+)?/g) || []).map(Number);
+    if (c === 'H') n.forEach(x => add(x, cy));
+    else if (c === 'V') n.forEach(y => add(cx, y));
+    else if (c !== 'Z') for (let k = 0; k + 1 < n.length; k += 2) add(n[k], n[k + 1]);
+  }
   return [x0, y0, x1, y1];
 }
 
+const EXT = new Set(['2223', '2225', '7C', '23A2', '23A5', '23AA', 'E154', '2212', '23D0']);
 const out = {};
 for (const [key, texSrc] of Object.entries(src)) {
   const node = doc.convert(texSrc, { display: true });
   const svgEl = adaptor.firstChild(node);
   const vb = adaptor.getAttribute(svgEl, 'viewBox').split(/\s+/).map(Number);
   const items = [];
-  const walk = (el, M, fill, cls, stroke) => {
+  const walk = (el, M, fill, cls, stroke, clip = null) => {
     if (adaptor.kind(el) === '#text' || adaptor.kind(el) === '#comment') return;
     const tag = adaptor.kind(el);
-    const M2 = mul(M, parseTransform(adaptor.getAttribute(el, 'transform')));
+    let M2 = mul(M, parseTransform(adaptor.getAttribute(el, 'transform')));
+    // 嵌套 <svg>（MathJax 伸缩定界符的延伸段）：按 SVG 语义套 x/y + viewBox 映射，并记下视口裁剪框（根坐标）
+    if (tag === 'svg' && el !== svgEl) {
+      const g = k => Number(adaptor.getAttribute(el, k) || 0);
+      const [vx, vy, vw, vh] = (adaptor.getAttribute(el, 'viewBox') || `0 0 ${g('width')} ${g('height')}`).split(/\s+/).map(Number);
+      const sx = vw ? g('width') / vw : 1, sy = vh ? g('height') / vh : 1;
+      M2 = mul(M2, [sx, 0, 0, sy, g('x') - vx * sx, g('y') - vy * sy]);
+      const c = [[vx, vy], [vx + vw, vy + vh]].map(q => [M2[0] * q[0] + M2[2] * q[1] + M2[4], M2[1] * q[0] + M2[3] * q[1] + M2[5]]);
+      clip = [Math.min(c[0][0], c[1][0]), Math.min(c[0][1], c[1][1]), Math.max(c[0][0], c[1][0]), Math.max(c[0][1], c[1][1])];
+    }
     const f = adaptor.getAttribute(el, 'fill') || fill;
     const st = adaptor.getAttribute(el, 'stroke') || stroke;
     const c = adaptor.getAttribute(el, 'class');
     const cls2 = c && !c.startsWith('mjx') ? [...cls, ...c.split(/\s+/).filter(Boolean)] : cls;
     if (tag === 'path') {
       const d = adaptor.getAttribute(el, 'd');
-      if (d) items.push({ t: 'p', d, m: M2, fill: f, cls: cls2, bb: pathBBox(d) });
+      const dc = adaptor.getAttribute(el, 'data-c');
+      if (d && clip && EXT.has(dc)) {
+        // 直线延伸段：变换后包围盒 ∩ 视口 → 矩形（等价于浏览器裁剪后的样子）
+        const bb = pathBBox(d), m = M2;
+        const c = [[bb[0], bb[1]], [bb[2], bb[1]], [bb[0], bb[3]], [bb[2], bb[3]]].map(q => [m[0] * q[0] + m[2] * q[1] + m[4], m[1] * q[0] + m[3] * q[1] + m[5]]);
+        const x0 = Math.max(clip[0], Math.min(...c.map(q => q[0]))), x1 = Math.min(clip[2], Math.max(...c.map(q => q[0])));
+        const y0 = Math.max(clip[1], Math.min(...c.map(q => q[1]))), y1 = Math.min(clip[3], Math.max(...c.map(q => q[1])));
+        if (x1 > x0 && y1 > y0) items.push({ t: 'r', x: x0, y: y0, w: x1 - x0, h: y1 - y0, m: [1, 0, 0, 1, 0, 0], fill: f, cls: cls2 });
+      } else if (d) {
+        if (clip) console.warn(`  ⚠ ${key}: 嵌套 svg 内非延伸字形 ${dc}，未裁剪`);
+        items.push({ t: 'p', d, m: M2, fill: f, cls: cls2, bb: pathBBox(d) });
+      }
     } else if (tag === 'rect') {
       const g = k => Number(adaptor.getAttribute(el, k) || 0);
       items.push({ t: 'r', x: g('x'), y: g('y'), w: g('width'), h: g('height'), m: M2, fill: f, cls: cls2 });
@@ -76,7 +103,7 @@ for (const [key, texSrc] of Object.entries(src)) {
       items.push({ t: 'r', x: Math.min(x1, x2) - (x1 === x2 ? sw / 2 : 0), y: Math.min(y1, y2) - (y1 === y2 ? sw / 2 : 0),
                    w: Math.abs(x2 - x1) || sw, h: Math.abs(y2 - y1) || sw, m: M2, fill: st || f, cls: cls2 });
     }
-    for (const ch of adaptor.childNodes(el)) walk(ch, M2, f, cls2, st);
+    for (const ch of adaptor.childNodes(el)) walk(ch, M2, f, cls2, st, clip);
   };
   walk(svgEl, [1, 0, 0, 1, 0, 0], 'currentColor', [], null);
   out[key] = { vb, items };

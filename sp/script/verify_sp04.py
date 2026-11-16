@@ -1,0 +1,16 @@
+from sympy import *
+x=symbols('x'); ok=lambda c,m: print(('OK  ' if c else 'FAIL'),m)
+ok(all(integrate(p,(x,0,1))==0 for p in [x-Rational(1,2),x**2-Rational(1,3),x**3-Rational(1,4)]),'sp4_2 basis ∫=0')
+v=[Matrix(t) for t in [(1,0,0),(0,1,1),(1,0,1),(1,2,3)]]; ok(v[3]==2*v[1]+v[2],'sp4_4 15-16 v4=2v2+v3')
+x1,x2,x3=Matrix([2,1,3]),Matrix([3,-1,4]),Matrix([2,6,4]); ok(x3==4*x1-2*x2 and x1.cross(x2)==Matrix([7,1,-5]),'sp4_4 x3=4x1-2x2, n=(7,1,-5)')
+ok(Matrix.hstack(x1,x2).rank()==2,'sp4_4 x1,x2 indep')
+V=[Matrix(t) for t in [(1,1,2,4),(2,-1,-5,2),(1,-1,-4,0),(2,1,1,6)]]; ok(Matrix.hstack(*V).rank()==2 and V[2]==(2*V[1]-V[0])/3 and V[3]==(4*V[0]+V[1])/3,'sp4_4 18-19 Q9')
+a=symbols('a'); M=Matrix([[1,2,-1,0],[1,1,0,2],[2,1,1,a]]); ok(M.subs(a,6).rank()==2 and M.subs(a,5).rank()==3,'sp4_4 a=6')
+print('  echelon', M.echelon_form().tolist())
+f=[1,x,x**2,x**3,x**4]; ok(wronskian(f,x)==288,'sp4_5 W=288')
+g=[1,exp(x),exp(2*x),exp(3*x)]; ok(simplify(wronskian(g,x).subs(x,0))==12,'sp4_5 W(0)=12')
+ok(simplify(wronskian([1,sin(x),cos(x)],x))==-1,'sp4_5 W=-1'); ok(simplify(wronskian([exp(x),exp(-x)],x))==-2,'sp4_5 W=-2')
+co=lambda p: [Poly(p,x).coeff_monomial(x**k) for k in range(3)]
+d=lambda ps: Matrix([co(p) for p in ps]).T.det()
+ok(d([x+2,x-4,x**2-2*x+3])==6,'sp4_5 23-24 Q6 det 6'); ok(d([x,x+2,x**2])==-2 and d([-x,x+1,x**2])==1 and d([1-x**2,x+2,x**2])==1,'sp4_5 span P3 dets')
+ok(d([x+2,x+1,x**2-1])==1,'sp4_5 17-18 Q3 det 1')

@@ -19,3 +19,11 @@ pipeline/_from_calc/
 assets/characters/raw/
 assets/fonts/src/
 .cache48/
+
+# 分集打包中间件
+ep/pack/
+ep/chk/
+ep/cct/
+ep/*_progress.txt
+ep/*_filter.txt
+ep/*_list.txt

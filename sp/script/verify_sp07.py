@@ -1,0 +1,13 @@
+from sympy import *
+ok=lambda c,m: print(('OK  ' if c else 'FAIL'),m)
+A=Matrix([[0,1],[0,0]]);B=Matrix([[0,0],[1,0]]); ok((A+B)**2!=A**2+2*A*B+B**2 and A*B!=B*A,'(A+B)^2 counterexample')
+x=Matrix([1,2,3]); y=Matrix([4,5,6]); M=x*y.T; ok(M.det()==0 and M.rank()==1,'xy^T rank1 det0 (n=3)'); ok(Matrix([[2*3]]).det()==6,'n=1: xy^T=[6] det 6')
+A=Matrix([[1,0],[0,0]]); B=Matrix([[1,0],[0,1]]); e=Matrix([1,0]); ok(A*e==B*e and A!=B,'Ax=Bx counterexample')
+A=Matrix([[1,0],[0,0]]); B=Matrix([[0,0],[0,1]]); ok(A*B==A*zeros(2,2) and B!=zeros(2,2),'AB=AC counterexample')
+ok((eye(2)+eye(2)).det()==4 and eye(2).det()+eye(2).det()==2,'det(A+B) counterexample')
+ok((3*eye(2)).det()==9,'det(3I)=9 not 3')
+ok(Matrix([1,0,1])+Matrix([0,1,1])==Matrix([1,1,2]),'{x3=x1 or x3=x2} not closed')
+R=Matrix([[1,0,0],[0,0,1]]); print('  free var but inconsistent example: [1 1 | 0],[0 0 | 1]')
+A=Matrix([[3,-1,-2],[2,0,-2],[2,-1,-1]]); V=Matrix([[1,1,0],[1,2,-2],[1,0,1]])
+ok(V.inv()*A*V==diag(0,1,1) and V.det()==-1,'2015-16 Q4 B=diag(0,1,1)'); ok(V.inv()==Matrix([[-2,1,2],[3,-1,-2],[2,-1,-1]]),'V^-1')
+ok(A*V[:,0]==zeros(3,1) and A*V[:,1]==V[:,1] and A*V[:,2]==V[:,2],'Av1=0,Av2=v2,Av3=v3')

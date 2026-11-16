@@ -11,7 +11,7 @@ export async function setup(R) {
     assets, label: '特别篇 · 期中速成', title: '判断题闪电战', hi: 1, en: 'TRUE OR FALSE',
     titleEnd: () => B.L('G01').s + 0.3,
     pre: { C02: 1.0, C10: 1.0, C15: 1.0, C17: 0.8, C18: 1.0 },
-    post: { C03: 1.2, C05: 0.6, G02: 1.0, C07: 1.0, C08: 1.0, C09: 1.0, C11: 1.0, C12: 0.8, C13: 0.8, C14: 0.8, C15: 0.8, D04: 0.6, C17: 1.0, G03: 1.2, C20: 1.2, C21: 1.6 },
+    post: { C20z: 0.6, C20a: 1.0, C20b: 1.0, C20c: 1.0, C20d: 1.4, C20e: 1.0, C20f: 1.2, C20g: 1.0, C20h: 0.8, C20i: 1.0, C20j: 1.2, C03: 1.2, C05: 0.6, G02: 1.0, C07: 1.0, C08: 1.0, C09: 1.0, C11: 1.0, C12: 0.8, C13: 0.8, C14: 0.8, C15: 0.8, D04: 0.6, C17: 1.0, G03: 1.2, C20: 1.2, C21: 1.6 },
   });
   const { L, cue, TL, ctx, gin, rv, texAt, ctag } = B;
   const s = id => L(id).s, e = id => L(id).e;
@@ -44,6 +44,8 @@ export async function setup(R) {
   TL.sfx('impact', s('G03') + 0.2, 0.35); TL.sfx('sparkle', s('G03') + 0.5, 0.3);
   const tTen = [s('C18') + 2.0, cue('C18', '一：'), cue('C18', '二：'), cue('C18', '三：'), cue('C19', '四：'), cue('C19', '五：'), cue('C19', '六：'), cue('C20', '七：'), cue('C20', '八：'), cue('C20', '九：'), cue('C20', '十：')].slice(1);
   tTen.forEach(t => TL.sfx('tick2', t, 0.3));
+  // 扩写三 sfx
+  'abcdefghij'.split('').forEach(c => TL.sfx('pop', s('C20' + c) + 0.3, 0.25));
   TL.sfx('bell_soft', s('C18'), 0.35); TL.sfx('shimmer', s('D05'), 0.35); TL.sfx('swell', s('C21'), 0.3);
 
   // ════ 开场：规则 ════
@@ -112,6 +114,8 @@ export async function setup(R) {
     ctag('反例三模板', DX, DY + 210, { px: 34, a: a * gin(s('G03') + 1.5), color: C.ink, font: F.serif });
   }
 
+  const EXS = [["A 是 3 阶，det A = 2", "det(3A) = 3³ × 2 = 54（不是 6）"], ["A 是 4 阶，|A| = 2", "|A · adj A| = |2I| = 2⁴ = 16"], ["A₂₁ + A₂₂ + 2A₂₃", "= 第 2 行换成 (1, 1, 2) 后的行列式"], ["末行 (0, 0, a − 1 | b − 2)", "a ≠ 1 唯一 · a = 1, b ≠ 2 无解 · a = 1, b = 2 无穷多"], ["[[2, 1], [6, 4]]：倍数 6 ÷ 2 = 3", "L = [[1, 0], [3, 1]]，U = [[2, 1], [0, 1]]"], ["[[3, 1], [5, 2]]⁻¹，det = 1", "主对角互换、副对角变号 → [[2, −1], [−5, 3]]"], ["{x : x₁ + x₂ = 1}", "0 + 0 ≠ 1 → 不是子空间"], ["R³ 里 4 个向量", "4 > 3 → 必相关"], ["旧基是标准基：E = I", "S = F⁻¹"], ["RREF 第 3 列 (2, 3, 0, 0)ᵀ", "a₃ = 2a₁ + 3a₂"]];
+
   function shotTen() {
     const a = B.win(s('C18'), s('C21') + 0.4); if (a <= 0) return;
     ctag('考前十条', DX, DY - 360, { px: 50, a: a * gin(s('C18')), color: C.peri, font: F.serif });
@@ -121,6 +125,13 @@ export async function setup(R) {
       ctag(`${k + 1}`, x, y, { px: 34, a: g, color: C.peri, font: F.serif });
       ctag(t, x + 34, y, { px: 30, a: g, color: C.ink, align: 'left' });
       ctag('✓', x + 370, y, { px: lerp(60, 36, gin(tTen[k] + 0.8)), a: g * gin(tTen[k] + 0.8), color: OK });
+      const id = 'C20' + 'abcdefghij'[k], ga = a * B.win(s(id), e(id) + 0.25);
+      if (ga > 0) {
+        ctx.save(); ctx.globalAlpha = ga; ctx.strokeStyle = C.peri; ctx.lineWidth = 3; ctx.strokeRect(x - 30, y - 34, 430, 68); ctx.restore();
+        B.card(DX - 40, DY + 225, 740, 110, ga * 0.95, C.i);
+        ctag(EXS[k][0], DX - 40, DY + 198, { px: 28, a: ga * gin(s(id) + 0.3), color: C.ink, font: F.serif });
+        ctag(EXS[k][1], DX - 40, DY + 250, { px: 28, a: ga * gin(s(id) + 1.4), color: C.i, font: F.serif });
+      }
     });
   }
 

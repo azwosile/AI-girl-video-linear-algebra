@@ -7,12 +7,12 @@ import { base, loadExam, MBoard, C, F, lerp, prog, smooth, smoother, outCubic, D
 export const assets = { chars: ['claude_smile', 'claude_explain', 'claude_point', 'ds_shock', 'ds_think', 'ds_happy', 'ds_proud', 'gpt_point', 'gpt_explain', 'gpt_cross'] };
 
 export async function setup(R) {
-  const EX = await loadExam(['y2526_q5', 'y2425_q6', 'y1718_q7', 'y2021_q5', 'y1516_q3']);
+  const EX = await loadExam(['y2526_q5', 'y2425_q6', 'y1718_q7', 'y2021_q5', 'y1516_q3', 'y2324_q3']);
   const B = base(R, {
     assets, label: '特别篇 · 期中速成', title: '过渡矩阵', hi: 1, en: 'CHANGE OF BASIS',
     titleEnd: () => B.L('C02').s + 0.3,
-    pre: { C03: 1.0, C04: 0.4, C06: 0.6, C08: 0.6, C13: 0.6, C16g: 1.0, C16m: 1.0, C16o: 0.4, C16q: 1.0, C17: 0.8 },
-    post: { C02: 1.6, C04: 2.0, C05: 2.4, C07: 1.4, C11: 1.2, C12: 1.0, C13: 1.0, C15: 1.0, G02: 1.0, C16: 1.0, C16g: 1.2, C16h: 0.8, C16i: 1.0, C16j: 1.2, C16k: 1.2, C16l: 1.2, G03b: 1.0, C16n: 1.2, C16o: 0.8, C16p: 1.6, G03c: 1.0, C16r: 1.0, C16s: 1.4, G03d: 1.2, C17: 1.2 },
+    pre: { C16t: 1.0, C03: 1.0, C04: 0.4, C06: 0.6, C08: 0.6, C13: 0.6, C16g: 1.0, C16m: 1.0, C16o: 0.4, C16q: 1.0, C17: 0.8 },
+    post: { C16t: 0.6, C16u: 1.2, C16v: 1.4, C16w: 1.6, C16x: 1.4, G03e: 1.0, D04c: 0.6, C02: 1.6, C04: 2.0, C05: 2.4, C07: 1.4, C11: 1.2, C12: 1.0, C13: 1.0, C15: 1.0, G02: 1.0, C16: 1.0, C16g: 1.2, C16h: 0.8, C16i: 1.0, C16j: 1.2, C16k: 1.2, C16l: 1.2, G03b: 1.0, C16n: 1.2, C16o: 0.8, C16p: 1.6, G03c: 1.0, C16r: 1.0, C16s: 1.4, G03d: 1.2, C17: 1.2 },
   });
   const { L, cue, TL, ctx, gin, rv, texAt, ctag } = B;
   const s = id => L(id).s, e = id => L(id).e;
@@ -39,6 +39,10 @@ export async function setup(R) {
   TL.sfx('check', e('G02') - 0.6, 0.35);
   TL.sfx('sting', s('G03') + 0.2, 0.3); TL.sfx('swoosh_soft', cue('G03', '同济教材'), 0.3); TL.sfx('slam', s('C16') + 0.4, 0.3);
   TL.sfx('bell_soft', s('C17'), 0.35); TL.sfx('shimmer', s('D05'), 0.35);
+  // 扩写三 sfx
+  TL.sfx('whoosh', s('C16t') + 0.2, 0.3); TL.sfx('ding_hi', cue('C16u', '所以S等于'), 0.3);
+  [cue('C16v', '第二行减第一行'), cue('C16v', '第三行减第一行'), cue('C16v', '再第三行减'), cue('C16w', '第三行乘负一'), cue('C16w', '第二行减两倍'), cue('C16w', '第一行减两倍'), cue('C16w', '再减第二行')].forEach(x => TL.sfx('pop', x + 0.5, 0.28));
+  TL.sfx('impact', cue('C16w', '右边就是S'), 0.3); TL.sfx('tick', cue('C16x', '三、二、五的坐标'), 0.3); TL.sfx('tick', cue('C16x', '二、三、二的坐标'), 0.3); TL.sfx('check', cue('G03e', '对上了'), 0.3);
   // 扩写二 sfx
   TL.sfx('whoosh', s('C16g') + 0.2, 0.3); TL.sfx('swoosh_soft', s('C16h') + 0.3, 0.3);
   TL.sfx('pop', cue('C16i', '左边得到零、零'), 0.3); TL.sfx('pop', cue('C16i', '第二行减第一行') + 0.8, 0.3); TL.sfx('pop', cue('C16j', '第二行减第三行') + 0.8, 0.3); TL.sfx('zap', cue('C16j', '最后') + 1.6, 0.3);
@@ -329,7 +333,7 @@ export async function setup(R) {
       }
     }
     // ── 15–16 Q3：倒着问 ──
-    a = B.win(s('C16q'), s('C17') - 0.2);
+    a = B.win(s('C16q'), s('C16t') - 0.2);
     if (a > 0) {
       const A = a * gin(s('C16q') + 0.4);
       B.qhead('2015–2016 · 第 3 题 · 倒着问', A);
@@ -356,6 +360,36 @@ export async function setup(R) {
     }
   }
 
+  // ════ 扩写三：23–24 Q3 标准基 → {u} ════
+  function shotR3() {
+    const a = B.win(s('C16t'), s('C17') - 0.2); if (a <= 0) return;
+    const A = a * gin(s('C16t') + 0.4);
+    B.qhead('2023–2024 期中 · 第 3 题 · 12 分', A);
+    const tV = s('C16v'), tX = s('C16x');
+    const R = [[1, 1, 2, 1, 0, 0], [1, 2, 4, 0, 1, 0], [1, 3, 5, 0, 0, 1]];
+    const st = [R]; const op = (f) => { const n = st[st.length - 1].map(r => r.slice()); f(n); st.push(n); };
+    op(n => n[1] = n[1].map((v, j) => v - n[0][j])); op(n => n[2] = n[2].map((v, j) => v - n[0][j])); op(n => n[2] = n[2].map((v, j) => v - 2 * n[1][j]));
+    op(n => n[2] = n[2].map(v => -v)); op(n => n[1] = n[1].map((v, j) => v - 2 * n[2][j])); op(n => n[0] = n[0].map((v, j) => v - 2 * n[2][j])); op(n => n[0] = n[0].map((v, j) => v - n[1][j]));
+    const T = [-1, cue('C16v', '第二行减第一行'), cue('C16v', '第三行减第一行'), cue('C16v', '再第三行减'), cue('C16w', '第三行乘负一'), cue('C16w', '第二行减两倍'), cue('C16w', '第一行减两倍'), cue('C16w', '再减第二行')].map((x, i) => i ? x + 0.5 : x);
+    const ops = [null, [[1, 'R₂ − R₁']], [[2, 'R₃ − R₁']], [[2, 'R₃ − 2R₂']], [[2, '× (−1)']], [[1, 'R₂ − 2R₃']], [[0, 'R₁ − 2R₃']], [[0, 'R₁ − R₂']]];
+    const tS = cue('C16w', '右边就是S');
+    B.drill(A, [
+      { txt: 'u₁ = (1, 1, 1)    u₂ = (1, 2, 3)    u₃ = (2, 4, 5)', x: DX, y: DY - 300, px: 30, col: C.i, t: s('C16t') + 1.0, u: tV },
+      { txt: 'S = F⁻¹E', x: DX, y: DY - 200, px: 38, t: s('C16u') + 0.3, u: tV },
+      { txt: 'E = I（标准基），F = U = [u₁ u₂ u₃]', x: DX, y: DY - 130, px: 30, t: cue('C16u', '新基矩阵'), u: tV },
+      { txt: 'S = U⁻¹', x: DX, y: DY - 40, px: 40, card: C.peri, t: cue('C16u', '所以S等于'), u: tV, burst: true },
+      { txt: '[ U | I ]', x: DX, y: DY - 290, px: 28, col: C.peri, t: tV, u: tX },
+      { mat: st, T, ops, x: DX, y: DY - 150, px: 34, bar: 3, t: tV + 0.2, u: tX, hi: (i, j, k) => k === 7 && j >= 3 ? OK : null },
+      { txt: 'I    |    S = U⁻¹', x: DX + 20, y: DY - 20, px: 30, col: OK, t: tS, u: tX, burst: true },
+      { txt: 'S =', x: DX - 230, y: DY - 170, px: 32, t: tX },
+      { mat: [st[7].map(r => r.slice(3))], x: DX - 70, y: DY - 170, px: 34, t: tX, hi: () => OK },
+      { txt: 'S (3, 2, 5)ᵀ = (4, 7, −4)', x: DX, y: DY, px: 32, t: cue('C16x', '三、二、五的坐标') },
+      { txt: 'S (2, 3, 2)ᵀ = (1, −3, 2)', x: DX, y: DY + 60, px: 32, t: cue('C16x', '二、三、二的坐标') },
+      { txt: '4u₁ + 7u₂ − 4u₃ = (3, 2, 5) ✓', x: DX, y: DY + 170, px: 30, card: C.gpt, t: s('G03e') + 0.3, burst: cue('G03e', '对上了') },
+      { txt: '标准基 → {u}：S = U⁻¹', x: DX, y: DY + 255, px: 30, col: C.ds, t: s('D04c') + 0.2 },
+    ]);
+  }
+
   function shotOutro() {
     const a = B.win(s('C17'), 1e9); if (a <= 0) return;
     const g = a * gin(s('C17'));
@@ -373,7 +407,8 @@ export async function setup(R) {
     B.paper(EX, 'y2425_q6', { t0: s('C16a') + 0.2, dock: s('C16b') - 0.5, out: s('C16g') - 0.3 });
     B.paper(EX, 'y1718_q7', { t0: s('C16g') + 0.2, dock: cue('C16g', '给了v一') , out: s('C16m') - 0.3 });
     B.paper(EX, 'y2021_q5', { t0: s('C16m') + 0.2, dock: cue('C16m', '给了两组') , out: s('C16q') - 0.3 });
-    B.paper(EX, 'y1516_q3', { t0: s('C16q') + 0.2, dock: cue('C16q', '已知v一') , out: s('C17') - 0.3 });
+    B.paper(EX, 'y1516_q3', { t0: s('C16q') + 0.2, dock: cue('C16q', '已知v一') , out: s('C16t') - 0.3 });
+    B.paper(EX, 'y2324_q3', { t0: s('C16t') + 0.2, dock: cue('C16t', '第一问') - 0.3, out: s('C17') - 0.3 });
   }
 
   // ── 扩写：逐步算式小卡 ──
@@ -393,7 +428,7 @@ export async function setup(R) {
   }
 
   function draw(t) {
-    B.frame(t, D => { shotGlasses(); shotChain(); show3D(D); shotGJ(); shotConv(); shotP3(); shotR2(); shotOutro(); papers(); extras(); });
+    B.frame(t, D => { shotGlasses(); shotChain(); show3D(D); shotGJ(); shotConv(); shotP3(); shotR2(); shotR3(); shotOutro(); papers(); extras(); });
   }
   return { TL, draw };
 }

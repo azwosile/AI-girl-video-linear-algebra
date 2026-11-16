@@ -219,6 +219,36 @@ export function base(R, o) {
   };
   // ── 印章动作：卡片从 from 落到 to，s 0..1；落下瞬间放大回弹 ──
   B.stampMove = (from, to, s) => { const e = smoother(Math.min(1, s / 0.7)), k = s < 0.7 ? lerp(1.25, 1, e) : 1 + 0.12 * Math.sin(Math.PI * Math.min(1, (s - 0.7) / 0.3)); return { x: lerp(from[0], to[0], e), y: lerp(from[1], to[1], e), k }; };
+
+  // ── 数据驱动的讲题板：B.drill(A, items) ──
+  // item: {mat:[S0,S1..], T:[-1,t1..], ops:[null,[[row,'R₂ − R₁']]..], x, y, px, bar, cw, t, u, lx, hi:(i,j,k)=>col}
+  //       {txt, x, y, t, u, px, col, card:col, w, h, burst:bool|t}   {stamp:'文字', ok, x, y, t}
+  const ngs = v => String(v).replace(/-/g, '−');
+  B.drill = (A, items) => {
+    if (A <= 0) return;
+    for (const it of items) {
+      const g = A * (it.t != null ? B.gin(it.t, it.d ?? 0.4) : 1) * (it.u != null ? 1 - B.gin(it.u) : 1);
+      if (g <= 0.001) continue;
+      if (it.mat) {
+        const S = it.mat, T = it.T || [-1]; let k = 0; for (let q = 1; q < S.length; q++) if (t() >= T[q]) k = q;
+        const prev = k ? S[k - 1] : S[0], fresh = k ? B.gin(T[k], 0.5) : 1;
+        const M = B.mat(it.x, it.y, S[k], { px: it.px ?? 36, a: g, bar: it.bar ?? null, cw: it.cw ?? null, cell: (i, j) => {
+          const ch = ngs(S[k][i][j]) !== ngs(prev[i][j]);
+          const hc = it.hi ? it.hi(i, j, k) : null;
+          return { txt: ngs(S[k][i][j]), col: ch && fresh < 1 ? C.j : (hc || C.ink), a: ch ? 0.3 + 0.7 * fresh : 1 };
+        } });
+        if (k > 0 && it.ops && it.ops[k]) it.ops[k].forEach(([i, tx]) => B.ctag(tx, it.lx ?? it.x - M.w / 2 - 85, M.cell(i, 0)[1], { px: 24, a: g * B.gin(T[k] - 0.4) * (1 - B.gin(T[k] + 4.0)), color: C.j, font: F.serif }));
+        if (it.label) B.ctag(it.label, it.x - M.w / 2 - 60, it.y, { px: 32, a: g, color: it.lcol ?? C.ink, font: F.serif, align: 'right' });
+      } else if (it.stamp) {
+        B.stamp(it.x, it.y, it.ok ?? true, B.gin(it.t, 0.4), g, it.stamp);
+      } else if (it.txt != null) {
+        const col = it.col ?? C.ink;
+        if (it.card) { const w = it.w ?? Math.min(900, [...it.txt].reduce((q, ch) => q + (/[\u3000-\u9fff\uff00-\uffef]/.test(ch) ? 1.0 : 0.55), 0) * (it.px ?? 32) + 80); B.card(it.x, it.y, w, it.h ?? (it.px ?? 32) + 44, g * 0.95, it.card); }
+        B.ctag(it.txt, it.x, it.y, { px: it.px ?? 32, a: g, color: it.card && it.col == null ? (it.card === C.ink ? C.ink : it.card) : col, font: it.sans ? F.sans : F.serif });
+        if (it.burst) B.burst(it.x, it.y, it.burst === true ? it.t + 0.15 : it.burst, it.card || col, { r1: it.r1 ?? 220 });
+      }
+    }
+  };
   return B;
 }
 

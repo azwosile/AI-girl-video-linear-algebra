@@ -25,7 +25,7 @@ export async function setup(R) {
     assets, label: '特别篇 · 期中速成', title: '期中速成 · 开场', hi: 1, en: 'MIDTERM CRASH COURSE',
     titleEnd: () => B.L('G01').s + 0.2,
     pre: { C02: 0.6, C05: 0.2 },
-    post: { C02: 2.4, C03: 1.6, C04: 1.2, D02: 0.6, C07: 1.6, C08: 1.0, G02: 1.6, C09: 1.0 },
+    post: { C08a: 1.2, G02a: 1.2, D02a: 0.4, C08b: 1.4, C02: 2.4, C03: 1.6, C04: 1.2, D02: 0.6, C07: 1.6, C08: 1.0, G02: 1.6, C09: 1.0 },
   });
   const { L, cue, TL, ctx, gin, ctag } = B;
   const s = id => L(id).s, e = id => L(id).e;
@@ -42,6 +42,8 @@ export async function setup(R) {
   [0, 1, 2, 3].forEach(i => TL.sfx('pop', cue('C08', ['原题上屏', '一句话套路', '动画演示', '答案和评分点'][i]), 0.28));
   TL.sfx('swoosh_in', s('G02') + 0.4, 0.3); TL.sfx('sparkle', s('G02') + 1.6, 0.3);
   TL.sfx('count_go', s('D03') + 0.2, 0.3); TL.sfx('whoosh', s('C09') + 0.4, 0.3);
+  // 扩写三 sfx
+  TL.sfx('whoosh', s('C08a') + 0.3, 0.3); TL.sfx('check', s('G02a') + 0.3, 0.3); TL.sfx('sting', s('D02a') + 0.2, 0.2); TL.sfx('pop', s('C08b') + 0.3, 0.3);
 
   // ════ 前三章拼图 ════
   function shotChapters() {
@@ -141,7 +143,7 @@ export async function setup(R) {
       B.card(x, DY - 40, 200, 150, g, cols[i]); ctag(`${i + 1}`, x, DY - 80, { px: 36, a: g, color: cols[i], font: F.serif }); ctag(l, x, DY - 10, { px: 28, a: g, color: C.ink });
       if (i < 3) ctag('→', x + 115, DY - 40, { px: 32, a: g, color: C.inkMid });
     });
-    const g2 = a * gin(s('G02') + 0.4);
+    const g2 = a * gin(s('G02') + 0.4) * (1 - gin(s('C08a')));
     if (g2 > 0) {
       for (let k = 0; k < 11; k++) {
         const sp = smoother(prog(B.t, s('G02') + 0.4, s('G02') + 1.6)), th = lerp(0, (k - 5) * 0.13, sp);
@@ -150,8 +152,20 @@ export async function setup(R) {
         ctag(`套路卡`, 0, -40, { px: 20, a: 1, color: C.inkMid }); ctag('①②③④⑤⑥⑦⑧⑨⑩⑪'[k], 0, 20, { px: 52, a: 1, color: [C.peri, C.i, C.j, C.k][k % 4], font: F.serif });
         ctx.restore();
       }
-      ctag('考前过一遍 = 复习提纲', DX, DY + 300, { px: 32, a: a * gin(cue('G02', '考前')), color: C.gpt });
+      ctag('考前过一遍 = 复习提纲', DX, DY + 300, { px: 32, a: g2 * gin(cue('G02', '考前')), color: C.gpt });
     }
+  }
+
+  function shotTips() {
+    const a = B.win(s('C08a'), s('C09')); if (a <= 0) return;
+    B.drill(a, [
+      { txt: '原题上屏 → 暂停 → 自己做 2 分钟', x: DX, y: DY - 230, px: 34, card: C.peri, t: s('C08a') + 0.3, burst: true },
+      { txt: '卡住的那一步 = 最该记的', x: DX, y: DY - 155, px: 30, col: C.ink, t: cue('C08a', '被卡住') },
+      { txt: '验算：代回去 · 抽查一格', x: DX, y: DY - 40, px: 34, card: C.gpt, t: s('G02a') + 0.3, burst: true },
+      { txt: '留 2 分钟验算 = 最便宜的保分', x: DX, y: DY + 35, px: 30, col: C.ink, t: cue('G02a', '考场上') },
+      { txt: '先写能写的：定义 · 消元第一步 · 套路卡第一行', x: DX - 30, y: DY + 150, px: 30, card: C.i, w: 720, t: s('C08b') + 0.3, burst: true },
+      { txt: '按步骤给分：写对一半 = 一半的分', x: DX - 30, y: DY + 225, px: 30, col: C.ink, t: cue('C08b', '大题按步骤') },
+    ]);
   }
 
   function shotGo() {
@@ -162,7 +176,7 @@ export async function setup(R) {
   }
 
   function draw(t) {
-    B.frame(t, () => { shotChapters(); shotHeat(); shotRoad(); shotBeats(); shotGo(); });
+    B.frame(t, () => { shotChapters(); shotHeat(); shotRoad(); shotBeats(); shotTips(); shotGo(); });
   }
   return { TL, draw };
 }

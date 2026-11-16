@@ -7,12 +7,12 @@ import { base, loadExam, C, F, lerp, prog, smooth, smoother, outCubic, DX, DY, O
 export const assets = { chars: ['claude_smile', 'claude_explain', 'claude_point', 'ds_proud', 'ds_think', 'ds_shock', 'ds_happy', 'gpt_point', 'gpt_explain'] };
 
 export async function setup(R) {
-  const EX = await loadExam(['y2324_f1', 'y2223_f1', 'y2425_f3', 'y2324_f4', 'y2425_f2', 'y1819_q5', 'y2021_q4', 'y1718_q4', 'y2324_q7']);
+  const EX = await loadExam(['y2324_f1', 'y2223_f1', 'y2425_f3', 'y2324_f4', 'y2425_f2', 'y1819_q5', 'y2021_q4', 'y1718_q4', 'y2324_q7', 'y2122_q3']);
   const B = base(R, {
     assets, label: '特别篇 · 期中速成', title: '行列式', hi: 1, en: 'DETERMINANTS',
     titleEnd: () => B.L('C02').s + 0.5,
-    pre: { C03: 0.8, C05: 0.8, C09: 0.8, C12: 0.8, C16: 1.0, C21: 0.6, C23: 1.0, C26: 0.6, C27b: 1.0, C27f: 0.4, C27j: 1.0, C28: 0.8 },
-    post: { C02: 1.0, C04: 1.0, C06: 1.6, C07: 1.0, C11: 1.0, C14: 1.2, C15: 1.0, C18: 0.6, C19: 0.8, C20: 1.0, C22: 1.0, C25: 1.0, C27: 1.0, C27b: 1.0, C27c: 0.8, C27d: 1.4, C27e: 1.2, D06a: 0.6, C27f: 1.0, C27g: 1.0, C27h: 1.4, C27i: 1.4, G03b: 1.0, C27j: 0.8, C27k: 1.4, C27l: 1.2, C27m: 1.2, C28: 1.2 },
+    pre: { C27n: 1.0, C03: 0.8, C05: 0.8, C09: 0.8, C12: 0.8, C16: 1.0, C21: 0.6, C23: 1.0, C26: 0.6, C27b: 1.0, C27f: 0.4, C27j: 1.0, C28: 0.8 },
+    post: { C27n: 0.6, D06c: 0.4, C27o: 1.4, C27p: 1.2, C27q: 1.2, G03c: 1.0, C02: 1.0, C04: 1.0, C06: 1.6, C07: 1.0, C11: 1.0, C14: 1.2, C15: 1.0, C18: 0.6, C19: 0.8, C20: 1.0, C22: 1.0, C25: 1.0, C27: 1.0, C27b: 1.0, C27c: 0.8, C27d: 1.4, C27e: 1.2, D06a: 0.6, C27f: 1.0, C27g: 1.0, C27h: 1.4, C27i: 1.4, G03b: 1.0, C27j: 0.8, C27k: 1.4, C27l: 1.2, C27m: 1.2, C28: 1.2 },
   });
   const { L, cue, TL, ctx, gin, rv, texAt, ctag } = B;
   const s = id => L(id).s, e = id => L(id).e;
@@ -30,6 +30,10 @@ export async function setup(R) {
   for (let i = 0; i < 6; i++) TL.sfx('tick', cue('C24', '二减一') + i * 0.75, 0.25);
   TL.sfx('ding_hi', cue('C25', '等于负四十八'), 0.35); TL.sfx('slam', s('C26') + 3.0, 0.3); TL.sfx('ding_hi', cue('C27', '等于十二'), 0.35);
   TL.sfx('bell_soft', s('C28'), 0.35); TL.sfx('shimmer', s('D07'), 0.35);
+  // 扩写三 sfx
+  TL.sfx('whoosh', s('C27n') + 0.2, 0.3); TL.sfx('sting', s('D06c') + 0.2, 0.25);
+  ['第一列得零', '第二列得负一', '第三列得零'].forEach(p => TL.sfx('tick', cue('C27o', p), 0.3)); TL.sfx('slam', cue('C27p', '再加上'), 0.3);
+  TL.sfx('impact', s('C27q') + 0.3, 0.35); TL.sfx('pop', s('G03c') + 0.3, 0.3);
   // 扩写二 sfx
   TL.sfx('whoosh', s('C27b') + 0.2, 0.3); TL.sfx('swoosh_soft', cue('C27c', '先交换') + 0.5, 0.3); TL.sfx('pluck', cue('C27c', '变号'), 0.3);
   ['第四行减第一行', '再减第二行', '最后加第三行'].forEach(p => TL.sfx('pop', cue('C27d', p) + 0.6, 0.3));
@@ -304,7 +308,7 @@ export async function setup(R) {
       }
     }
     // ── 23–24 Q7 ──
-    a = B.win(s('C27j'), s('C28') - 0.2);
+    a = B.win(s('C27j'), s('C27n') - 0.2);
     if (a > 0) {
       const A = a * gin(s('C27j') + 0.4);
       B.qhead('2023–2024 期中 · 第 7 题 · 12 分', A);
@@ -330,6 +334,27 @@ export async function setup(R) {
         ctag('套路：常数项移一边，另一边提出 A', DX, DY + 240, { px: 28, a: g2 * gin(cue('C27m', '这类题的套路')), color: C.peri });
       }
     }
+  }
+
+  // ════ 扩写三：21–22 Q3 det(AB + I) ════
+  function shotR3() {
+    const a = B.win(s('C27n'), s('C28') - 0.2); if (a <= 0) return;
+    const A = a * gin(s('C27n') + 0.4);
+    B.qhead('2021–2022 期中 · 第 3 题 · 10 分', A);
+    const tO = s('C27o'), tG = s('G03c');
+    B.drill(A, [
+      { txt: 'A =', x: DX - 360, y: DY - 230, px: 32, t: s('C27n') + 0.8 },
+      { mat: [[[1, 1, 1], [2, -1, 0], [1, 0, 1]]], x: DX - 220, y: DY - 230, px: 34, t: s('C27n') + 0.8, hi: (i) => i === 1 && B.t >= tO ? C.i : null },
+      { txt: 'B =', x: DX + 20, y: DY - 230, px: 32, t: s('C27n') + 1.2 },
+      { mat: [[[1, 0, 0], [2, 1, 0], [0, 2, 1]]], x: DX + 160, y: DY - 230, px: 34, t: s('C27n') + 1.2 },
+      { txt: '只算 AB 的第 2 行', x: DX, y: DY - 120, px: 28, col: C.i, t: tO + 0.3, u: tG },
+      { txt: '(2, −1, 0)·(1, 2, 0) = 0', x: DX, y: DY - 60, px: 30, t: cue('C27o', '第一列得零'), u: tG },
+      { txt: '(2, −1, 0)·(0, 1, 2) = −1', x: DX, y: DY - 5, px: 30, t: cue('C27o', '第二列得负一'), u: tG },
+      { txt: '(2, −1, 0)·(0, 0, 1) = 0', x: DX, y: DY + 50, px: 30, t: cue('C27o', '第三列得零'), u: tG },
+      { txt: '(0, −1, 0) + (0, 1, 0) = (0, 0, 0)', x: DX, y: DY + 125, px: 32, col: C.free, t: cue('C27p', '再加上'), card: C.free },
+      { txt: 'det(AB + I) = 0', x: DX, y: DY + 225, px: 38, card: OK, t: s('C27q') + 0.3, burst: true },
+      { txt: '先扫：全零行 · 成比例 · 只有一个非零元', x: DX, y: DY - 20, px: 30, card: C.gpt, t: tG + 0.3, burst: true },
+    ]);
   }
 
   function shotOutro() {
@@ -360,7 +385,8 @@ export async function setup(R) {
     B.paper(EX, 'y1819_q5', { t0: s('C16') + 0.2, dock: cue('C16', '第一列只有') - 0.5, out: s('C23') - 0.4 });
     B.paper(EX, 'y2021_q4', { t0: s('C23') + 0.2, dock: cue('C23', '仔细看') - 0.5, out: s('C27b') - 0.3 });
     B.paper(EX, 'y1718_q4', { t0: s('C27b') + 0.2, dock: cue('C27b', '第一问') - 0.3, out: s('C27j') - 0.3 });
-    B.paper(EX, 'y2324_q7', { t0: s('C27j') + 0.2, dock: cue('C27j', '求行列式') - 0.3, out: s('C28') - 0.3 });
+    B.paper(EX, 'y2324_q7', { t0: s('C27j') + 0.2, dock: cue('C27j', '求行列式') - 0.3, out: s('C27n') - 0.3 });
+    B.paper(EX, 'y2122_q3', { t0: s('C27n') + 0.2, dock: cue('C27n', '给了A和B') - 0.3, out: s('C28') - 0.3 });
   }
 
   // ── 扩写：逐步算式小卡 ──
@@ -387,7 +413,7 @@ export async function setup(R) {
   }
 
   function draw(t) {
-    B.frame(t, D => { shotIntro(D); shotWall(); shotF1(); shotF2(D); shotF3(); shotF4(); shotQ5(); shotQ4(); shotR2(); shotOutro(); combo(); papers(); extras(); });
+    B.frame(t, D => { shotIntro(D); shotWall(); shotF1(); shotF2(D); shotF3(); shotF4(); shotQ5(); shotQ4(); shotR2(); shotR3(); shotOutro(); combo(); papers(); extras(); });
   }
   return { TL, draw };
 }

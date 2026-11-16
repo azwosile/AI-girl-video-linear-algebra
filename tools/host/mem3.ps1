@@ -1,0 +1,4 @@
+$m = Get-CimInstance Win32_PerfFormattedData_PerfOS_Memory
+"Avail MB {0}  Committed MB {1}  Limit MB {2}  PoolNP MB {3}  PoolP MB {4}  Cache MB {5}  Modified MB {6}  Standby MB {7}" -f $m.AvailableMBytes, [math]::Round($m.CommittedBytes/1MB), [math]::Round($m.CommitLimit/1MB), [math]::Round($m.PoolNonpagedBytes/1MB), [math]::Round($m.PoolPagedBytes/1MB), [math]::Round($m.CacheBytes/1MB), [math]::Round($m.ModifiedPageListBytes/1MB), [math]::Round(($m.StandbyCacheNormalPriorityBytes+$m.StandbyCacheReserveBytes+$m.StandbyCacheCoreBytes)/1MB)
+Get-Process -IncludeUserName -ErrorAction SilentlyContinue | Sort-Object PrivateMemorySize64 -Descending | Select-Object -First 6 | ForEach-Object { "{0,7} {1,7}MB {2}" -f $_.Id, [math]::Round($_.PrivateMemorySize64/1MB), $_.ProcessName }
+Get-Process vmmem*, Memory*, Secure*, Registry -ErrorAction SilentlyContinue | ForEach-Object { "{0} WS {1}MB" -f $_.ProcessName, [math]::Round($_.WorkingSet64/1MB) }

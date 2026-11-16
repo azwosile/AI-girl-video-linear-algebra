@@ -1,6 +1,7 @@
 # 本地抽帧联系表：python tools/sheet.py spx/x1 [--at 0.6] [--ids C01 C02 ...] [--times 3 8.5]
 # 每条台词取 起点 + at×时长 一帧；每 12 帧拼一张 4×3（每格 640×360）→ <段>/_sheets/sheet_N.png
-import argparse, json, subprocess, sys
+import argparse, json, subprocess, sys, os
+CH = ['--channel', 'chrome'] if os.name == 'nt' else []
 from pathlib import Path
 from PIL import Image, ImageDraw
 ROOT = Path(__file__).resolve().parents[1]
@@ -11,12 +12,12 @@ tl = json.loads((seg / 'out/timeline.json').read_text(encoding='utf-8')) if (seg
 if a.times: pts = [(f'{t:.1f}', t) for t in a.times]
 else:
     if tl is None:
-        subprocess.run([sys.executable, str(ROOT / 'pipeline/render.py'), a.seg, '--frames', '0.5'], check=True)
+        subprocess.run([sys.executable, str(ROOT / 'pipeline/render.py'), a.seg, '--frames', '0.5', *CH], check=True)
         tl = json.loads((seg / 'out/timeline.json').read_text(encoding='utf-8'))
     L = tl['seq']
     pts = [(l['id'], l['vo'] + a.at * l['dur']) for l in L if not a.ids or l['id'] in a.ids]
 out = seg / 'out/frames'
-subprocess.run([sys.executable, str(ROOT / 'pipeline/render.py'), a.seg, '--frames', *[f'{t:.3f}' for _, t in pts], '--outdir', str(out)], check=True)
+subprocess.run([sys.executable, str(ROOT / 'pipeline/render.py'), a.seg, '--frames', *[f'{t:.3f}' for _, t in pts], '--outdir', str(out), *CH], check=True)
 files = sorted(out.glob('*.jpg')) + sorted(out.glob('*.png'))
 def find(t):
     return min(files, key=lambda f: abs(float(f.stem[1:]) - t))

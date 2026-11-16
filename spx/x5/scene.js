@@ -7,12 +7,12 @@ import { base, loadExam, SBoard, C, F, lerp, prog, smooth, smoother, outCubic, D
 export const assets = { chars: ['claude_smile', 'claude_explain', 'claude_point', 'ds_happy', 'ds_think', 'ds_proud', 'gpt_point', 'gpt_explain'] };
 
 export async function setup(R) {
-  const EX = await loadExam(['y1516_q2', 'y1718_q6', 'y2324_q4', 'y1819_q9', 'y2021_q6', 'y1718_q3', 'y2324_q6']);
+  const EX = await loadExam(['y1516_q2', 'y1718_q6', 'y2324_q4', 'y1819_q9', 'y2021_q6', 'y1718_q3', 'y2324_q6', 'y2021_q8']);
   const B = base(R, {
     assets, label: '特别篇 · 期中速成', title: '线性相关', hi: 1, en: 'LINEAR DEPENDENCE',
     titleEnd: () => B.L('C02').s + 0.3,
-    pre: { C04: 0.8, C06: 1.0, C09: 0.6, C13: 1.0, C16: 1.0, C19a: 1.0, C19f: 1.0, C19h: 0.4, C20: 0.8 },
-    post: { C02: 1.0, C03: 1.0, C05: 1.4, C07: 1.4, C08: 1.0, C09: 2.4, C12: 1.4, C14: 1.2, C15: 1.0, C18: 1.0, C19: 1.0, C19a: 0.8, C19b: 1.2, C19c: 0.8, C19d: 1.4, D04a: 0.4, C19e: 1.2, G02b: 1.2, C19f: 1.0, C19g: 1.4, C19h: 1.2, D04b: 0.6, C20: 1.2 },
+    pre: { C19i: 1.0, C04: 0.8, C06: 1.0, C09: 0.6, C13: 1.0, C16: 1.0, C19a: 1.0, C19f: 1.0, C19h: 0.4, C20: 0.8 },
+    post: { C19i: 0.6, C19j: 1.2, C19k: 1.2, C19l: 1.4, D04c: 0.6, C02: 1.0, C03: 1.0, C05: 1.4, C07: 1.4, C08: 1.0, C09: 2.4, C12: 1.4, C14: 1.2, C15: 1.0, C18: 1.0, C19: 1.0, C19a: 0.8, C19b: 1.2, C19c: 0.8, C19d: 1.4, D04a: 0.4, C19e: 1.2, G02b: 1.2, C19f: 1.0, C19g: 1.4, C19h: 1.2, D04b: 0.6, C20: 1.2 },
   });
   const { L, cue, TL, ctx, gin, rv, texAt, ctag } = B;
   const s = id => L(id).s, e = id => L(id).e;
@@ -41,6 +41,9 @@ export async function setup(R) {
   TL.sfx('zap', cue('C12', '法向量'), 0.3); TL.sfx('ding_hi', s('D03') + 1.4, 0.35);
   TL.sfx('ding_hi', o14[4] + 1.0, 0.3); TL.sfx('ding_hi', o17[2] + 1.2, 0.3); TL.sfx('slam', s('C18') + 0.6, 0.35); TL.sfx('check', cue('C19', '正好'), 0.35);
   TL.sfx('bell_soft', s('C20'), 0.35); TL.sfx('shimmer', s('D05'), 0.35);
+  // 扩写三 sfx
+  TL.sfx('whoosh', s('C19i') + 0.2, 0.3); ['x读成', 'x加二读成', 'x平方读成'].forEach(p => TL.sfx('pop', cue('C19j', p), 0.3));
+  TL.sfx('impact', cue('C19k', '三个向量') + 0.2, 0.3); TL.sfx('ding_hi', cue('C19l', '记住'), 0.3); TL.sfx('shimmer', s('D04c'), 0.3);
   // 扩写二 sfx
   TL.sfx('whoosh', s('C19a') + 0.2, 0.3); ['读成二', '读成一', '读成负一'].forEach(p => TL.sfx('pop', cue('C19b', p), 0.3));
   TL.sfx('swoosh_soft', s('C19c'), 0.3); TL.sfx('tick', s('C19d') + 0.4, 0.3); TL.sfx('impact', cue('C19d', '所以线性无关') + 0.2, 0.3);
@@ -231,7 +234,7 @@ export async function setup(R) {
       const gz = A * gin(cue('G02b', '解出来'));
       ctag('⇒ c = 0 ✓', DX + 240, DY + 162, { px: 30, a: gz, color: OK, font: F.serif });
     }
-    a = B.win(s('C19f'), s('C20') - 0.2);
+    a = B.win(s('C19f'), s('C19i') - 0.2);
     if (a > 0) {
       const A = a * gin(s('C19f') + 0.4);
       B.qhead('2023–2024 期中 · 第 6 题 · 10 分', A);
@@ -242,6 +245,16 @@ export async function setup(R) {
       ctag('Leon：P₃ = 次数 < 3 的多项式', DX, DY + 228, { px: 30, a: gp, color: C.free, font: F.serif });
       ctag('基 {1, x, x²}，dim P₃ = 3（不是 4！）', DX, DY + 272, { px: 28, a: gp * gin(cue('C19h', '维数是三')), color: C.ink, font: F.serif });
     }
+  }
+
+  // ════ 扩写三：20–21 Q8(2) {x, x + 2, x²} 张成 P₃ ════
+  function shotR3() {
+    const a = B.win(s('C19i'), s('C20') - 0.2); if (a <= 0) return;
+    const A = a * gin(s('C19i') + 0.4);
+    B.qhead('2020–2021 期中 · 第 8(2) 题 · 5 分', A);
+    polyShot(A, { polys: ['x', 'x + 2', 'x²'], vec: [[0, 1, 0], [2, 1, 0], [0, 0, 1]], minor: '1 × (0·1 − 2·1)', calc: '= −2 ≠ 0', ans: 'det = −2 ≠ 0 ⇒ 线性无关' },
+      { t0: s('C19i') + 0.6, read: [cue('C19j', 'x读成'), cue('C19j', 'x加二读成'), cue('C19j', 'x平方读成')], mat: cue('C19j', '排成三列'), det: s('C19k'), ans: cue('C19k', '三个向量'), fadeAns: 1e9 });
+    B.drill(A, [{ txt: '无关 + 个数 = dim P₃ = 3  ⇒  基  ⇒  张成', x: DX, y: DY + 250, px: 30, card: OK, t: s('C19l') + 0.3, burst: cue('C19l', '记住') }]);
   }
 
   function shotOutro() {
@@ -263,7 +276,8 @@ export async function setup(R) {
     B.paper(EX, 'y1819_q9', { t0: s('C13') + 0.2, dock: cue('C13', '四个四维向量') - 0.6, out: s('C16') - 0.4 });
     B.paper(EX, 'y2021_q6', { t0: s('C16') + 0.2, dock: cue('C16', '三个四维向量') - 0.6, out: s('C19a') - 0.3 });
     B.paper(EX, 'y1718_q3', { t0: s('C19a') + 0.2, dock: cue('C19a', 'x加二') - 0.3, out: s('C19f') - 0.3 });
-    B.paper(EX, 'y2324_q6', { t0: s('C19f') + 0.2, dock: cue('C19f', 'x加二') - 0.3, out: s('C20') - 0.3 });
+    B.paper(EX, 'y2324_q6', { t0: s('C19f') + 0.2, dock: cue('C19f', 'x加二') - 0.3, out: s('C19i') - 0.3 });
+    B.paper(EX, 'y2021_q8', { t0: s('C19i') + 0.2, dock: cue('C19i', '证明x') - 0.3, out: s('C20') - 0.3 });
   }
 
   // ── 扩写：逐步算式小卡 ──
@@ -286,7 +300,7 @@ export async function setup(R) {
   }
 
   function draw(t) {
-    B.frame(t, D => { shotDef(); shotQ1516(); shotQ1718(D); shotQ1819(); shotQ2021(); shotPoly(); shotOutro(); papers(); extras(); });
+    B.frame(t, D => { shotDef(); shotQ1516(); shotQ1718(D); shotQ1819(); shotQ2021(); shotPoly(); shotR3(); shotOutro(); papers(); extras(); });
   }
   return { TL, draw };
 }

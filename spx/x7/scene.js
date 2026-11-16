@@ -7,12 +7,12 @@ import { base, loadExam, C, F, lerp, prog, smooth, smoother, outCubic, DX, DY, O
 export const assets = { chars: ['claude_smile', 'claude_explain', 'claude_point', 'ds_shock', 'ds_think', 'ds_proud', 'gpt_point', 'gpt_explain'] };
 
 export async function setup(R) {
-  const EX = await loadExam(['y2425_q4', 'y2223_q2', 'y2021_q7', 'y2526_q4']);
+  const EX = await loadExam(['y2425_q4', 'y2223_q2', 'y2021_q7', 'y2526_q4', 'y2324_n2']);
   const B = base(R, {
     assets, label: '特别篇 · 期中速成', title: 'RREF 反推', hi: 1, en: 'READING THE RREF',
     titleEnd: () => B.L('C02').s + 0.3,
-    pre: { C03: 1.0, C04: 0.4, C06: 0.6, C10: 0.6, C12: 0.8, C17a: 1.0, C17f: 0.9, C17j: 1.0, C17p: 0.6, C18: 0.8 },
-    post: { C02: 1.6, C05: 0.8, C07: 1.2, C09: 1.2, C11: 1.0, C13: 1.0, C14: 1.0, C16: 1.0, C17: 1.2, G03: 1.0, C17b: 0.8, C17d: 0.8, C17e: 1.0, C17g: 0.8, C17h: 0.8, C17i: 1.2, C17k: 0.9, C17l: 0.9, C17m: 1.1, C17n: 0.8, C17o: 1.3, C17p: 1.0, C17q: 1.0, C17r: 1.0, G03d: 0.8, C17s: 1.3, C18: 1.2 },
+    pre: { C17t: 1.0, C17w: 0.6, C03: 1.0, C04: 0.4, C06: 0.6, C10: 0.6, C12: 0.8, C17a: 1.0, C17f: 0.9, C17j: 1.0, C17p: 0.6, C18: 0.8 },
+    post: { C17t: 0.6, C17u: 1.6, C17v: 1.4, G03e: 1.2, C17w: 1.4, C17x: 1.4, D04e: 0.6, C02: 1.6, C05: 0.8, C07: 1.2, C09: 1.2, C11: 1.0, C13: 1.0, C14: 1.0, C16: 1.0, C17: 1.2, G03: 1.0, C17b: 0.8, C17d: 0.8, C17e: 1.0, C17g: 0.8, C17h: 0.8, C17i: 1.2, C17k: 0.9, C17l: 0.9, C17m: 1.1, C17n: 0.8, C17o: 1.3, C17p: 1.0, C17q: 1.0, C17r: 1.0, G03d: 0.8, C17s: 1.3, C18: 1.2 },
   });
   const { L, cue, TL, ctx, gin, rv, texAt, ctag } = B;
   const s = id => L(id).s, e = id => L(id).e;
@@ -38,6 +38,10 @@ export async function setup(R) {
   [0, 1, 2].forEach(i => TL.sfx('laser', tT.b + i * 0.45, 0.25)); TL.sfx('impact', tT.b + 1.6, 0.3);
   [0, 1, 2, 3].forEach(i => TL.sfx('tick', cue('C17', ['四减六', '负四加零', '负八加零', '零减六'][i]), 0.3)); TL.sfx('ding_hi', cue('C17', 'b等于'), 0.35);
   TL.sfx('check', e('G03') - 0.6, 0.35); TL.sfx('bell_soft', s('C18'), 0.35); TL.sfx('shimmer', s('D05'), 0.35);
+  // 扩写三 sfx
+  TL.sfx('whoosh', s('C17t') + 0.2, 0.3); ['第二行加两倍', '除以负六', '第一行加第二行'].forEach(p => TL.sfx('pop', cue('C17u', p) + 0.5, 0.3));
+  TL.sfx('tick', cue('C17v', '令x三等于一'), 0.3); TL.sfx('tick', cue('C17v', '令x三等于零'), 0.3); TL.sfx('impact', s('G03e') + 0.3, 0.3);
+  ['第二行减两倍', '第三行加第一行', '两行一加'].forEach(p => TL.sfx('pop', cue('C17w', p) + 0.5, 0.3)); TL.sfx('impact', cue('C17x', '取x三等于三'), 0.35);
   // 扩写段 sfx
   TL.sfx('whoosh', s('C17a') + 0.2, 0.3); TL.sfx('pop', s('C17b') + 0.6, 0.3); TL.sfx('ding_hi', cue('C17b', '轮流取一') + 1.0, 0.3);
   TL.sfx('laser', s('C17d') + 0.4, 0.25); TL.sfx('ding_hi', cue('C17d', '所以a三'), 0.3); TL.sfx('laser', s('C17e') + 0.3, 0.25); TL.sfx('impact', cue('C17e', '所以a四') + 0.2, 0.3);
@@ -230,7 +234,7 @@ export async function setup(R) {
 
   // ════ 压轴加练：2025–26 Q4（自己消元 + 四个子空间 + 零行配方求 N(Aᵀ)）════
   function shotQ4() {
-    const a = B.win(s('C17j'), s('C18') - 0.2); if (a <= 0) return;
+    const a = B.win(s('C17j'), s('C17t') - 0.2); if (a <= 0) return;
     const A = a * gin(cue('C17j', '这次没有给U'));
     B.qhead('2025–2026 期中 · 第 4 题 · 24 分', A);
     const S = [
@@ -309,6 +313,33 @@ export async function setup(R) {
     }
   }
 
+  // ════ 扩写三：23–24 Q2′ 零空间 ════
+  function shotR3() {
+    const a = B.win(s('C17t'), s('C18') - 0.2); if (a <= 0) return;
+    const A = a * gin(s('C17t') + 0.4);
+    B.qhead('2023–2024 期中 · 第 2′ 题 · 14 分', A);
+    const tW = s('C17w'), tV = s('C17v');
+    B.drill(A, [
+      { txt: 'A =', x: DX - 250, y: DY - 210, px: 32, t: s('C17t') + 0.8, u: tW },
+      { mat: [[[1, -1, 4, 2], [-2, -4, 7, 5]], [[1, -1, 4, 2], [0, -6, 15, 9]], [[1, -1, 4, 2], [0, 1, '-5/2', '-3/2']], [[1, 0, '3/2', '1/2'], [0, 1, '-5/2', '-3/2']]],
+        T: [-1, cue('C17u', '第二行加两倍') + 0.5, cue('C17u', '除以负六') + 0.5, cue('C17u', '第一行加第二行') + 0.5],
+        ops: [null, [[1, 'R₂ + 2R₁']], [[1, 'R₂ ÷ (−6)']], [[0, 'R₁ + R₂']]], x: DX - 20, y: DY - 210, px: 34, cw: 90, lx: DX + 290, t: s('C17t') + 0.8, u: tW,
+        hi: (i, j, k) => k === 3 && i === j ? C.i : (k === 3 && j >= 2 && B.t >= tV ? C.free : null) },
+      { txt: '主元：第 1、2 列    自由：x₃、x₄', x: DX, y: DY - 110, px: 28, col: C.free, t: tV + 0.2, u: tW },
+      { txt: 'x₃ = 1, x₄ = 0  →  (−3/2, 5/2, 1, 0)', x: DX, y: DY - 40, px: 30, t: cue('C17v', '令x三等于一'), u: tW },
+      { txt: 'x₃ = 0, x₄ = 1  →  (−1/2, 3/2, 0, 1)', x: DX, y: DY + 20, px: 30, t: cue('C17v', '令x三等于零'), u: tW },
+      { txt: 'N(A) = Span{(−3, 5, 2, 0), (−1, 3, 0, 2)}', x: DX, y: DY + 130, px: 32, card: OK, t: s('G03e') + 0.3, u: tW, burst: true },
+      { txt: 'B =', x: DX - 200, y: DY - 190, px: 32, t: tW },
+      { mat: [[[1, 2, -4], [2, 1, -1], [-1, 1, -3]], [[1, 2, -4], [0, -3, 7], [-1, 1, -3]], [[1, 2, -4], [0, -3, 7], [0, 3, -7]], [[1, 2, -4], [0, -3, 7], [0, 0, 0]]],
+        T: [-1, cue('C17w', '第二行减两倍') + 0.5, cue('C17w', '第三行加第一行') + 0.5, cue('C17w', '两行一加') + 0.4],
+        ops: [null, [[1, 'R₂ − 2R₁']], [[2, 'R₃ + R₁']], [[2, 'R₃ + R₂']]], x: DX - 40, y: DY - 190, px: 36, lx: DX + 200, t: tW, hi: (i, j, k) => k === 3 && i === 2 ? C.free : null },
+      { txt: 'x₂ = 7x₃ / 3', x: DX, y: DY - 30, px: 30, t: s('C17x') + 0.3 },
+      { txt: 'x₁ = −2x₂ + 4x₃ = −2x₃ / 3', x: DX, y: DY + 30, px: 30, t: cue('C17x', 'x一等于') },
+      { txt: 'N(B) = Span{(−2, 7, 3)}', x: DX, y: DY + 140, px: 34, card: OK, t: cue('C17x', '取x三等于三'), burst: true },
+      { txt: '自由变量轮流取 1，其余取 0', x: DX, y: DY + 245, px: 30, col: C.ds, t: s('D04e') + 0.2 },
+    ]);
+  }
+
   function shotOutro() {
     const a = B.win(s('C18'), 1e9); if (a <= 0) return;
     const g = a * gin(s('C18'));
@@ -325,7 +356,8 @@ export async function setup(R) {
     B.paper(EX, 'y2425_q4', { t0: s('C03') + 0.2, dock: s('C03') + 3.0, out: s('C12') - 0.6 });
     B.paper(EX, 'y2223_q2', { t0: s('C17a') + 0.2, dock: cue('C17a', '行最简形') - 0.5, out: s('C17f') - 0.3 });
     B.paper(EX, 'y2021_q7', { t0: s('C17f') + 0.2, dock: cue('C17f', '三乘四') - 0.5, out: s('C17j') - 0.3 });
-    B.paper(EX, 'y2526_q4', { t0: s('C17j') + 0.2, dock: cue('C17j', '这次没有给U') - 0.3, out: s('C18') - 0.3 });
+    B.paper(EX, 'y2526_q4', { t0: s('C17j') + 0.2, dock: cue('C17j', '这次没有给U') - 0.3, out: s('C17t') - 0.3 });
+    B.paper(EX, 'y2324_n2', { t0: s('C17t') + 0.2, dock: cue('C17t', '求A和B') - 0.3, out: s('C18') - 0.3 });
   }
 
   // ── 扩写：逐步算式小卡 ──
@@ -342,7 +374,7 @@ export async function setup(R) {
   }
 
   function draw(t) {
-    B.frame(t, () => { shotKey(); shotMain(); shotMore(); shotQ4(); shotOutro(); papers(); extras(); });
+    B.frame(t, () => { shotKey(); shotMain(); shotMore(); shotQ4(); shotR3(); shotOutro(); papers(); extras(); });
   }
   return { TL, draw };
 }

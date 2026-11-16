@@ -7,12 +7,12 @@ import { base, loadExam, SBoard, MBoard, C, F, lerp, prog, smooth, smoother, out
 export const assets = { chars: ['claude_smile', 'claude_explain', 'claude_point', 'ds_proud', 'ds_shock', 'ds_think', 'ds_happy', 'gpt_point', 'gpt_explain', 'gpt_cross'] };
 
 export async function setup(R) {
-  const EX = await loadExam(['y1819_q2', 'y2324_q5', 'y2021_q2', 'y2425_q5', 'y2425_q3']);
+  const EX = await loadExam(['y1819_q2', 'y2324_q5', 'y2021_q2', 'y2425_q5', 'y2425_q3', 'y2526_q3']);
   const B = base(R, {
     assets, label: '特别篇 · 期中速成', title: '初等矩阵 · LU · 逆', hi: 4, en: 'ELEMENTARY · LU · INVERSE', titlePx: 92,
     titleEnd: () => B.L('C03').s,
-    pre: { C03: 0.8, C05: 0.4, C10: 0.6, C12: 0.4, C15: 0.8, C19: 1.0, C24: 1.0, C28: 0.6, C30c: 1.0, D06a: 0.4, C30k: 0.6, C30l: 1.0, C31: 0.8 },
-    post: { C02: 0.8, C06: 1.6, C07: 1.6, C08: 1.8, C09: 0.8, C13: 2.0, C14: 0.8, C16: 1.5, C17: 2.5, C18: 1.0, C22: 1.5, C23: 0.8, G03: 0.6, C27: 0.8, C30: 1.0, C30c: 1.0, C30d: 1.2, C30e: 1.0, C30f: 1.4, D06a: 0.4, C30g: 1.2, C30h: 1.2, C30i: 1.0, C30j: 1.2, G03b: 1.0, C30k: 1.4, C30m: 1.2, C30n: 1.2, D06b: 0.6, C32: 1.0 },
+    pre: { C30o: 1.0, C03: 0.8, C05: 0.4, C10: 0.6, C12: 0.4, C15: 0.8, C19: 1.0, C24: 1.0, C28: 0.6, C30c: 1.0, D06a: 0.4, C30k: 0.6, C30l: 1.0, C31: 0.8 },
+    post: { C30p: 1.0, C30q: 1.4, D06c: 0.4, C30r: 1.4, C30s: 1.2, G03c: 1.2, C02: 0.8, C06: 1.6, C07: 1.6, C08: 1.8, C09: 0.8, C13: 2.0, C14: 0.8, C16: 1.5, C17: 2.5, C18: 1.0, C22: 1.5, C23: 0.8, G03: 0.6, C27: 0.8, C30: 1.0, C30c: 1.0, C30d: 1.2, C30e: 1.0, C30f: 1.4, D06a: 0.4, C30g: 1.2, C30h: 1.2, C30i: 1.0, C30j: 1.2, G03b: 1.0, C30k: 1.4, C30m: 1.2, C30n: 1.2, D06b: 0.6, C32: 1.0 },
   });
   const { L, cue, TL, ctx, gin, rv, texAt, ctag } = B;
   const s = id => L(id).s, e = id => L(id).e;
@@ -37,6 +37,9 @@ export async function setup(R) {
   TL.sfx('whoosh', s('C24') + 0.2, 0.35); TL.sfx('stamp', s('C24') + 2.5, 0.35);
   TL.sfx('pop', s('C25') + 0.4, 0.3); TL.sfx('ding_hi', s('C27') + 0.3, 0.3); TL.sfx('buzz', s('C29') + 0.2, 0.25); TL.sfx('ding_hi', cue('C30', '再右乘'), 0.3);
   TL.sfx('bell_soft', s('C31'), 0.35); TL.sfx('shimmer', s('D07'), 0.35);
+  // 扩写三 sfx
+  TL.sfx('whoosh', s('C30o') + 0.2, 0.3); [cue('C30p', '第二行加第一行'), cue('C30p', '第三行加第一行'), cue('C30q', '第三行加两倍')].forEach(x => TL.sfx('pop', x + 0.6, 0.3));
+  TL.sfx('pluck', cue('C30q', '所以L'), 0.3); TL.sfx('swoosh_soft', cue('C30r', '变号'), 0.3); TL.sfx('ding_hi', cue('C30s', '所以U也能') + 1.0, 0.3); TL.sfx('check', cue('G03c', '正是A'), 0.3);
   // 扩写二 sfx
   TL.sfx('whoosh', s('C30c') + 0.2, 0.3); TL.sfx('pop', cue('C30d', '第二行减三倍') + 0.5, 0.3); TL.sfx('pop', s('C30e') + 1.5, 0.3);
   TL.sfx('pluck', s('C30f') + 0.4, 0.3); TL.sfx('buzz', cue('C30f', '注意那个负一'), 0.2); TL.sfx('sting', s('D06a') + 0.2, 0.25);
@@ -290,7 +293,7 @@ export async function setup(R) {
       }
     }
     // ── 24–25 Q3 ──
-    a = B.win(s('C30l'), s('C31') - 0.2);
+    a = B.win(s('C30l'), s('C30o') - 0.2);
     if (a > 0) {
       const A = a * gin(s('C30l') + 0.4);
       B.qhead('2024–2025 期中 · 第 3 题 · 10 分', A);
@@ -315,6 +318,37 @@ export async function setup(R) {
     }
   }
 
+  // ════ 扩写三：25–26 Q3 LU + 初等矩阵乘积 ════
+  function shotR3() {
+    const a = B.win(s('C30o'), s('C31') - 0.2); if (a <= 0) return;
+    const A = a * gin(s('C30o') + 0.4);
+    B.qhead('2025–2026 期中 · 第 3 题 · 12 分', A);
+    const E1 = [[1, 0, 0], [-1, 1, 0], [0, 0, 1]], E2 = [[1, 0, 0], [0, 1, 0], [-1, 0, 1]], E3 = [[1, 0, 0], [0, 1, 0], [0, -2, 1]];
+    const P = [[1, 0, 1], [0, 1, 0], [0, 0, 1]], Q = [[1, 0, 0], [0, 1, 2], [0, 0, 1]];
+    const tL = cue('C30q', '所以L'), D1 = s('D06c');
+    B.drill(A, [
+      { mat: [[[1, 0, 1], [-1, 1, 1], [-1, -2, -4]], [[1, 0, 1], [0, 1, 2], [-1, -2, -4]], [[1, 0, 1], [0, 1, 2], [0, -2, -3]], [[1, 0, 1], [0, 1, 2], [0, 0, 1]]],
+        T: [-1, cue('C30p', '第二行加第一行') + 0.6, cue('C30p', '第三行加第一行') + 0.6, cue('C30q', '第三行加两倍') + 0.6],
+        ops: [null, [[1, 'R₂ + R₁']], [[2, 'R₃ + R₁']], [[2, 'R₃ + 2R₂']]], x: DX - 120, y: DY - 170, px: 40, t: s('C30o') + 0.8, u: D1 },
+      { txt: 'ℓ₂₁ = −1', x: DX + 260, y: DY - 250, px: 28, col: C.i, t: cue('C30p', '倍数是'), u: D1 },
+      { txt: 'ℓ₃₁ = −1', x: DX + 260, y: DY - 195, px: 28, col: C.i, t: cue('C30p', '倍数是') + 0.6, u: D1 },
+      { txt: 'ℓ₃₂ = −2', x: DX + 260, y: DY - 140, px: 28, col: C.i, t: s('C30q') + 0.3, u: D1 },
+      { txt: 'L =', x: DX - 230, y: DY + 70, px: 32, col: C.i, t: tL, u: D1 },
+      { mat: [[[1, 0, 0], [-1, 1, 0], [-1, -2, 1]]], x: DX - 90, y: DY + 70, px: 32, t: tL, u: D1, hi: (i, j) => i > j ? C.i : null },
+      { txt: 'U = 上面的结果', x: DX + 170, y: DY + 70, px: 28, t: tL + 0.8, u: D1 },
+      { txt: 'E₃E₂E₁A = U', x: DX, y: DY - 270, px: 32, t: s('C30r') + 0.3 },
+      { txt: 'A = E₁⁻¹ E₂⁻¹ E₃⁻¹ · U', x: DX, y: DY - 205, px: 34, col: C.i, t: cue('C30r', '所以A等于') },
+      ...[[E1, 'E₁⁻¹：R₂ − R₁'], [E2, 'E₂⁻¹：R₃ − R₁'], [E3, 'E₃⁻¹：R₃ − 2R₂']].flatMap(([m, lab], k) => [
+        { mat: [m], x: DX - 280 + k * 280, y: DY - 40, px: 26, t: cue('C30r', '变号') + k * 0.5, hi: (i, j) => i !== j && m[i][j] ? C.j : null },
+        { txt: lab, x: DX - 280 + k * 280, y: DY - 115, px: 22, col: C.j, t: cue('C30r', '变号') + k * 0.5 }]),
+      { txt: 'U =', x: DX - 280, y: DY + 140, px: 30, t: cue('C30s', '第一行减第三行') },
+      { mat: [P], x: DX - 130, y: DY + 140, px: 26, t: cue('C30s', '所以U也能'), hi: (i, j) => i === 0 && j === 2 ? C.peri : null },
+      { mat: [Q], x: DX + 70, y: DY + 140, px: 26, t: cue('C30s', '所以U也能') + 0.4, hi: (i, j) => i === 1 && j === 2 ? C.peri : null },
+      { txt: '初等！', x: DX + 230, y: DY + 140, px: 28, col: OK, t: cue('C30s', '所以U也能') + 1.0 },
+      { txt: '−1·(1,0,1) − 2·(0,1,2) + (0,0,1) = (−1, −2, −4) ✓', x: DX, y: DY + 260, px: 26, card: C.gpt, t: s('G03c') + 0.3, burst: cue('G03c', '正是A') },
+    ]);
+  }
+
   // ════ 套路卡 ════
   const RC = [['③', '未知矩阵在哪边，逆就乘在哪边', C.peri], ['④', '初等矩阵的逆 = 那个数变号', C.j], ['⑤', 'L = 消元倍数原样填（倍数 = 下 ÷ 主元）', C.i]];
   function shotOutro() {
@@ -332,7 +366,8 @@ export async function setup(R) {
     B.paper(EX, 'y2324_q5', { t0: s('C19') + 0.2, dock: s('C20') - 0.5, out: s('C24') - 0.4 });
     B.paper(EX, 'y2021_q2', { t0: s('C24') + 0.2, dock: cue('C24', '求AX') - 0.6, out: s('C30c') - 0.3 });
     B.paper(EX, 'y2425_q5', { t0: s('C30c') + 0.2, dock: cue('C30c', '第一问') - 0.3, out: s('C30l') - 0.3 });
-    B.paper(EX, 'y2425_q3', { t0: s('C30l') + 0.2, dock: cue('C30l', '一个五阶') - 0.3, out: s('C31') - 0.3 });
+    B.paper(EX, 'y2425_q3', { t0: s('C30l') + 0.2, dock: cue('C30l', '一个五阶') - 0.3, out: s('C30o') - 0.3 });
+    B.paper(EX, 'y2526_q3', { t0: s('C30o') + 0.2, dock: cue('C30o', '求A的LU') - 0.3, out: s('C31') - 0.3 });
   }
 
   // ── 扩写：逐步算式小卡 ──
@@ -360,7 +395,7 @@ export async function setup(R) {
   }
 
   function draw(t) {
-    B.frame(t, D => { shotIntro(); shotQ1(); shotQ2(); shotQ3(); shotR2(); shotOutro(); papers(); extras(); });
+    B.frame(t, D => { shotIntro(); shotQ1(); shotQ2(); shotQ3(); shotR2(); shotR3(); shotOutro(); papers(); extras(); });
   }
   return { TL, draw };
 }

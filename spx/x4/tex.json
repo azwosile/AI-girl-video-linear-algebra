@@ -1,0 +1,19 @@
+{
+ "g1": "\\mathbf 0\\in W",
+ "g2": "f,g\\in W\\Rightarrow f+g\\in W",
+ "g3": "f\\in W\\Rightarrow cf\\in W",
+ "Wa": "W=\\{f\\mid f''+f=0\\}",
+ "a1": "0''+0=0",
+ "a2": "(f+g)''+(f+g)=(f''+f)+(g''+g)=0",
+ "a3": "(cf)''+cf=c\\,(f''+f)=0",
+ "Wb": "W=\\{f\\mid f''+f=x^2\\}",
+ "b1": "0''+0=0\\neq x^2",
+ "b2": "f=x^2-2:\\ f''+f=x^2",
+ "b3": "(2f)''+2f=2x^2\\neq x^2",
+ "S": "S=\\Big\\{p\\in P_4\\ \\Big|\\ \\int_0^1 p(x)\\,dx=0\\Big\\}",
+ "p": "p=a+bx+cx^2+dx^3",
+ "int": "\\int_0^1 p\\,dx=a+\\tfrac b2+\\tfrac c3+\\tfrac d4=0",
+ "aeq": "a=-\\tfrac b2-\\tfrac c3-\\tfrac d4",
+ "pb": "p=b\\class{i}{\\big(x-\\tfrac12\\big)}+c\\class{j}{\\big(x^2-\\tfrac13\\big)}+d\\class{k}{\\big(x^3-\\tfrac14\\big)}",
+ "basis": "\\{\\,x-\\tfrac12,\\ x^2-\\tfrac13,\\ x^3-\\tfrac14\\,\\},\\quad \\dim S=3"
+}

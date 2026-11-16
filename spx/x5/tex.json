@@ -1,0 +1,12 @@
+{
+ "rule": "\\text{rank}<\\#\\text{vectors}\\ \\Longleftrightarrow\\ \\text{dependent}",
+ "x3": "\\class{j}{x_3}=4\\class{i}{x_1}-2\\class{peri}{x_2}",
+ "x3chk": "4\\begin{pmatrix}2\\\\1\\\\3\\end{pmatrix}-2\\begin{pmatrix}3\\\\-1\\\\4\\end{pmatrix}=\\begin{pmatrix}2\\\\6\\\\4\\end{pmatrix}",
+ "prop": "\\frac{2}{3}\\neq\\frac{1}{-1}",
+ "cross": "x_1\\times x_2=\\begin{vmatrix}\\mathbf i&\\mathbf j&\\mathbf k\\\\2&1&3\\\\3&-1&4\\end{vmatrix}=(7,\\,1,\\,-5)",
+ "plane": "7x+y-5z=0",
+ "plchk": "7\\cdot2+6-5\\cdot4=0",
+ "v34": "v_3=-\\tfrac13v_1+\\tfrac23v_2,\\qquad v_4=\\tfrac43v_1+\\tfrac13v_2",
+ "a6": "a-6=0\\ \\Rightarrow\\ a=6",
+ "a3": "\\alpha_3=-\\alpha_1+3\\alpha_2"
+}

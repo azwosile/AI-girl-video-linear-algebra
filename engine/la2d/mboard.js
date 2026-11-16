@@ -11,6 +11,7 @@ import { clamp, lerp, prog, smooth, smoother, pulse } from '../core/util.js';
 const VAR_FONT = px => `italic 500 ${px * 1.02}px "LA-Latin", serif`;
 // 数字显示：整数照写；分数（分母 ≤ 12）写成 p/q；负号用 −
 export const fmtNum = v => {
+  if (typeof v === 'string') return v;  // 特别篇：参数格（如 'a−5'）原样显示
   const sg = v < -1e-9 ? '−' : '', x = Math.abs(v);
   if (Math.abs(x - Math.round(x)) < 1e-9) return sg + Math.round(x);
   for (let q = 2; q <= 12; q++) { const p = Math.round(x * q); if (Math.abs(p / q - x) < 1e-9) return `${sg}${p}/${q}`; }

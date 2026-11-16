@@ -1,0 +1,19 @@
+{
+ "key": "\\text{row ops keep column relations}",
+ "n1": "\\begin{pmatrix}-1\\\\1\\\\0\\\\0\\\\0\\end{pmatrix}",
+ "n2": "\\begin{pmatrix}0\\\\0\\\\-1\\\\1\\\\0\\end{pmatrix}",
+ "xp": "\\begin{pmatrix}4\\\\0\\\\-6\\\\0\\\\3\\end{pmatrix}",
+ "gen": "x=\\begin{pmatrix}4\\\\0\\\\-6\\\\0\\\\3\\end{pmatrix}+c_1\\begin{pmatrix}-1\\\\1\\\\0\\\\0\\\\0\\end{pmatrix}+c_2\\begin{pmatrix}0\\\\0\\\\-1\\\\1\\\\0\\end{pmatrix}",
+ "col": "R(A)=\\mathrm{Span}(a_1,a_3,a_5)",
+ "a2": "a_2=a_1=(1,-1,-2,0)^T",
+ "a4": "a_4=a_3=(1,0,0,1)^T",
+ "b": "b=4a_1-6a_3+3a_5=(1,-1,1,3)^T",
+ "chk": "A\\,x_p=4a_1-6a_3+3a_5=b",
+ "p2n": "N(A):\\ (-2,-1,1,0)^T,\\ \\ (-1,-4,0,1)^T",
+ "p2r": "R(A^T):\\ (1,0,2,1),\\ \\ (0,1,1,4)",
+ "p2a3": "\\mathbf a_3=2\\mathbf a_1+\\mathbf a_2=(2,7,11,1)^T",
+ "p2a4": "\\mathbf a_4=\\mathbf a_1+4\\mathbf a_2=(15,-7,30,-3)^T",
+ "p3n": "N(A):\\ (1,-1,1,1)^T",
+ "p3b": "\\mathbf b=A\\eta=\\alpha_1+\\alpha_2+2\\alpha_3+\\class{z}{0\\cdot\\alpha_4}=(-2,2,-3)^T",
+ "p3x": "\\mathbf x=(1,1,2,0)^T+c\\,(1,-1,1,1)^T"
+}

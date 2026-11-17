@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """B 站封面合成：art/<id>.png（Arena 生图，无文字）+ 代码叠加中文标题。
-输出 out/<id>_16x9.jpg（1920x1080）与 out/<id>_16x10.jpg（1920x1200，B 站推荐比例）。
+输出 out/<id>_16x9.jpg（1920x1080）与 out/<id>_4x3.jpg（1440x1080），对应 B 站投稿的两种封面比例。
 用法：python3 make_covers.py [id ...]
 """
 import sys, os
@@ -23,7 +23,7 @@ C = {
  'sp4': dict(tag='特别篇 4/7 · 期中真题精讲', num='4', title=['子空间', '与相关性'], sub='判定、证明、反例，一套带走', chips=['三道闸门', '朗斯基', '证明模板'], acc='ds'),
  'sp5': dict(tag='特别篇 5/7 · 期中真题精讲', num='5', title=['过渡矩阵'], sub='Leon 与同济的“约定之战”', chips=['两副眼镜', '坐标', '自检'], acc='claude'),
  'sp6': dict(tag='特别篇 6/7 · 期中真题精讲', num='6', title=['RREF', '反推'], sub='压轴题 + 一道原题有 bug', chips=['24 分压轴', '丝线读心术', '四个子空间'], acc='gpt', stamp='压轴'),
- 'sp7': dict(tag='特别篇 7/7 · 期中真题精讲', num='7', title=['判断题', '闪电战'], sub='整卷导航 · 120 分钟怎么分', chips=['反例速查', '整卷地图', '附加题'], acc='claude'),
+ 'sp7': dict(tag='特别篇 7/7 · 期中真题精讲', num='7', title=['判断题', '闪电战'], sub='整卷导航 · 120 分钟怎么分', chips=['反例速查', '整卷地图', '附加题'], acc='claude', x43=0.36),
 }
 
 
@@ -36,19 +36,27 @@ def compose(cid, W, H):
     art = Image.open(f'art/{cid}.png').convert('RGB')
     sc = max(W / art.width, H / art.height)
     art = art.resize((round(art.width * sc), round(art.height * sc)), Image.LANCZOS)
-    x0 = art.width - W  # crop from the left: the character lives on the right
+    if W / H > 1.6:
+        x0 = art.width - W  # 16:9: crop from the left, the character lives on the right
+    else:
+        # 4:3: keep the character (≈73% of art width) at ≈68% of the frame
+        x0 = art.width * 0.73 - W * 0.68
+        if cfg.get('x43') is not None:  # per-cover anchor: art fraction placed at 40% of frame
+            x0 = art.width * cfg['x43'] - W * 0.40
+        x0 = int(min(art.width - W, max(0, x0)))
     y0 = (art.height - H) // 2
     img = art.crop((x0, y0, x0 + W, y0 + H)).convert('RGBA')
     # left gradient for readability
     grad = Image.new('L', (W, 1))
     for x in range(W):
-        t = x / (W * 0.62)
+        t = x / (W * (0.62 if W / H > 1.6 else 0.66))
         grad.putpixel((x, 0), int(255 * max(0, min(1, 1 - t)) ** 1.4 * 0.93))
     grad = grad.resize((W, H))
     img = Image.composite(Image.new('RGBA', (W, H), PAPER + (255,)), img, grad)
     d = ImageDraw.Draw(img)
-    X = 110
-    top = 120 if H == 1080 else 150
+    narrow = W / H < 1.6
+    X = 90 if narrow else 110
+    top = 120
     acc = ACC[cfg['acc']]
     # faint outline numeral
     big = font(SERIF, 640)
@@ -63,6 +71,8 @@ def compose(cid, W, H):
     y = top + 110
     n = max(len(s) for s in cfg['title'])
     size = 220 if n <= 3 else (190 if n <= 4 else 160)
+    if narrow:
+        size = min(size, int(W * 0.5 / n))
     fT = font(SERIF, size)
     for line in cfg['title']:
         # dark halo for legibility, then heavy cream text (stroke thickens Bold → Black)
@@ -77,13 +87,15 @@ def compose(cid, W, H):
     d.rectangle((X, y + 18, X + 140, y + 30), fill=PERI)
     fs = font(SANS, 62)
     sw = d.textlength(cfg['sub'], font=fs)
+    while sw > W * 0.6:
+        fs = font(SANS, fs.size - 2); sw = d.textlength(cfg['sub'], font=fs)
     plate = Image.new('RGBA', (W, H)); pd = ImageDraw.Draw(plate)
     pd.rounded_rectangle((X - 22, y + 46, X + sw + 26, y + 46 + 92), radius=14, fill=PAPER + (225,))
     img = Image.alpha_composite(img, plate); d = ImageDraw.Draw(img)
     d.text((X, y + 52), cfg['sub'], font=fs, fill=PERI, stroke_width=1, stroke_fill=PERI)
     # chips
     fc = font(SANS, 40)
-    cy = H - (150 if H == 1080 else 175)
+    cy = H - 150
     cx = X
     for ch in cfg['chips']:
         tw = d.textlength(ch, font=fc)
@@ -96,8 +108,12 @@ def compose(cid, W, H):
         sd.rounded_rectangle((10, 10, 410, 210), radius=22, outline=FREE, width=12)
         sd.text((210, 112), cfg['stamp'], font=font(SANS, 130), fill=FREE, anchor='mm')
         st = st.rotate(14, expand=True, resample=Image.BICUBIC)
-        sx = X + int(d.textlength(cfg['title'][0], font=fT)) + 40
-        img.alpha_composite(st, (min(sx, 900), top + 70))
+        if narrow:  # 4:3: small stamp in the lower-right, clear of faces
+            st = st.resize((int(st.width * 0.62), int(st.height * 0.62)), Image.LANCZOS)
+            img.alpha_composite(st, (W - st.width - 50, H - st.height - 60))
+        else:
+            sx = X + int(d.textlength(cfg['title'][0], font=fT)) + 40
+            img.alpha_composite(st, (min(sx, W - st.width - 60), top + 70))
     # thin frame
     d = ImageDraw.Draw(img)
     d.rectangle((24, 24, W - 25, H - 25), outline=PERI + (120,), width=2)
@@ -108,6 +124,6 @@ if __name__ == '__main__':
     os.makedirs('out', exist_ok=True)
     ids = sys.argv[1:] or [k for k in C if os.path.exists(f'art/{k}.png')]
     for cid in ids:
-        for (W, H, tag) in [(1920, 1080, '16x9'), (1920, 1200, '16x10')]:
+        for (W, H, tag) in [(1920, 1080, '16x9'), (1440, 1080, '4x3')]:
             compose(cid, W, H).save(f'out/{cid}_{tag}.jpg', quality=92)
         print('ok', cid)

@@ -1,0 +1,39 @@
+# -*- coding: utf-8 -*-
+"""特别篇 7 · 第 2 段：整卷导航与考场策略。
+原题：2025–26 全卷（6 题，100 分）以及 9 份卷子的结构
+台词源（唯一真源），由 mid/script/sp07.py 导出；数值见 verify_sp07.py。
+运行：python lines.py → script.json / lines.json
+"""
+import json
+from pathlib import Path
+
+LINES = [
+    # 镜头：热力图回顾：横轴是七个特别篇，纵轴是 9 份卷子，格子颜色深浅代表分值；最新卷那一行高亮。
+    dict(id='C01', pose='claude_point', sub='现在把最新卷从头走一遍，每道题对应到我们讲过的段落。2025 到 2026 学年，六道题，一百分。', read='现在把最新卷从头走一遍，每道题对应到我们讲过的段落。二零二五到二零二六学年，六道题，一百分。'),
+    # 镜头：试卷缩略图逐题放大，每题旁弹出“对应讲解”标签与分值。
+    dict(id='C02', pose='claude_explain', sub='第 1 题，判断 25 分：刚刚的闪电战。第 2 题，12 分，参数讨论 det = −2(α − 8)：特别篇 1。', read='第一题，判断，二十五分：就是刚刚的闪电战。第二题，十二分，参数讨论，行列式等于负二乘阿尔法减八：特别篇一。'),
+    dict(id='C03', pose='claude_explain', sub='第 3 题，12 分，LU 分解与初等矩阵：特别篇 2。第 4 题，24 分，RREF 与四个子空间：特别篇 6。', read='第三题，十二分，LU分解与初等矩阵：特别篇二。第四题，二十四分，RREF与四个子空间：特别篇六。'),
+    dict(id='C04', pose='claude_explain', sub='第 5 题，15 分，过渡矩阵：特别篇 5。第 6 题，12 分，积分为零的多项式子空间：特别篇 4。', read='第五题，十五分，过渡矩阵：特别篇五。第六题，十二分，积分为零的多项式子空间：特别篇四。'),
+    dict(id='D01', mood='easy', pose='ds_happy', sub='每一题都讲过！', read='每一道题都讲过！'),
+    # 镜头：时间分配条：120 分钟切成六段——判断 20 分钟，第 2、3 题各 15 分钟，第 4 题 25 分钟，第 5 题 15 分钟，第 6 题 15 分钟，验算 15 分钟。
+    dict(id='G01', pose='gpt_point', sub='时间分配：判断 20 分钟；第 2、3 题各 15 分钟；第 4 题 25 分钟；第 5、6 题各 15 分钟；最后留 15 分钟验算。', read='时间分配：判断二十分钟；第二、三题各十五分钟；第四题二十五分钟；第五、六题各十五分钟；最后留十五分钟验算。'),
+    dict(id='G02', pose='gpt_point', sub='顺序建议：先做第 4、5 题这种纯计算大题，套路固定、分值高；判断题放后面，留出时间想反例。', read='顺序建议：先做第四、第五题这种纯计算大题，套路固定、分值高；判断题放到后面，留出时间想反例。'),
+    # 镜头：套路卡像扑克牌一样扇形展开，共 10 张，逐张高亮。
+    dict(id='C05', pose='claude_explain', sub='必背清单，十张套路卡。一，参数讨论先算行列式，让行列式为零的值单独代回。二，LU 的乘数变号进 L。', read='必背清单，十张套路卡。一，参数讨论先算行列式，让行列式为零的值单独代回去。二，LU分解的乘数，变号进L。'),
+    dict(id='C06', pose='claude_explain', sub='三，求逆用 [A | I]。四，行列式先化三角，伴随矩阵用 A·adj A = det A · I。五，子空间三条：含零、加法封闭、数乘封闭。', read='三，求逆用A增广单位矩阵。四，行列式先化三角；伴随矩阵用A乘伴随等于行列式乘单位矩阵。五，子空间三条：含零向量、加法封闭、数乘封闭。'),
+    dict(id='C07', pose='claude_explain', sub='六，相关性看秩或行列式，函数用 Wronskian。七，过渡矩阵先写定义式，到谁用谁的逆。', read='六，相关性看秩或者行列式，函数用朗斯基行列式。七，过渡矩阵先写定义式，到谁就用谁的逆。'),
+    dict(id='C08', pose='claude_explain', sub='八，行用 U，列用 A。九，非主元列和 b 的系数读 U 的列。十，判断题：F 给反例，T 给证明。', read='八，行空间用U，列空间用A。九，非主元列和b的系数，读U的那一列。十，判断题：F给反例，T给证明。'),
+    # 镜头：“验算习惯”三连图标：代回原式 / 维数检查 / 小数字反例。
+    dict(id='G03', pose='gpt_proud', sub='最后是验算：解代回原方程；维数加起来对不对；判断题拿 2×2 试一下。我们这七集，每题都验过。', read='最后是验算：解出来代回原方程；维数加起来对不对；判断题拿二乘二矩阵试一下。我们这七集，每道题都验过。'),
+    dict(id='D02', mood='think', pose='ds_think', sub='包括那道有 bug 的题——验算才发现的。', read='包括那道有bug的题，也是验算才发现的。', post=500),
+]
+
+if __name__ == '__main__':
+    here = Path(__file__).resolve().parent
+    for l in LINES:
+        l.setdefault('read', l['sub'])
+        l.setdefault('mood', None)
+    ids = [l['id'] for l in LINES]; assert len(ids) == len(set(ids)), '台词 id 重复'
+    (here / 'script.json').write_text(json.dumps({l['id']: [l['read'], l['mood']] for l in LINES}, ensure_ascii=False, indent=1), encoding='utf-8')
+    (here / 'lines.json').write_text(json.dumps(LINES, ensure_ascii=False, indent=1), encoding='utf-8')
+    print(len(LINES), 'lines,', sum(len(l['read']) for l in LINES), 'chars')

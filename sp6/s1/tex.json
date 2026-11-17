@@ -1,0 +1,6 @@
+{
+ "ueq": "U = E\\,A",
+ "pf1": "A\\mathbf{c}=\\mathbf{0}\\;\\Longrightarrow\\;U\\mathbf{c}=E A\\mathbf{c}=\\class{z}{\\color{#4FC1A6}{\\mathbf{0}}}",
+ "pf2": "U\\mathbf{c}=\\mathbf{0}\\;\\Longrightarrow\\;A\\mathbf{c}=E^{-1}U\\mathbf{c}=\\mathbf{0}",
+ "nul": "N(A) = N(U)"
+}

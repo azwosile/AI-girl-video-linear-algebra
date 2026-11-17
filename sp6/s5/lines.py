@@ -1,0 +1,34 @@
+# -*- coding: utf-8 -*-
+"""特别篇 6 · 第 5 段：由 RREF 求 N(A)、R(Aᵀ) 和剩余列。
+原题：2022–23 第 2 题（10 分）：4×4 A 的 RREF U=[[1,0,2,1],[0,1,1,4],[0,0,0,0],[0,0,0,0]]，a₁=(−1,5,2,1)，a₂=(4,−3,7,−1)
+台词源（唯一真源），由 mid/script/sp06.py 导出；数值见 verify_sp06.py。
+运行：python lines.py → script.json / lines.json
+"""
+import json
+from pathlib import Path
+
+LINES = [
+    # 镜头：原题三步：2022–23 第 2 题 → 纸卡。标题条写“一题四问的最短书写”。
+    dict(id='C01', pose='claude_point', sub='2022 到 2023 学年第 2 题：4×4 的 A，RREF 两个非零行 (1, 0, 2, 1)、(0, 1, 1, 4)；a₁ = (−1, 5, 2, 1)，a₂ = (4, −3, 7, −1)。求 N(A)、R(Aᵀ) 的基，以及 a₃、a₄。', read='二零二二到二零二三学年第二题：四乘四的A，RREF两个非零行：一、零、二、一；零、一、一、四。a一等于负一、五、二、一，a二等于四、负三、七、负一。求零空间和行空间的基，以及a三和a四。'),
+    dict(id='C02', pose='claude_explain', sub='这一题示范最短书写。四行解决，每一行都带上依据。', read='这一题示范最短书写。四行解决，每一行都带上依据。'),
+    # 镜头：答卷纸上逐行写出四行答案，每行左侧一枚小标签：①看 U ②看 U ③丝线 ④丝线。
+    dict(id='C03', pose='claude_write', sub='① N(A) = N(U)：x₃ = s，x₄ = t，基 (−2, −1, 1, 0)，(−1, −4, 0, 1)。', read='第一行：A的零空间等于U的零空间。令x三等于s，x四等于t，基是负二、负一、一、零，和负一、负四、零、一。'),
+    dict(id='C04', pose='claude_write', sub='② R(Aᵀ) = R(Uᵀ)：基 (1, 0, 2, 1)，(0, 1, 1, 4)。', read='第二行：A的行空间等于U的行空间。基是一、零、二、一，和零、一、一、四。'),
+    dict(id='C05', pose='claude_write', sub='③ U 第 3 列 (2, 1)：a₃ = 2a₁ + a₂ = (−2 + 4, 10 − 3, 4 + 7, 2 − 1) = (2, 7, 11, 1)。', read='第三行：U的第三列是二、一，所以a三等于二a一加a二，等于负二加四、十减三、四加七、二减一，也就是二、七、十一、一。'),
+    dict(id='C06', pose='claude_write', sub='④ U 第 4 列 (1, 4)：a₄ = a₁ + 4a₂ = (−1 + 16, 5 − 12, 2 + 28, 1 − 4) = (15, −7, 30, −3)。', read='第四行：U的第四列是一、四，所以a四等于a一加四a二，等于负一加十六、五减十二、二加二十八、一减四，也就是十五、负七、三十、负三。'),
+    dict(id='D01', mood='think', pose='ds_ask', sub='零空间的基和丝线系数，好像是一回事？', read='零空间的基和丝线的系数，好像是一回事？'),
+    dict(id='C07', pose='claude_smile', sub='眼睛很尖！(−2, −1, 1, 0) 在零空间，意思就是 −2a₁ − a₂ + a₃ = 0，也就是 a₃ = 2a₁ + a₂。零空间里的每个向量，都是一条丝线。', read='眼睛很尖！负二、负一、一、零在零空间里，意思就是负二a一减a二加a三等于零，也就是a三等于二a一加a二。零空间里的每一个向量，都是一条丝线。'),
+    # 音效：pluck @ 丝线
+    dict(id='G01', pose='gpt_think', sub='所以第三、四行，正好可以拿来验算第一行。一题之内自带校验。', read='所以第三行、第四行，正好可以拿来验算第一行。一道题之内，自带校验。'),
+]
+
+
+if __name__ == '__main__':
+    here = Path(__file__).resolve().parent
+    for l in LINES:
+        l.setdefault('read', l['sub'])
+        l.setdefault('mood', None)
+    ids = [l['id'] for l in LINES]; assert len(ids) == len(set(ids)), '台词 id 重复'
+    (here / 'script.json').write_text(json.dumps({l['id']: [l['read'], l['mood']] for l in LINES}, ensure_ascii=False, indent=1), encoding='utf-8')
+    (here / 'lines.json').write_text(json.dumps(LINES, ensure_ascii=False, indent=1), encoding='utf-8')
+    print(len(LINES), 'lines,', sum(len(l['read']) for l in LINES), 'chars')

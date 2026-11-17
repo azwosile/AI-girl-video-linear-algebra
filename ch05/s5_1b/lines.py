@@ -1,0 +1,44 @@
+# -*- coding: utf-8 -*-
+"""第 5 章 5.1（下）投影：影子公式（Leon 9th §5.1：标量投影 / 向量投影；例 5 Q = (2.1, 0.7)；平面方程例 6、例 7 N = (6, 1, −8)ᵀ；
+例 8 距离 2/3；Chapter Test B 1：p = (−2/3, 1/3, 2/3, 0)ᵀ，(x − p) ⊥ p，1 + 9 = 10）台词源（唯一真源）。
+3B1B 画面：影子从 x 尖端垂直落下；直线上滑动的点与距离计；3D 平面 + 法向量 + 点到平面的影子。
+运行：python lines.py → script.json / lines.json
+"""
+import json
+from pathlib import Path
+
+LINES = [
+    dict(id='C01', pose='claude_smile', sub='上一节说：点积 = 影子长度 × 长度。这一节，把影子本身算出来。', read='上一节说，点积等于影子长度乘长度。这一节，把影子本身算出来。'),
+    dict(id='C02', pose='claude_explain', sub='把 x 拆成两块：p 沿着 y 的方向，z = x − p 垂直于 y。p 叫 x 在 y 上的向量投影。', read='把x拆成两块：p沿着y的方向，z等于x减p，垂直于y。p就叫x在y上的向量投影。'),
+    dict(id='C03', pose='claude_point', sub='设 u = y/‖y‖ 是 y 方向的单位向量，p = αu。α = ‖x‖cos θ = xᵀy/‖y‖，叫标量投影。', read='设u是y方向的单位向量，p等于阿尔法倍的u。阿尔法等于x的长度乘余弦，也就是点积除以y的长度，它叫标量投影。'),
+    dict(id='C04', pose='claude_explain', sub='于是 p = αu = (xᵀy / yᵀy) y。分子是点积，分母是 y 和自己的点积。记住这一个公式就够了。', read='于是，p等于x转置y，除以y转置y，再乘y。分子是点积，分母是y和自己的点积。记住这一个公式，就够了。'),
+    dict(id='D01', mood='think', pose='ds_think', sub='分母为什么是 yᵀy，不是 ‖y‖？', read='分母为什么是y转置y，不是y的长度？'),
+    dict(id='C05', pose='claude_smile', sub='因为要除两次 ‖y‖：一次把点积变成影子长度，一次把 y 变成单位向量。两次合起来，就是 yᵀy。', read='因为要除两次y的长度：一次把点积变成影子长度，一次把y变成单位向量。两次合起来，就是y转置y。'),
+    dict(id='C06', pose='claude_point', sub='例 5：直线 y = x/3 上，离点 (1, 4) 最近的点 Q 在哪里？', read='例五：在直线y等于三分之x上，离点一、四最近的点Q，在哪里？'),
+    dict(id='C07', pose='claude_explain', sub='取方向向量 w = (3, 1)ᵀ，v = (1, 4)ᵀ。vᵀw = 7，wᵀw = 10，Q = (7/10)(3, 1)ᵀ = (2.1, 0.7)。', read='取方向向量w，是三、一；v是一、四。v和w的点积是七，w和自己的点积是十。所以Q等于十分之七倍的w，也就是二点一、零点七。'),
+    dict(id='C08', pose='claude_point', sub='画面里：垂足就是最近点。v − p 与直线垂直，这就是“最近”的几何含义。第三节的最小二乘，靠的就是它。', read='看画面：垂足，就是最近点。v减p和直线垂直，这就是最近的几何含义。第三节的最小二乘，靠的就是它。'),
+    dict(id='C09', pose='claude_explain', sub='点积还能写平面方程：过 P₀、法向量 N = (a, b, c)ᵀ 的平面，就是 (P − P₀)·N = 0，即 a(x − x₀) + b(y − y₀) + c(z − z₀) = 0。', read='点积还能写平面方程：过点P零、法向量是a、b、c的平面，就是P减P零与N的点积为零。展开就是a乘x减x零，加b乘y减y零，加c乘z减z零，等于零。'),
+    dict(id='C10', pose='claude_point', sub='例 6：过 (2, −1, 3)、法向量 (2, 3, 4)ᵀ 的平面：2(x − 2) + 3(y + 1) + 4(z − 3) = 0。', read='例六：过点二、负一、三，法向量是二、三、四的平面：二乘x减二，加三乘y加一，加四乘z减三，等于零。'),
+    dict(id='C11', pose='claude_explain', sub='例 7：过 P₁(1, 1, 2)、P₂(2, 3, 3)、P₃(3, −3, 3)。两条边的叉积 N = (6, 1, −8)ᵀ，平面 6(x − 1) + (y − 1) − 8(z − 2) = 0。', read='例七：过三个点，一一二、二三三、三负三三。两条边的叉积，是法向量六、一、负八。平面方程：六乘x减一，加y减一，减八乘z减二，等于零。'),
+    dict(id='C12', pose='claude_point', sub='例 8：点 (2, 0, 0) 到平面 x + 2y + 2z = 0 的距离，就是 v 在法向量 N 上的标量投影的绝对值：|vᵀN|/‖N‖ = 2/3。', read='例八：点二、零、零，到平面x加二y加二z等于零的距离，就是v在法向量上的标量投影，取绝对值：二除以三，等于三分之二。'),
+    dict(id='D02', mood='easy', pose='ds_happy', sub='点到平面的距离公式，原来就是“影子长度”！', read='点到平面的距离公式，原来就是影子长度！'),
+    dict(id='C13', pose='claude_smile', sub='没错。下面做测验 B 第 1 题，把投影的三件事一次验完。', read='没错。下面做测验B第一题，把投影的三件事，一次验完。'),
+    dict(id='C14', pose='claude_point', sub='x = (1, 1, 2, 2)ᵀ，y = (−2, 1, 2, 0)ᵀ。xᵀy = 3，yᵀy = 9，p = (1/3)y = (−2/3, 1/3, 2/3, 0)ᵀ。', read='x是一、一、二、二，y是负二、一、二、零。x转置y等于三，y转置y等于九，所以p是三分之一倍的y：负三分之二、三分之一、三分之二、零。'),
+    dict(id='C15', pose='claude_explain', sub='x − p = (5/3, 2/3, 4/3, 2)ᵀ。与 p 点积：−10/9 + 2/9 + 8/9 + 0 = 0，正交。', read='x减p，是三分之五、三分之二、三分之四、二。它和p的点积：负九分之十，加九分之二，加九分之八，加零，等于零，正交。'),
+    dict(id='C16', pose='claude_point', sub='勾股定律：‖p‖² = 1，‖x − p‖² = 9，加起来是 10，正好等于 ‖x‖²。', read='再验勾股定律：p的长度平方是一，x减p的长度平方是九，加起来是十，正好等于x的长度平方。'),
+    dict(id='D03', mood='easy', pose='ds_proud', sub='四维空间画不出来，勾股定理照样成立！', read='四维空间画不出来，勾股定理照样成立！'),
+    dict(id='G01', pose='gpt_explain', sub='同济对照：同济正文没有单独讲投影公式。但施密特正交化里的那一项 [b, a]/[a, a]·a，就是这里的向量投影。第六节会对上。', read='同济对照：同济正文，没有单独讲投影公式。但施密特正交化里的那一项，方括号b a，除以方括号a a，再乘a，就是这里的向量投影。第六节会对上。'),
+    dict(id='C17', pose='claude_explain', sub='小结：p = (xᵀy/yᵀy)y，并且 x − p ⊥ y。垂足就是最近点。点到平面的距离，是法向量方向上的影子。', read='小结：p等于x转置y除以y转置y，再乘y，并且x减p垂直于y。垂足就是最近点。点到平面的距离，是法向量方向上的影子。'),
+    dict(id='C18', pose='claude_point', sub='下一节：从“向量垂直”升级到“子空间垂直”，看看矩阵的四个基本子空间。', read='下一节：从向量垂直，升级到子空间垂直，看看矩阵的四个基本子空间。'),
+]
+
+
+if __name__ == '__main__':
+    here = Path(__file__).resolve().parent
+    for l in LINES:
+        l.setdefault('read', l['sub'])
+        l.setdefault('mood', None)
+    ids = [l['id'] for l in LINES]; assert len(ids) == len(set(ids)), '台词 id 重复'
+    (here / 'script.json').write_text(json.dumps({l['id']: [l['read'], l['mood']] for l in LINES}, ensure_ascii=False, indent=1), encoding='utf-8')
+    (here / 'lines.json').write_text(json.dumps(LINES, ensure_ascii=False, indent=1), encoding='utf-8')
+    print(len(LINES), 'lines,', sum(len(l['read']) for l in LINES), 'chars')

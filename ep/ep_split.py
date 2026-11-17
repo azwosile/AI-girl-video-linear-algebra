@@ -15,7 +15,7 @@ SFX = P + '/assets/sfx/'
 os.makedirs(EP + '/pack', exist_ok=True)
 os.makedirs(P + '/out', exist_ok=True)
 CFG = json.load(open(EP + '/ep_split.json', encoding='utf-8'))
-NCARD = {1: 11, 2: 9, 3: 10}
+NCARD = {1: 11, 2: 9, 3: 10, 4: 8, 5: 10}
 
 
 def log(*a):
@@ -42,7 +42,7 @@ def dur(f):
     return float(run(['ffprobe', '-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', f], timeout=30, tries=3).strip())
 
 
-def wait_render():
+def wait_render(eps=(1, 2, 3)):
     while True:
         tl = subprocess.run(['tasklist'], capture_output=True, text=True, errors='replace', stdin=subprocess.DEVNULL).stdout.lower()
         names = [n for n in os.listdir(PKG) if n.endswith('.mp4')]
@@ -50,8 +50,8 @@ def wait_render():
             break
         log('aerender running, mp4 =', len(names)); time.sleep(60)
     names = [n for n in os.listdir(PKG) if n.endswith('.mp4')]
-    need = ['EP%02d_Intro.mp4' % e for e in (1, 2, 3)] + ['EP%02d_End.mp4' % e for e in (1, 2, 3)] + \
-           ['EP%02d_Card%02d.mp4' % (e, k) for e in (1, 2, 3) for k in range(1, NCARD[e] + 1)]
+    need = ['EP%02d_Intro.mp4' % e for e in eps] + ['EP%02d_End.mp4' % e for e in eps] + \
+           ['EP%02d_Card%02d.mp4' % (e, k) for e in eps for k in range(1, NCARD[e] + 1)]
     miss = [n for n in need if n not in names]
     if miss:
         log('MISSING', miss); sys.exit(2)
@@ -169,7 +169,7 @@ def build(e):
 
 if __name__ == '__main__':
     eps = [int(a) for a in sys.argv[1:]] or [1, 2, 3]
-    wait_render()
+    wait_render(eps)
     tot = {}
     for e in eps:
         tot[e] = build(e)

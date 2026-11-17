@@ -261,6 +261,59 @@ for k, si in enumerate(M.get('similar', [])):
         chk(sp.simplify(S.inv() * A * S - Bm) == sp.zeros(*A.shape), f'similar[{k}] {si.get("desc","")}: S⁻¹AS = {sp.simplify(S.inv()*A*S).tolist()}')
     chk(sp.simplify(A.trace() - Bm.trace()) == 0 and sp.simplify(A.det() - Bm.det()) == 0, f'similar[{k}] 迹 / 行列式不同')
 
+# —— 第五章 ——
+#   dots[]  {x, y, dot}               — xᵀy
+#   norms[] {x, p: 1|2|"inf", val}    — 向量范数（val 可写 "5*sqrt(2)"）
+#   projs[] {x, y, p}                 — p = (xᵀy/yᵀy) y，并自动验 (x − p) ⊥ y
+#   lsq[]   {A, b, AtA?, Atb?, xhat}  — 正规方程；自动验 Aᵀ(b − Ax̂) = 0；rank = n 时 x̂ 唯一
+#   orth[]  {vecs, unit?}             — 两两正交（unit=True 时还要求单位长度）
+#   qr[]    {A, Q, R}                 — QR = A、QᵀQ = I、R 上三角且对角为正
+#   perp[]  {S, comp}                 — comp 的每个向量与 S 的每个向量正交，且 dim S + dim comp = n
+#   pmat[]  {A, P}                    — P = A(AᵀA)⁻¹Aᵀ（A 的列张成的子空间上的投影矩阵）
+#   orthmat[] {Q, orth}               — 方阵是否正交矩阵
+#   integrals[] {f, a, b, val}        — 定积分（函数内积 / 范数）
+for k, d in enumerate(M.get('dots', [])):
+    x, y = Mx(d['x']), Mx(d['y']); chk(sp.simplify(x.dot(y) - Q(d['dot'])) == 0, f'dots[{k}] {d.get("desc","")}: xᵀy = {x.dot(y)}')
+for k, d in enumerate(M.get('norms', [])):
+    x = Mx(d['x']); pp = d['p']
+    v = sum(abs(t) for t in x) if pp == 1 else (max(abs(t) for t in x) if pp == 'inf' else sp.sqrt(x.dot(x)))
+    chk(sp.simplify(v - sp.sympify(str(d['val']))) == 0, f'norms[{k}] {d.get("desc","")}: ‖x‖_{pp} = {v}')
+for k, d in enumerate(M.get('projs', [])):
+    x, y = Mx(d['x']), Mx(d['y']); p_ = (x.dot(y) / y.dot(y)) * y
+    chk(sp.simplify(p_ - Mx(d['p'])) == sp.zeros(*p_.shape), f'projs[{k}] {d.get("desc","")}: p = {list(p_)}')
+    chk(sp.simplify((x - p_).dot(y)) == 0, f'projs[{k}]: x − p 不垂直于 y')
+for k, d in enumerate(M.get('lsq', [])):
+    A, b = Mx(d['A']), Mx(d['b']); x = Mx(d['xhat']); dd = d.get('desc', '')
+    if 'AtA' in d: chk(A.T * A == Mx(d['AtA']), f'lsq[{k}] {dd}: AᵀA = {(A.T*A).tolist()}')
+    if 'Atb' in d: chk(A.T * b == Mx(d['Atb']), f'lsq[{k}] {dd}: Aᵀb = {list(A.T*b)}')
+    chk(sp.simplify(A.T * (b - A * x)) == sp.zeros(A.cols, 1), f'lsq[{k}] {dd}: Aᵀ(b − Ax̂) = {list(sp.simplify(A.T*(b-A*x)))}')
+    if 'res' in d: chk(sp.simplify(b - A * x - Mx(d['res'])) == sp.zeros(A.rows, 1), f'lsq[{k}] {dd}: 残差 = {list(b-A*x)}')
+    if 'ss' in d: chk(sp.simplify((b - A * x).dot(b - A * x) - Q(d['ss'])) == 0, f'lsq[{k}] {dd}: 残差平方和 = {(b-A*x).dot(b-A*x)}')
+for k, d in enumerate(M.get('orth', [])):
+    V = [Mx(v) for v in d['vecs']]
+    chk(all(sp.simplify(V[i].dot(V[j])) == 0 for i in range(len(V)) for j in range(i + 1, len(V))), f'orth[{k}] {d.get("desc","")}: 不两两正交')
+    if d.get('unit'): chk(all(sp.simplify(v.dot(v) - 1) == 0 for v in V), f'orth[{k}]: 不是单位向量')
+for k, d in enumerate(M.get('qr', [])):
+    A, Qm, Rm = Mx(d['A']), Mx(d['Q']), Mx(d['R']); dd = d.get('desc', '')
+    chk(sp.simplify(Qm * Rm - A) == sp.zeros(*A.shape), f'qr[{k}] {dd}: QR = {sp.simplify(Qm*Rm).tolist()}')
+    chk(sp.simplify(Qm.T * Qm - sp.eye(Qm.cols)) == sp.zeros(Qm.cols, Qm.cols), f'qr[{k}] {dd}: QᵀQ ≠ I')
+    chk(all(Rm[i, j] == 0 for i in range(Rm.rows) for j in range(i)) and all(Rm[i, i] > 0 for i in range(Rm.rows)), f'qr[{k}] {dd}: R 不是对角为正的上三角')
+for k, d in enumerate(M.get('perp', [])):
+    S = [Mx(v) for v in d['S']]; Cc = [Mx(v) for v in d['comp']]; n = S[0].rows
+    chk(all(s_.dot(c_) == 0 for s_ in S for c_ in Cc), f'perp[{k}] {d.get("desc","")}: 有向量不正交')
+    chk(sp.Matrix.hstack(*S).rank() + sp.Matrix.hstack(*Cc).rank() == n, f'perp[{k}]: 维数不互补')
+for k, d in enumerate(M.get('pmat', [])):
+    A = Mx(d['A']); Pm = A * (A.T * A).inv() * A.T
+    chk(sp.simplify(Pm - Mx(d['P'])) == sp.zeros(*Pm.shape), f'pmat[{k}] {d.get("desc","")}: P = {Pm.tolist()}')
+for k, d in enumerate(M.get('orthmat', [])):
+    Qm = Mx(d['Q']); isO = sp.simplify(Qm.T * Qm - sp.eye(Qm.rows)) == sp.zeros(Qm.rows, Qm.rows)
+    chk(isO == d.get('orth', True), f'orthmat[{k}] {d.get("desc","")}: 正交 = {isO}')
+
+xs = sp.Symbol('x')
+for k, d in enumerate(M.get('integrals', [])):
+    v = sp.integrate(sp.sympify(d['f'], locals={'x': xs}), (xs, sp.sympify(str(d['a'])), sp.sympify(str(d['b']))))
+    chk(sp.simplify(v - sp.sympify(str(d['val']))) == 0, f'integrals[{k}] {d.get("desc","")}: = {sp.simplify(v)}')
+
 for m in bad: print('✗', m)
 print(f'{ok} 项通过')
 print('MATHCHECK PASS' if not bad else f'MATHCHECK FAIL {len(bad)}')

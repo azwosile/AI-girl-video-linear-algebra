@@ -1,0 +1,45 @@
+# -*- coding: utf-8 -*-
+"""第 5 章 5.3（上）最小二乘：把 b 投影到列空间（Leon 9th §5.3：应用 1 谷神星与高斯；残差；定理 5.3.1 勾股证明；
+R(A)⊥ = N(Aᵀ) ⇒ 正规方程；定理 5.3.2；投影矩阵；例 1 x̂ = (83/50, 71/50)ᵀ，残差 (−2/25, 3/50, 1/10)ᵀ）台词源（唯一真源）。
+3B1B 画面：构成主义星空 + 轨道弧；3D 列空间平面、b、垂线、r ⊥ 两列。
+运行：python lines.py → script.json / lines.json
+"""
+import json
+from pathlib import Path
+
+LINES = [
+    dict(id='C01', pose='claude_smile', sub='1801 年元旦，天文学家发现了一颗小行星：谷神星。跟踪了四十天，它就躲进了太阳的光芒里。', read='一八零一年的元旦，天文学家发现了一颗小行星，谷神星。跟踪了四十天，它就躲进了太阳的光芒里。'),
+    dict(id='C02', pose='claude_explain', sub='年轻的高斯用不多的观测数据算出了轨道。年底，天文学家按他的预测，重新找到了谷神星。他用的方法，就是最小二乘。', read='年轻的高斯，用不多的观测数据，算出了它的轨道。到了年底，天文学家按他的预测，重新找到了谷神星。他用的方法，就是最小二乘。'),
+    dict(id='C03', pose='claude_point', sub='问题是这样的：方程比未知数多，A 是 m×n、m > n，Ax = b 通常没有解。', read='问题是这样的：方程比未知数多，A是m行n列，m大于n，A x等于b，通常没有解。'),
+    dict(id='D01', mood='think', pose='ds_think', sub='没有解，那还算什么？', read='都没有解了，那还算什么？'),
+    dict(id='C04', pose='claude_explain', sub='退一步：找 x̂，让残差 r = b − Ax 的长度最小。‖r‖² 是各分量的平方和，所以叫“最小二乘”。', read='退一步：找一个x帽，让残差r，也就是b减A x，长度最小。r的长度平方，是各分量的平方和，所以叫最小二乘。'),
+    dict(id='C05', pose='claude_point', sub='换成几何语言：Ax 跑遍 A 的列空间 R(A)。我们要在这张平面里，找离 b 最近的点 p。', read='换成几何语言：A x跑遍A的列空间。我们要在这张平面里，找离b最近的点p。'),
+    dict(id='C06', pose='claude_explain', sub='定理 5.3.1：子空间 S 里离 b 最近的点 p 唯一存在；而且 p 最近，等价于 b − p ⊥ S。', read='定理五点三点一：子空间S里，离b最近的点p，唯一存在；而且，p最近，等价于b减p垂直于S。'),
+    dict(id='C07', pose='claude_point', sub='证明就是勾股定理：S 里任取 y，‖b − y‖² = ‖b − p‖² + ‖p − y‖²。仅在 y = p 时最小。', read='证明就是勾股定理：在S里任取一个y，b减y的长度平方，等于b减p的长度平方，加p减y的长度平方。仅在y等于p的时候最小。'),
+    dict(id='C08', pose='claude_explain', sub='所以 x̂ 是最小二乘解，等价于残差 r 落在 R(A)⊥ 里。上一节刚学过：R(A)⊥ = N(Aᵀ)。', read='所以，x帽是最小二乘解，等价于残差r，落在列空间的正交补里。上一节刚学过：列空间的正交补，就是A转置的零空间。'),
+    dict(id='C09', pose='claude_point', sub='于是 Aᵀ(b − Ax̂) = 0。整理一下，就是正规方程：AᵀAx = Aᵀb。', read='于是，A转置乘b减A x帽，等于零。整理一下，就是正规方程：A转置A x，等于A转置b。'),
+    dict(id='D02', mood='easy', pose='ds_proud', sub='两边同时左乘 Aᵀ，没解的方程就有解了！', read='两边同时左乘A转置，没解的方程，就有解了！'),
+    dict(id='C10', pose='claude_smile', sub='这样记也行，但别忘了背后的几何：残差垂直于列空间。', read='这样记也可以，但别忘了它背后的几何：残差垂直于列空间。'),
+    dict(id='C11', pose='claude_explain', sub='定理 5.3.2：A 的秩为 n，也就是列无关，则 AᵀA 可逆，最小二乘解唯一：x̂ = (AᵀA)⁻¹Aᵀb。', read='定理五点三点二：如果A的秩是n，也就是各列线性无关，那么A转置A可逆，最小二乘解唯一：x帽等于A转置A的逆，乘A转置b。'),
+    dict(id='C12', pose='claude_point', sub='投影 p = Ax̂ = A(AᵀA)⁻¹Aᵀb。中间的 P = A(AᵀA)⁻¹Aᵀ，叫投影矩阵。', read='投影p等于A乘x帽。把中间那一串，记作大写的P，它叫投影矩阵。'),
+    dict(id='C13', pose='claude_explain', sub='例 1：x₁ + x₂ = 3，−2x₁ + 3x₂ = 1，2x₁ − x₂ = 2。三个方程，两个未知数。', read='例一：x一加x二等于三；负二x一加三x二等于一；二x一减x二等于二。三个方程，两个未知数。'),
+    dict(id='C14', pose='claude_point', sub='AᵀA = [[9, −7], [−7, 11]]，Aᵀb = (5, 4)ᵀ。解这个二阶方程组，x̂ = (83/50, 71/50)ᵀ。', read='算出A转置A，是九、负七，负七、十一；A转置b是五、四。解这个二阶方程组，x帽是五十分之八十三，五十分之七十一。'),
+    dict(id='C15', pose='claude_explain', sub='验一下：残差 r = (−2/25, 3/50, 1/10)ᵀ，Aᵀr = 0。残差确实垂直于 A 的两列。', read='验一下：残差r，是负二十五分之二、五十分之三、十分之一。A转置乘r等于零，残差确实垂直于A的两列。'),
+    dict(id='D03', mood='think', pose='ds_think', sub='残差这么小，快要是真的解了？', read='残差这么小，快要是真的解了？'),
+    dict(id='C16', pose='claude_smile', sub='说明这三条直线，就快交于一点了。画面里，b 离列空间平面很近，那根垂线很短。', read='说明这三条直线，就快交于一点了。看画面，b离列空间平面很近，那根垂线很短。'),
+    dict(id='G01', pose='gpt_explain', sub='同济对照：同济正文不讲最小二乘，它一般出现在数值分析、概率统计里。Leon 把它放在正交性这一章，是最自然的位置。', read='同济对照：同济正文不讲最小二乘，它一般出现在数值分析，或者概率统计里。英文教材把它放在正交性这一章，是最自然的位置。'),
+    dict(id='G02', pose='gpt_point', sub='考试记住一句话：最小二乘解，就是正规方程 AᵀAx = Aᵀb 的解。', read='考试的时候记住一句话：最小二乘解，就是正规方程，A转置A x等于A转置b的解。'),
+    dict(id='C17', pose='claude_explain', sub='小结：无解时，把 b 投影到列空间。残差垂直于列空间，得到正规方程；列无关时，解唯一。', read='小结：方程无解，就把b投影到列空间。残差垂直于列空间，得到正规方程；各列无关，解就唯一。'),
+    dict(id='C18', pose='claude_point', sub='下一节：用最小二乘拟合数据。直线、抛物线，一招搞定。', read='下一节：用最小二乘拟合数据。直线、抛物线，一招搞定。'),
+]
+
+
+if __name__ == '__main__':
+    here = Path(__file__).resolve().parent
+    for l in LINES:
+        l.setdefault('read', l['sub'])
+        l.setdefault('mood', None)
+    ids = [l['id'] for l in LINES]; assert len(ids) == len(set(ids)), '台词 id 重复'
+    (here / 'script.json').write_text(json.dumps({l['id']: [l['read'], l['mood']] for l in LINES}, ensure_ascii=False, indent=1), encoding='utf-8')
+    (here / 'lines.json').write_text(json.dumps(LINES, ensure_ascii=False, indent=1), encoding='utf-8')
+    print(len(LINES), 'lines,', sum(len(l['read']) for l in LINES), 'chars')

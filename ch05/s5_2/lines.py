@@ -1,0 +1,49 @@
+# -*- coding: utf-8 -*-
+"""第 5 章 5.2 正交子空间与四个基本子空间（Leon 9th §5.2：定义、例 1、例 2、地板与墙反例；正交补；定理 5.2.1；
+例 4 A = [[1, 1, 2], [0, 1, 1], [1, 3, 4]]：N(A) = Span{(−1, −1, 1)ᵀ}，R(Aᵀ) 基 (1, 0, 1)ᵀ、(0, 1, 1)ᵀ，R(A) 基 (1, 0, 1)ᵀ、(0, 1, 2)ᵀ，N(Aᵀ) = Span{(−1, −2, 1)ᵀ}；
+定理 5.2.2–5.2.4；A 在行空间上一一对应；推论 5.2.5）台词源（唯一真源）。
+3B1B 画面：3D 行空间平面 + 零空间法线；四子空间大图。
+运行：python lines.py → script.json / lines.json
+"""
+import json
+from pathlib import Path
+
+LINES = [
+    dict(id='C01', pose='claude_smile', sub='上一节，两个向量互相垂直。这一节，让整个子空间互相垂直。', read='上一节，两个向量互相垂直。这一节，让整个子空间互相垂直。'),
+    dict(id='C02', pose='claude_explain', sub='定义：X、Y 是 ℝⁿ 的子空间。如果 X 里每个 x 都与 Y 里每个 y 正交，就说 X ⊥ Y。', read='定义：X和Y是R n的子空间。如果X里的每个向量，都与Y里的每个向量正交，就说X垂直于Y。'),
+    dict(id='C03', pose='claude_point', sub='例 1：Span(e₁) ⊥ Span(e₂)。例 2：xy 平面与 z 轴正交。', read='例一：e一张成的直线，垂直于e二张成的直线。例二：x y平面，和z轴正交。'),
+    dict(id='D01', mood='think', pose='ds_think', sub='那教室的地板和墙壁，也是正交子空间吧？', read='那教室的地板和墙壁，也是正交子空间吧？'),
+    dict(id='C04', pose='claude_explain', sub='不是！xy 平面里取 (1, 1, 0)ᵀ，yz 平面里取 (0, 1, 1)ᵀ，点积是 1。而且两个平面交出一整条 y 轴。', read='不是！x y平面里取一、一、零，y z平面里取零、一、一，点积是一，不是零。而且两个平面，交出了一整条y轴。'),
+    dict(id='C05', pose='claude_point', sub='记住：正交子空间的交集只有零向量。x 同时在两边，就要和自己正交：xᵀx = 0，x 只能是 0。', read='记住：正交子空间的交集，仅有零向量。如果x同时在两边，它就要和自己正交，x转置x等于零，那x就是零向量。'),
+    dict(id='C06', pose='claude_explain', sub='正交补：与 Y 中所有向量都正交的全部向量，记作 Y⊥。它总是子空间。z 轴的正交补，就是整个 xy 平面。', read='正交补：和Y中所有向量都正交的全部向量，记作Y的正交补。它总是一个子空间。z轴的正交补，就是整个x y平面。'),
+    dict(id='C07', pose='claude_point', sub='注意区别：Span(e₁) ⊥ Span(e₂)，但 Span(e₁) 的正交补是 Span(e₂, e₃)，比 Span(e₂) 大。', read='注意区别：e一的直线垂直于e二的直线，但是e一直线的正交补，是e二和e三张成的平面，比e二的直线大。'),
+    dict(id='C08', pose='claude_explain', sub='回到矩阵。Ax = 0 的每一行都在说：A 的第 i 行与 x 正交。', read='现在回到矩阵。看齐次方程组，A乘x等于零。每一行都在说：A的第i行，与x正交。'),
+    dict(id='C09', pose='claude_point', sub='所以零空间 N(A) 与 A 的行空间正交。Leon 把行空间写成 R(Aᵀ)，也就是 Aᵀ 的列空间。', read='所以，A的零空间，和A的行空间正交。教材把行空间写成R A转置，也就是A转置的列空间。'),
+    dict(id='C10', pose='claude_explain', sub='定理 5.2.1，基本子空间定理：N(A) = R(Aᵀ)⊥，N(Aᵀ) = R(A)⊥。', read='定理五点二点一，基本子空间定理：A的零空间，是行空间的正交补；A转置的零空间，是列空间的正交补。'),
+    dict(id='C11', pose='claude_point', sub='例 4：A = [[1, 1, 2], [0, 1, 1], [1, 3, 4]]。化成简化行阶梯形，非零行是 (1, 0, 1) 和 (0, 1, 1)。', read='例四：A是这个三阶矩阵。化成简化行阶梯形，非零行是一、零、一，和零、一、一。'),
+    dict(id='C12', pose='claude_explain', sub='行空间 R(Aᵀ) 是一张平面；零空间 N(A) 由 (−1, −1, 1)ᵀ 张成，是一条直线。画面里，这条直线正好是平面的法线。', read='行空间是一张平面；零空间由负一、负一、一张成，是一条直线。看画面，这条直线，正好是那张平面的法线。'),
+    dict(id='C13', pose='claude_point', sub='再对 Aᵀ 化简：列空间 R(A) 的基是 (1, 0, 1)ᵀ、(0, 1, 2)ᵀ；N(Aᵀ) 由 (−1, −2, 1)ᵀ 张成。又是一面一线，互相垂直。', read='再对A转置化简：列空间的基，是一、零、一，和零、一、二；A转置的零空间，由负一、负二、一张成。又是一面一线，互相垂直。'),
+    dict(id='D02', mood='easy', pose='ds_happy', sub='四个子空间两两配对，每一对都垂直！', read='四个子空间，两两配对，每一对都垂直！'),
+    dict(id='C14', pose='claude_explain', sub='定理 5.2.2：dim S + dim S⊥ = n。S 的基和 S⊥ 的基拼在一起，就是 ℝⁿ 的一组基。', read='定理五点二点二：S的维数，加上S正交补的维数，等于n。两边的基拼在一起，就是R n的一组基。'),
+    dict(id='C15', pose='claude_point', sub='定理 5.2.3：ℝⁿ = S ⊕ S⊥，直和。每个向量都能唯一地拆成 S 里的一块，加 S⊥ 里的一块。', read='定理五点二点三：R n是S和它正交补的直和。每个向量，都能唯一地拆成S里的一块，加上正交补里的一块。'),
+    dict(id='C16', pose='claude_explain', sub='定理 5.2.4：(S⊥)⊥ = S。所以 N(A) 与 R(Aᵀ) 互为正交补，N(Aᵀ) 与 R(A) 也互为正交补。', read='定理五点二点四：正交补的正交补，就是S自己。所以零空间和行空间，互为正交补；A转置的零空间和列空间，也互为正交补。'),
+    dict(id='C17', pose='claude_point', sub='整理成一张大图：左边 ℝⁿ 劈成行空间和零空间，维数 r 与 n − r；右边 ℝᵐ 劈成列空间和 N(Aᵀ)，维数 r 与 m − r。', read='整理成一张大图：左边的R n，劈成行空间和零空间，维数是r和n减r；右边的R m，劈成列空间，和A转置的零空间，维数是r和m减r。'),
+    dict(id='C18', pose='claude_explain', sub='A 把零空间压成 0，把行空间一一对应地送到列空间上。限制在行空间上，A 是可逆的。', read='A把零空间压成零，把行空间一一对应地，送到列空间上。限制在行空间上，A是可逆的。'),
+    dict(id='C19', pose='claude_point', sub='推论 5.2.5：Ax = b 要么有解，要么存在 y 使 Aᵀy = 0 且 yᵀb ≠ 0。b 不在列空间，就一定有一部分伸进 N(Aᵀ)。', read='推论五点二点五：A x等于b，要么有解；要么存在y，使A转置y等于零，而y和b的点积不为零。b不在列空间，就一定有一部分，伸进了A转置的零空间。'),
+    dict(id='D03', mood='think', pose='ds_think', sub='b 不在列空间的时候，就只能放弃了吗？', read='b不在列空间的时候，就要放弃了吗？'),
+    dict(id='C20', pose='claude_smile', sub='不放弃。在列空间里找离 b 最近的点，这就是第三节的最小二乘。', read='不放弃。在列空间里，找离b最近的那个点，这就是第三节的最小二乘。'),
+    dict(id='G01', pose='gpt_explain', sub='同济对照：同济正文没有“四个基本子空间”。最接近的是第四章的解空间，和等式：秩 + 解空间维数 = n。', read='同济对照：同济正文，没有四个基本子空间这一套。最接近的，是第四章的解空间，和那个等式：秩加上解空间的维数，等于n。'),
+    dict(id='G02', pose='gpt_point', sub='但期末常见的“求与已知向量都正交的向量”，本质就是求零空间：把已知向量排成行，解 Ax = 0。复习下半节会做。', read='但是期末常见的，求与已知向量都正交的向量，本质就是求零空间：把已知向量排成行，解A x等于零。复习的下半节会做。'),
+    dict(id='C21', pose='claude_explain', sub='小结：N(A) ⊥ R(Aᵀ)，N(Aᵀ) ⊥ R(A)，各自互为正交补，维数加起来分别是 n 和 m。下一节：最小二乘。', read='小结：零空间垂直于行空间，A转置的零空间垂直于列空间，各自互为正交补，维数加起来，分别是n和m。下一节：最小二乘。'),
+]
+
+
+if __name__ == '__main__':
+    here = Path(__file__).resolve().parent
+    for l in LINES:
+        l.setdefault('read', l['sub'])
+        l.setdefault('mood', None)
+    ids = [l['id'] for l in LINES]; assert len(ids) == len(set(ids)), '台词 id 重复'
+    (here / 'script.json').write_text(json.dumps({l['id']: [l['read'], l['mood']] for l in LINES}, ensure_ascii=False, indent=1), encoding='utf-8')
+    (here / 'lines.json').write_text(json.dumps(LINES, ensure_ascii=False, indent=1), encoding='utf-8')
+    print(len(LINES), 'lines,', sum(len(l['read']) for l in LINES), 'chars')

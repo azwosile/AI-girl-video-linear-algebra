@@ -1,0 +1,20 @@
+{
+ "dec": "\\mathbf x={\\color{#E06A3A}\\mathbf p}+{\\color{#E8577A}\\mathbf z},\\quad {\\color{#E06A3A}\\mathbf p}\\parallel\\mathbf y,\\;{\\color{#E8577A}\\mathbf z}\\perp\\mathbf y",
+ "u": "\\mathbf u=\\dfrac{\\mathbf y}{\\|\\mathbf y\\|},\\quad \\mathbf p=\\alpha\\mathbf u",
+ "alpha": "\\alpha=\\|\\mathbf x\\|\\cos\\theta=\\dfrac{\\mathbf x^T\\mathbf y}{\\|\\mathbf y\\|}",
+ "pf": "{\\color{#E06A3A}\\mathbf p}=\\dfrac{\\mathbf x^T\\mathbf y}{\\mathbf y^T\\mathbf y}\\,\\mathbf y",
+ "two": "\\dfrac{\\mathbf x^T\\mathbf y}{\\|\\mathbf y\\|}\\cdot\\dfrac{\\mathbf y}{\\|\\mathbf y\\|}",
+ "e5": "\\mathbf v=\\begin{bmatrix}1\\\\4\\end{bmatrix},\\;\\mathbf w=\\begin{bmatrix}3\\\\1\\end{bmatrix}",
+ "e5c": "\\dfrac{\\mathbf v^T\\mathbf w}{\\mathbf w^T\\mathbf w}=\\dfrac{7}{10},\\quad Q={\\color{#E06A3A}(2.1,\\;0.7)}",
+ "pl": "(P-P_0)\\cdot\\mathbf N=0",
+ "ple": "a(x-x_0)+b(y-y_0)+c(z-z_0)=0",
+ "e6": "2(x-2)+3(y+1)+4(z-3)=0",
+ "e7": "\\mathbf N=\\overrightarrow{P_1P_2}\\times\\overrightarrow{P_1P_3}={\\color{#E06A3A}(6,\\,1,\\,-8)^T}",
+ "e7p": "6(x-1)+(y-1)-8(z-2)=0",
+ "e8": "d=\\dfrac{|\\mathbf v^T\\mathbf N|}{\\|\\mathbf N\\|}=\\dfrac{2}{3}",
+ "tb1": "\\mathbf x=(1,1,2,2)^T,\\;\\mathbf y=(-2,1,2,0)^T",
+ "tb1p": "\\mathbf x^T\\mathbf y=3,\\;\\mathbf y^T\\mathbf y=9,\\;{\\color{#E06A3A}\\mathbf p}=\\tfrac13\\mathbf y",
+ "tb1z": "(\\mathbf x-\\mathbf p)^T\\mathbf p=-\\tfrac{10}{9}+\\tfrac29+\\tfrac89+0={\\color{#E06A3A}0}",
+ "tb1py": "\\|\\mathbf p\\|^2+\\|\\mathbf x-\\mathbf p\\|^2=1+9=10=\\|\\mathbf x\\|^2",
+ "tj": "\\dfrac{[\\mathbf b,\\mathbf a]}{[\\mathbf a,\\mathbf a]}\\,\\mathbf a"
+}

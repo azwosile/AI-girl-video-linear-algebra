@@ -1,0 +1,55 @@
+# -*- coding: utf-8 -*-
+"""第 5 章 复习（下）计算题 + 同济题型 + 小结 + 第六章预告（Leon 9th Chapter 5 Test B 4、6、10；
+同济：求与 (1, 1, 1)ᵀ 两两正交的 a₂、a₃ → (1, 0, −1)ᵀ、(−1/2, 1, −1/2)ᵀ；正交矩阵判定 (1/9)[[1, −8, −4], [−8, 1, −4], [−4, −4, 7]]）台词源（唯一真源）。
+TB4：dim N(Aᵀ) = 3、补 = R(A)、‖x‖ = 0、dim N(AᵀA) = 1 → 无穷多解；TB6：S⊥ = Span{(−2, 2, 1)ᵀ}、P = nnᵀ/9；
+TB10：r₁₃ = −1、r₂₃ = 3、a₃ − p₂ = (−3, −3, 3, 3)ᵀ、r₃₃ = 6、q₃ = (1/2)(−1, −1, 1, 1)ᵀ、Qᵀb = (1, 6, 6)ᵀ、x̂ = (7/4, 3/4, 1)ᵀ。
+运行：python lines.py → script.json / lines.json
+"""
+import json
+from pathlib import Path
+
+LINES = [
+    dict(id='C01', pose='claude_smile', sub='复习下半节：三道测验 B 计算题，两类同济题型，然后整章收尾。', read='复习的下半节：三道测验B计算题，两类同济题型，然后整章收尾。'),
+    # TB4
+    dict(id='C02', pose='claude_point', sub='测验 B 第 4 题：A 是 7×5 矩阵，秩为 4。四个基本子空间：R(A)、N(Aᵀ)、R(Aᵀ)、N(A)。', read='测验B第四题：A是七行五列的矩阵，秩为四。四个基本子空间：列空间、A转置的零空间、行空间、零空间。'),
+    dict(id='C03', pose='claude_explain', sub='(a) N(Aᵀ) 在 ℝ⁷ 里，维数 = 7 − 4 = 3，它的正交补是列空间 R(A)。', read='第一问：A转置的零空间在R七里，维数等于七减四，是三。它的正交补，是列空间。'),
+    dict(id='C04', pose='claude_point', sub='(b) x 在 R(A) 里，又满足 Aᵀx = 0：x 同时属于一对正交补，所以 ‖x‖ = 0。', read='第二问：x在列空间里，又满足A转置x等于零，x同时属于一对正交补，所以x的长度是零。'),
+    dict(id='C05', pose='claude_explain', sub='(c) N(AᵀA) = N(A)，维数 5 − 4 = 1。所以最小二乘问题有无穷多个解，两两相减，都落在零空间里。', read='第三问：A转置A的零空间，就是A的零空间，维数五减四，是一。所以最小二乘问题，有无穷多个解，它们两两相减，都落在零空间里。'),
+    dict(id='D01', mood='think', pose='ds_think', sub='解有无穷多个，但投影还是一个，对吧？', read='解有无穷多个，但投影还是一个，对吧？'),
+    dict(id='C06', pose='claude_smile', sub='对，判断题第 6 题刚讲过。', read='对，判断题第六题刚讲过。'),
+    # TB6
+    dict(id='C07', pose='claude_point', sub='测验 B 第 6 题：S 由 x₁ = (1, 0, 2)ᵀ、x₂ = (0, 1, −2)ᵀ 张成。求 S⊥ 的基、几何描述，以及投影到 S⊥ 的投影矩阵。', read='测验B第六题：S由x一，一、零、二，和x二，零、一、负二张成。求S正交补的基，几何描述，以及投影到正交补的投影矩阵。'),
+    dict(id='C08', pose='claude_explain', sub='S⊥ 就是零空间：把 x₁、x₂ 排成行，解 Xz = 0，得 z = (−2, 2, 1)ᵀ。也可以直接用叉积 x₁ × x₂。', read='S的正交补，就是一个零空间：把x一、x二排成行，解齐次方程组，得到负二、二、一。也可以直接用叉积。'),
+    dict(id='C09', pose='claude_point', sub='几何上：S 是过原点的平面，S⊥ 是它的法线。', read='几何上：S是过原点的一张平面，它的正交补，是这张平面的法线。'),
+    dict(id='C10', pose='claude_explain', sub='投影到这条法线：P = nnᵀ/(nᵀn) = (1/9)[[4, −4, −2], [−4, 4, 2], [−2, 2, 1]]。这就是 UUᵀ，其中 u = n/3。', read='投影到这条法线：P等于n n转置，除以n转置n，也就是九分之一乘这个三阶矩阵。这就是U U转置，其中u是n除以三。'),
+    # TB10
+    dict(id='C11', pose='claude_point', sub='测验 B 第 10 题：施密特已经算出 q₁、q₂，请补完 q₃ 和 R 的第三列，再解最小二乘。', read='测验B第十题：施密特过程已经算出了q一和q二，请补完q三，和R的第三列，再解最小二乘。'),
+    dict(id='C12', pose='claude_explain', sub='r₁₃ = q₁ᵀa₃ = −1，r₂₃ = q₂ᵀa₃ = 3。a₃ − p₂ = (−3, −3, 3, 3)ᵀ，长度 r₃₃ = 6，q₃ = (1/2)(−1, −1, 1, 1)ᵀ。', read='r一三等于负一，r二三等于三。a三减p二，是负三、负三、三、三，长度r三三等于六，q三是二分之一倍的负一、负一、一、一。'),
+    dict(id='C13', pose='claude_point', sub='R 的第三列是 (−1, 3, 6)ᵀ。Qᵀb = (1, 6, 6)ᵀ，回代 Rx = Qᵀb：x₃ = 1，x₂ = 3/4，x₁ = 7/4。', read='所以R的第三列，是负一、三、六。Q转置b等于一、六、六，回代：x三等于一，x二等于四分之三，x一等于四分之七。'),
+    dict(id='D02', mood='easy', pose='ds_proud', sub='QR 解最小二乘，就是“乘 Qᵀ，再回代”！', read='用Q R解最小二乘，就是乘Q转置，再回代！'),
+    # 同济
+    dict(id='G01', pose='gpt_explain', sub='同济题型一：已知 a₁ = (1, 1, 1)ᵀ，求非零向量 a₂、a₃，使 a₁、a₂、a₃ 两两正交。', read='同济题型一：已知a一是一、一、一，求非零向量a二、a三，使三个向量两两正交。'),
+    dict(id='G02', pose='gpt_point', sub='a₂、a₃ 都要满足 x₁ + x₂ + x₃ = 0。基础解系 ξ₁ = (1, 0, −1)ᵀ，ξ₂ = (0, 1, −1)ᵀ。可 ξ₁、ξ₂ 彼此并不正交！', read='a二、a三都要满足，x一加x二加x三等于零。基础解系是一、零、负一，和零、一、负一。可是这两个向量，彼此并不正交！'),
+    dict(id='G03', pose='gpt_explain', sub='再做一次施密特：a₂ = ξ₁，a₃ = ξ₂ − (1/2)ξ₁ = (−1/2, 1, −1/2)ᵀ。这就是“求零空间”加上“施密特”。', read='再做一次施密特：a二取第一个，a三等于第二个减去二分之一倍的第一个，是负二分之一、一、负二分之一。这就是求零空间，加上施密特。'),
+    dict(id='G04', pose='gpt_cross', sub='题型二：判断正交矩阵。算 AᵀA 是否为 E，或逐列检查长度为 1、两两内积为 0。例如 (1/9)[[1, −8, −4], [−8, 1, −4], [−4, −4, 7]] 就是。行列式不是 ±1 的，直接排除。', read='题型二：判断正交矩阵。算A的转置乘以A，看是不是单位矩阵，或者逐列检查：长度为一，两两内积为零。比如画面上这个九分之一的矩阵，就是正交矩阵。行列式不是正负一的，直接排除。'),
+    dict(id='D03', mood='think', pose='ds_think', sub='那第五章考试，最容易丢分的是哪里？', read='那第五章考试，最容易丢分的是哪里？'),
+    dict(id='C14', pose='claude_explain', sub='两处。一是施密特算错：每一步算完，顺手验一次正交。二是正规方程排错：先写清 A 的每一行对应哪个方程、哪个数据点。', read='两处。一是施密特算错：每一步算完，顺手验一次正交。二是正规方程排错：先写清楚，A的每一行，对应哪个方程，哪个数据点。'),
+    # 小结
+    dict(id='C15', pose='claude_smile', sub='整章收尾，一句话：垂直，就是最近。', read='整章收尾，一句话：垂直，就是最近。'),
+    dict(id='C16', pose='claude_explain', sub='点积给出长度和角度；投影的垂足是最近点；把 b 投影到列空间就是最小二乘；四个子空间两两正交，告诉我们残差在哪里。', read='点积，给出长度和角度；投影的垂足，是最近点；把b投影到列空间，就是最小二乘；四个子空间两两正交，告诉我们残差在哪里。'),
+    dict(id='C17', pose='claude_point', sub='有了标准正交基，投影就是做内积；施密特把任意基掰正，顺手得到 A = QR。', read='有了标准正交基，投影就是做内积；施密特把任意的基掰正，顺手得到A等于Q R。'),
+    dict(id='D04', mood='easy', pose='ds_happy', sub='第五章，我真的懂了！', read='第五章，我真的懂了！'),
+    dict(id='G05', pose='gpt_point', sub='下一章预告：第四章例 2，换一组基，矩阵就变成 diag(0, 1, 4)。那组神奇的基，怎么找？', read='下一章预告：第四章的例二，换一组基，矩阵就变成对角的，零、一、四。那组神奇的基，怎么找？'),
+    dict(id='C18', pose='claude_smile', sub='第六章：特征值与特征向量。Ax = λx——被 A 作用以后，仍然留在自己方向上的向量。我们下一章见。', read='第六章：特征值与特征向量。A x等于兰姆达x，被A作用以后，仍然留在自己方向上的向量。我们下一章见。'),
+]
+
+
+if __name__ == '__main__':
+    here = Path(__file__).resolve().parent
+    for l in LINES:
+        l.setdefault('read', l['sub'])
+        l.setdefault('mood', None)
+    ids = [l['id'] for l in LINES]; assert len(ids) == len(set(ids)), '台词 id 重复'
+    (here / 'script.json').write_text(json.dumps({l['id']: [l['read'], l['mood']] for l in LINES}, ensure_ascii=False, indent=1), encoding='utf-8')
+    (here / 'lines.json').write_text(json.dumps(LINES, ensure_ascii=False, indent=1), encoding='utf-8')
+    print(len(LINES), 'lines,', sum(len(l['read']) for l in LINES), 'chars')

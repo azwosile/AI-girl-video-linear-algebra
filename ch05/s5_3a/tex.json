@@ -1,0 +1,16 @@
+{
+ "over": "A_{m\\times n}\\mathbf x=\\mathbf b,\\quad m>n",
+ "res": "{\\color{#E8577A}\\mathbf r}(\\mathbf x)=\\mathbf b-A\\mathbf x,\\quad\\min\\|\\mathbf r\\|^2=\\min\\sum r_i^2",
+ "thm1": "\\|\\mathbf b-\\mathbf y\\|^2=\\|\\mathbf b-\\mathbf p\\|^2+\\|\\mathbf p-\\mathbf y\\|^2",
+ "perp": "{\\color{#E8577A}\\mathbf b-\\mathbf p}\\perp S",
+ "rn": "{\\color{#E8577A}\\mathbf r}\\in R(A)^\\perp=N(A^T)",
+ "ne0": "A^T(\\mathbf b-A\\hat{\\mathbf x})=\\mathbf 0",
+ "ne": "{\\color{#E06A3A}A^TA\\,\\hat{\\mathbf x}=A^T\\mathbf b}",
+ "uniq": "\\hat{\\mathbf x}=(A^TA)^{-1}A^T\\mathbf b",
+ "P": "\\mathbf p=A\\hat{\\mathbf x}=\\underbrace{A(A^TA)^{-1}A^T}_{P}\\,\\mathbf b",
+ "e1": "\\begin{aligned}x_1+x_2&=3\\\\-2x_1+3x_2&=1\\\\2x_1-x_2&=2\\end{aligned}",
+ "e1A": "A=\\begin{bmatrix}1&1\\\\-2&3\\\\2&-1\\end{bmatrix},\\;\\mathbf b=\\begin{bmatrix}3\\\\1\\\\2\\end{bmatrix}",
+ "e1n": "A^TA=\\begin{bmatrix}9&-7\\\\-7&11\\end{bmatrix},\\;A^T\\mathbf b=\\begin{bmatrix}5\\\\4\\end{bmatrix}",
+ "e1x": "\\hat{\\mathbf x}=\\left(\\tfrac{83}{50},\\;\\tfrac{71}{50}\\right)^T",
+ "e1r": "{\\color{#E8577A}\\mathbf r}=\\left(-\\tfrac{2}{25},\\;\\tfrac{3}{50},\\;\\tfrac{1}{10}\\right)^T,\\quad A^T\\mathbf r=\\mathbf 0"
+}

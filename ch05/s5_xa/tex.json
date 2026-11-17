@@ -1,0 +1,22 @@
+{
+ "q1": "\\mathrm{proj}_{\\mathbf y}\\mathbf x=\\mathrm{proj}_{\\mathbf x}\\mathbf y",
+ "q1b": "\\mathrm{proj}_{\\mathbf y}\\mathbf x=\\dfrac{\\mathbf x^T\\mathbf y}{\\mathbf y^T\\mathbf y}\\,{\\color{#4FC1A6}\\mathbf y}\\qquad \\mathrm{proj}_{\\mathbf x}\\mathbf y=\\dfrac{\\mathbf x^T\\mathbf y}{\\mathbf x^T\\mathbf x}\\,{\\color{#F2B544}\\mathbf x}",
+ "q2": "\\|\\mathbf x\\|=\\|\\mathbf y\\|=1,\\;|\\mathbf x^T\\mathbf y|=1\\;\\Rightarrow\\;\\mathbf x,\\mathbf y\\;\\mathrm{independent}",
+ "q2b": "|\\mathbf x^T\\mathbf y|=\\|\\mathbf x\\|\\,\\|\\mathbf y\\|\\;\\Rightarrow\\;\\mathbf y=\\pm\\mathbf x",
+ "q3": "U\\perp V,\\;V\\perp W\\;\\Rightarrow\\;U\\perp W",
+ "q4": "\\exists\\,\\mathbf y\\in R(A),\\;\\mathbf y\\ne\\mathbf 0,\\;A^T\\mathbf y=\\mathbf 0",
+ "q4b": "R(A)\\cap N(A^T)=\\{\\mathbf 0\\}",
+ "q5": "\\mathrm{rank}(AA^T)=\\mathrm{rank}(A^TA)",
+ "q5b": "A^TA\\mathbf x=\\mathbf 0\\Rightarrow \\mathbf x^TA^TA\\mathbf x=\\|A\\mathbf x\\|^2=0\\Rightarrow A\\mathbf x=\\mathbf 0",
+ "q5c": "N(A^TA)=N(A)\\;\\Rightarrow\\;\\mathrm{rank}(A^TA)=\\mathrm{rank}(A)=\\mathrm{rank}(AA^T)",
+ "q6": "A\\;\\mathrm{dependent\\ columns}\\;\\Rightarrow\\;\\mathbf p\\;\\mathrm{not\\ unique}",
+ "q6b": "A\\hat{\\mathbf x}_1=A\\hat{\\mathbf x}_2={\\color{#E06A3A}\\mathbf p}",
+ "q7": "N(A)=\\{\\mathbf 0\\}\\;\\Rightarrow\\;\\hat{\\mathbf x}\\;\\mathrm{unique}",
+ "q8": "Q_1,Q_2\\;\\mathrm{orthogonal}\\;\\Rightarrow\\;Q_1Q_2\\;\\mathrm{orthogonal}",
+ "q8b": "(Q_1Q_2)^T(Q_1Q_2)=Q_2^T{\\color{#E06A3A}Q_1^TQ_1}Q_2=Q_2^TQ_2=I",
+ "q9": "U=(\\mathbf u_1,\\dots,\\mathbf u_k)\\;\\Rightarrow\\;U^TU=I_k",
+ "q9b": "(U^TU)_{ij}=\\mathbf u_i^T\\mathbf u_j=\\delta_{ij}",
+ "q10": "U=(\\mathbf u_1,\\dots,\\mathbf u_k)\\;\\Rightarrow\\;UU^T=I_n",
+ "q10b": "UU^T\\begin{bmatrix}5\\\\3\\\\4\\end{bmatrix}=\\begin{bmatrix}5\\\\3\\\\0\\end{bmatrix}\\ne\\begin{bmatrix}5\\\\3\\\\4\\end{bmatrix}",
+ "tool": "\\|A\\mathbf x\\|^2=\\mathbf x^TA^TA\\mathbf x"
+}

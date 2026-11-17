@@ -16,6 +16,7 @@ C = {
  'ep02': dict(tag='AI娘线性代数课 · EP 02', num='02', title=['行列式'], sub='面积、体积，和“会不会塌”', chips=['Leon 第2章', '3B1B式图解', '零基础'], acc='ds'),
  'ep03': dict(tag='AI娘线性代数课 · EP 03', num='03', title=['向量空间'], sub='子空间 · 线性无关 · 基 · 秩', chips=['Leon 第3章', '3B1B式图解', '零基础'], acc='gpt'),
  'ep04': dict(tag='AI娘线性代数课 · EP 04', num='04', title=['线性变换'], sub='矩阵，就是空间的动作', chips=['Leon 第4章', '3B1B式图解', '零基础'], acc='claude'),
+ 'ep05': dict(tag='AI娘线性代数课 · EP 05', num='05', title=['正交性'], sub='垂直，就是最近', chips=['Leon 第5章', '3B1B式图解', '零基础'], acc='ds'),
  'spx': dict(tag='AI娘线性代数课 · 特别篇', num='75', title=['期中', '速成版'], sub='75 分钟 · 9 份真题 · 8 类题型', chips=['考前必看', '真题逐步讲', '考前十条'], acc='claude', stamp='救急'),
  'sp1': dict(tag='特别篇 1/7 · 期中真题精讲', num='1', title=['含参', '方程组'], sub='三张平面的三种结局', chips=['2018–19', '2024–25', '2025–26'], acc='claude'),
  'sp2': dict(tag='特别篇 2/7 · 期中真题精讲', num='2', title=['初等矩阵', 'LU 与逆'], sub='每年必考的 10 分，怎么稳拿', chips=['7/7 年必考', '乘数归位', '逆印章'], acc='ds'),

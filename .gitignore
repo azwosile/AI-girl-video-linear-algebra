@@ -27,3 +27,8 @@ ep/cct/
 ep/*_progress.txt
 ep/*_filter.txt
 ep/*_list.txt
+
+# QA 联系表与系统临时文件
+**/_sheets/
+.DS_Store
+Thumbs.db

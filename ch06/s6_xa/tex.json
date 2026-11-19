@@ -1,0 +1,22 @@
+{
+ "q1": "\\lambda_i\\ne0\\;\\forall i\\;\\Rightarrow\\;A\\;\\mathrm{nonsingular}",
+ "q2": "A,\\;A^T\\;\\mathrm{same\\;eigenvectors}",
+ "q3": "A\\sim B\\;\\Rightarrow\\;\\mathrm{same}\\;\\lambda",
+ "q4": "\\mathrm{same}\\;\\lambda\\;\\Rightarrow\\;A\\sim B",
+ "q5": "\\mathrm{alg}(\\lambda)>1\\;\\Rightarrow\\;\\mathrm{defective}",
+ "q6": "4\\times4,\\;\\mathrm{rank}\\,3,\\;\\lambda=0\\;(\\times3)\\;\\Rightarrow\\;\\mathrm{diagonalizable}",
+ "q7": "4\\times4,\\;\\mathrm{rank}\\,1,\\;\\lambda=0\\;(\\times3)\\;\\Rightarrow\\;\\mathrm{defective}",
+ "q8": "\\mathrm{rank}\\,A=\\#\\{\\lambda_i\\ne0\\}",
+ "q9": "\\mathrm{rank}\\,A=\\#\\{\\sigma_i\\ne0\\}",
+ "q10": "A=A^T,\\;\\det A>0\\;\\Rightarrow\\;A\\succ0",
+ "q1b": "\\det A=\\lambda_1\\lambda_2\\cdots\\lambda_n\\ne0",
+ "q2a": "\\begin{bmatrix}1&1\\\\0&1\\end{bmatrix}:\\;\\begin{bmatrix}1\\\\0\\end{bmatrix}",
+ "q2b": "\\begin{bmatrix}1&0\\\\1&1\\end{bmatrix}:\\;\\begin{bmatrix}0\\\\1\\end{bmatrix}",
+ "q3b": "p_B(\\lambda)=p_A(\\lambda)",
+ "q4b": "S^{-1}IS=I\\ne\\begin{bmatrix}1&1\\\\0&1\\end{bmatrix}",
+ "q6b": "\\mathrm{geo}(0)=4-3={\\color{#E8577A}1}<3",
+ "q7b": "\\mathrm{geo}(0)=4-1={\\color{#4FC1A6}3},\\;\\;3+1=4",
+ "q8b": "\\begin{bmatrix}0&1\\\\0&0\\end{bmatrix}:\\;\\mathrm{rank}=1,\\;\\lambda=0,0",
+ "q9b": "\\mathrm{rank}\\,A=\\mathrm{rank}\\,\\Sigma",
+ "q10b": "-I_2:\\;\\det=1,\\;\\lambda=-1,-1"
+}

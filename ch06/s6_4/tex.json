@@ -1,0 +1,17 @@
+{
+ "zh": "\\|\\mathbf z\\|^2=\\bar{\\mathbf z}^T\\mathbf z=\\mathbf z^H\\mathbf z",
+ "zex": "\\mathbf z=\\begin{bmatrix}1+i\\\\2\\end{bmatrix},\\;\\;\\mathbf z^H\\mathbf z=(1-i)(1+i)+4={\\color{#E06A3A}6}",
+ "herm": "M=M^H",
+ "mex": "M=\\begin{bmatrix}2&1-i\\\\1+i&3\\end{bmatrix},\\;\\;\\lambda={\\color{#E06A3A}1},\\;{\\color{#E06A3A}4}",
+ "thm1": "\\lambda\\in\\mathbb R,\\qquad\\lambda\\ne\\mu\\Rightarrow \\mathbf z\\perp \\mathbf w",
+ "pf1": "\\mathbf z^HM\\mathbf z=\\lambda\\,\\mathbf z^H\\mathbf z\\in\\mathbb R,\\;\\;\\mathbf z^H\\mathbf z>0\\;\\Rightarrow\\;\\lambda\\in\\mathbb R",
+ "pf2": "(\\lambda-\\mu)\\,\\mathbf z^H\\mathbf w=0",
+ "unit": "U^HU=I",
+ "spec": "{\\color{#E06A3A}A=QDQ^T}",
+ "schur": "U^HAU=T\\;\\;\\mathrm{(upper)},\\quad T=T^H\\Rightarrow T\\;\\mathrm{diagonal}",
+ "e4A": "A=\\begin{bmatrix}0&2&-1\\\\2&3&-2\\\\-1&-2&0\\end{bmatrix},\\;\\;p(\\lambda)=(1+\\lambda)^2(5-\\lambda)",
+ "e4v": "\\lambda=-1:\\;\\begin{bmatrix}1\\\\0\\\\1\\end{bmatrix},\\begin{bmatrix}-2\\\\1\\\\0\\end{bmatrix}\\qquad\\lambda=5:\\;\\begin{bmatrix}-1\\\\-2\\\\1\\end{bmatrix}",
+ "e4u": "\\mathbf u_1=\\tfrac{1}{\\sqrt2}\\begin{bmatrix}1\\\\0\\\\1\\end{bmatrix},\\;\\mathbf u_2=\\tfrac{1}{\\sqrt3}\\begin{bmatrix}-1\\\\1\\\\1\\end{bmatrix},\\;\\mathbf u_3=\\tfrac{1}{\\sqrt6}\\begin{bmatrix}-1\\\\-2\\\\1\\end{bmatrix}",
+ "normal": "AA^H=A^HA",
+ "tj": "P^{-1}AP=P^TAP=\\Lambda"
+}

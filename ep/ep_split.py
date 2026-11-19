@@ -15,7 +15,7 @@ SFX = P + '/assets/sfx/'
 os.makedirs(EP + '/pack', exist_ok=True)
 os.makedirs(P + '/out', exist_ok=True)
 CFG = json.load(open(EP + '/ep_split.json', encoding='utf-8'))
-NCARD = {1: 11, 2: 9, 3: 10, 4: 8, 5: 10}
+NCARD = {1: 11, 2: 9, 3: 10, 4: 8, 5: 10, 6: 11}
 
 
 def log(*a):

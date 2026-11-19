@@ -314,6 +314,66 @@ for k, d in enumerate(M.get('integrals', [])):
     v = sp.integrate(sp.sympify(d['f'], locals={'x': xs}), (xs, sp.sympify(str(d['a'])), sp.sympify(str(d['b']))))
     chk(sp.simplify(v - sp.sympify(str(d['val']))) == 0, f'integrals[{k}] {d.get("desc","")}: = {sp.simplify(v)}')
 
+# —— 第六章 ——
+#   eigs[]  {A, pairs: [[λ, v], ...], charpoly?: 'expr in l', evals?: [...]}  — A v = λ v（v ≠ 0）；特征多项式 det(A − lI)；特征值多重集
+#   diag[]  {A, X, D}                — X 可逆且 X D X⁻¹ = A（D 对角）
+#   expm[]  {A, val, t?: true}       — e^{A}（t=true 时 e^{tA}）；val 可写 'E'、'exp(6*t)' 等
+#   ivp[]   {A, Y0, Y}               — Y(t) 满足 Y′ = AY 且 Y(0) = Y0
+#   svd[]   {A, U, S, V}             — U、V 正交，S 非负对角且递减，UΣVᵀ = A
+#   posdef[] {A, minors?, pd}        — 顺序主子式；是否正定（用特征值 / Cholesky 判定）
+#   chol[]  {A, L}                   — L 下三角对角为正，LLᵀ = A
+#   ldl[]   {A, L, D}                — L 单位下三角，LDLᵀ = A
+#   hess[]  {f, at, H, kind}         — 黑塞矩阵与驻点类型 min/max/saddle
+lam = sp.Symbol('l')
+def MxE(X):
+    return sp.Matrix([[sp.sympify(str(v), locals={'t': t, 'I': sp.I, 'E': sp.E}) for v in row] for row in X])
+def VxE(v): return sp.Matrix([sp.sympify(str(q), locals={'t': t, 'I': sp.I, 'E': sp.E}) for q in v])
+for k, d in enumerate(M.get('eigs', [])):
+    A = MxE(d['A']); dd = d.get('desc', '')
+    for lv, v in d.get('pairs', []):
+        lv = sp.sympify(str(lv), locals={'I': sp.I}); v = VxE(v)
+        chk(any(q != 0 for q in v) and sp.simplify(A * v - lv * v) == sp.zeros(A.rows, 1), f'eigs[{k}] {dd}: A v ≠ λ v（λ = {lv}, v = {list(v)}, Av = {list(sp.simplify(A*v))}）')
+    if 'charpoly' in d:
+        cp = (A - lam * sp.eye(A.rows)).det(); chk(sp.expand(cp - sp.sympify(d['charpoly'], locals={'l': lam})) == 0, f'eigs[{k}] {dd}: det(A − λI) = {sp.factor(cp)}')
+    if 'evals' in d:
+        ev = A.eigenvals(); got = sorted([str(sp.nsimplify(x)) for x, m in ev.items() for _ in range(m)]); want = sorted([str(sp.nsimplify(sp.sympify(str(x), locals={'I': sp.I}))) for x in d['evals']])
+        chk(got == want, f'eigs[{k}] {dd}: 特征值 = {got}')
+for k, d in enumerate(M.get('diag', [])):
+    A, X, D = MxE(d['A']), MxE(d['X']), MxE(d['D']); dd = d.get('desc', '')
+    chk(X.det() != 0 and D == sp.diag(*[D[i, i] for i in range(D.rows)]), f'diag[{k}] {dd}: X 奇异或 D 非对角')
+    if X.det() != 0: chk(sp.simplify(X * D * X.inv() - A) == sp.zeros(*A.shape), f'diag[{k}] {dd}: XDX⁻¹ = {sp.simplify(X*D*X.inv()).tolist()}')
+for k, d in enumerate(M.get('expm', [])):
+    A = MxE(d['A']); E_ = (A * t).exp() if d.get('t') else A.exp()
+    chk(sp.simplify(E_ - MxE(d['val'])) == sp.zeros(*A.shape), f'expm[{k}] {d.get("desc","")}: e^A = {sp.simplify(E_).tolist()}')
+for k, d in enumerate(M.get('ivp', [])):
+    A, Y0, Y = MxE(d['A']), VxE(d['Y0']), VxE(d['Y']); dd = d.get('desc', '')
+    chk(sp.simplify(Y.diff(t) - A * Y) == sp.zeros(A.rows, 1), f'ivp[{k}] {dd}: Y′ ≠ AY')
+    chk(sp.simplify(Y.subs(t, 0) - Y0) == sp.zeros(A.rows, 1), f'ivp[{k}] {dd}: Y(0) = {list(Y.subs(t, 0))}')
+for k, d in enumerate(M.get('svd', [])):
+    A, U, S_, V = MxE(d['A']), MxE(d['U']), MxE(d['S']), MxE(d['V']); dd = d.get('desc', '')
+    chk(sp.simplify(U.T * U - sp.eye(U.cols)) == sp.zeros(U.cols, U.cols) and sp.simplify(V.T * V - sp.eye(V.cols)) == sp.zeros(V.cols, V.cols), f'svd[{k}] {dd}: U 或 V 不正交')
+    sg = [S_[i, i] for i in range(min(S_.shape))]
+    chk(all(S_[i, j] == 0 for i in range(S_.rows) for j in range(S_.cols) if i != j) and all(sp.simplify(x) >= 0 for x in sg) and all(sp.simplify(sg[i] - sg[i + 1]) >= 0 for i in range(len(sg) - 1)), f'svd[{k}] {dd}: Σ 不是非负递减对角')
+    chk(sp.simplify(U * S_ * V.T - A) == sp.zeros(*A.shape), f'svd[{k}] {dd}: UΣVᵀ = {sp.simplify(U*S_*V.T).tolist()}')
+for k, d in enumerate(M.get('posdef', [])):
+    A = MxE(d['A']); dd = d.get('desc', '')
+    if 'minors' in d: mn = [A[:i, :i].det() for i in range(1, A.rows + 1)]; chk([sp.simplify(x) for x in mn] == [sp.sympify(str(x)) for x in d['minors']], f'posdef[{k}] {dd}: 顺序主子式 = {mn}')
+    chk(bool(A.is_positive_definite) == d['pd'], f'posdef[{k}] {dd}: 正定 = {A.is_positive_definite}')
+for k, d in enumerate(M.get('chol', [])):
+    A, Lm = MxE(d['A']), MxE(d['L']); dd = d.get('desc', '')
+    chk(all(Lm[i, j] == 0 for i in range(Lm.rows) for j in range(i + 1, Lm.cols)) and all(sp.simplify(Lm[i, i]) > 0 for i in range(Lm.rows)), f'chol[{k}] {dd}: L 不是对角为正的下三角')
+    chk(sp.simplify(Lm * Lm.T - A) == sp.zeros(*A.shape), f'chol[{k}] {dd}: LLᵀ = {sp.simplify(Lm*Lm.T).tolist()}')
+for k, d in enumerate(M.get('ldl', [])):
+    A, Lm, D = MxE(d['A']), MxE(d['L']), MxE(d['D']); dd = d.get('desc', '')
+    chk(all(Lm[i, i] == 1 for i in range(Lm.rows)) and all(Lm[i, j] == 0 for i in range(Lm.rows) for j in range(i + 1, Lm.cols)), f'ldl[{k}] {dd}: L 不是单位下三角')
+    chk(sp.simplify(Lm * D * Lm.T - A) == sp.zeros(*A.shape), f'ldl[{k}] {dd}: LDLᵀ = {sp.simplify(Lm*D*Lm.T).tolist()}')
+for k, d in enumerate(M.get('hess', [])):
+    X_, Y_ = sp.symbols('x y'); f = sp.sympify(d['f'], locals={'x': X_, 'y': Y_}); at = {X_: Q(d['at'][0]), Y_: Q(d['at'][1])}; dd = d.get('desc', '')
+    chk(all(sp.diff(f, v).subs(at) == 0 for v in (X_, Y_)), f'hess[{k}] {dd}: 不是驻点')
+    H = sp.hessian(f, (X_, Y_)).subs(at); chk(H == MxE(d['H']), f'hess[{k}] {dd}: H = {H.tolist()}')
+    ev = list(H.eigenvals()); kind = 'min' if all(e > 0 for e in ev) else ('max' if all(e < 0 for e in ev) else 'saddle')
+    chk(kind == d['kind'], f'hess[{k}] {dd}: 类型 = {kind}')
+
 for m in bad: print('✗', m)
 print(f'{ok} 项通过')
 print('MATHCHECK PASS' if not bad else f'MATHCHECK FAIL {len(bad)}')

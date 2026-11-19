@@ -1,0 +1,15 @@
+{
+ "A": "A=\\begin{bmatrix}3&0\\\\4&5\\end{bmatrix}",
+ "sig": "{\\color{#F2B544}\\sigma_1=3\\sqrt5},\\quad {\\color{#4FC1A6}\\sigma_2=\\sqrt5}",
+ "vv": "\\mathbf v_1=\\tfrac{1}{\\sqrt2}\\begin{bmatrix}1\\\\1\\end{bmatrix},\\;\\mathbf v_2=\\tfrac{1}{\\sqrt2}\\begin{bmatrix}-1\\\\1\\end{bmatrix}",
+ "ata": "A^TA=\\begin{bmatrix}25&20\\\\20&25\\end{bmatrix},\\;\\;\\lambda=45,\\,5",
+ "svd": "{\\color{#E06A3A}A=U\\Sigma V^T}",
+ "sigm": "\\Sigma=\\begin{bmatrix}\\sigma_1&&\\\\&\\ddots&\\\\&&\\sigma_r\\end{bmatrix},\\;\\;\\sigma_1\\ge\\cdots\\ge\\sigma_r>0",
+ "how": "\\sigma_i=\\sqrt{\\lambda_i(A^TA)},\\qquad \\mathbf u_i=\\dfrac{A\\mathbf v_i}{\\sigma_i}",
+ "e1A": "A=\\begin{bmatrix}1&1\\\\1&1\\\\0&0\\end{bmatrix},\\;\\;A^TA=\\begin{bmatrix}2&2\\\\2&2\\end{bmatrix},\\;\\;\\sigma=2,\\,0",
+ "e1u": "\\mathbf u_1=\\tfrac12A\\mathbf v_1=\\tfrac{1}{\\sqrt2}\\begin{bmatrix}1\\\\1\\\\0\\end{bmatrix},\\;\\;\\mathbf u_2=\\tfrac{1}{\\sqrt2}\\begin{bmatrix}1\\\\-1\\\\0\\end{bmatrix},\\;\\;\\mathbf u_3=\\begin{bmatrix}0\\\\0\\\\1\\end{bmatrix}",
+ "rank": "\\mathrm{rank}\\,A=\\#\\{\\sigma_i>0\\}",
+ "layers": "A=\\sigma_1\\mathbf u_1\\mathbf v_1^T+\\sigma_2\\mathbf u_2\\mathbf v_2^T+\\cdots",
+ "best": "A_k=\\textstyle\\sum_{i\\le k}\\sigma_i\\mathbf u_i\\mathbf v_i^T,\\quad\\|A-A_k\\|_F=\\sqrt{\\sigma_{k+1}^2+\\cdots}",
+ "tj": "A^TA=V\\Sigma^T\\Sigma V^T"
+}

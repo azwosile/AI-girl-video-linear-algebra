@@ -1,0 +1,16 @@
+{
+ "prob": "x_i\\ge0,\\;\\;\\textstyle\\sum x_i=1",
+ "stoch": "A=\\begin{bmatrix}0.7&0.2\\\\0.3&0.8\\end{bmatrix},\\;\\;\\mathrm{columns\\;sum\\;to\\;}1",
+ "an": "A^n=X\\begin{bmatrix}1&0\\\\0&(\\frac12)^n\\end{bmatrix}X^{-1}\\;\\to\\;X\\begin{bmatrix}1&0\\\\0&0\\end{bmatrix}X^{-1}",
+ "ss": "{\\color{#E06A3A}\\mathbf x=\\begin{bmatrix}0.4\\\\0.6\\end{bmatrix}}",
+ "thm3": "\\mathbf x_k\\to\\mathbf x\\;\\Rightarrow\\;A\\mathbf x=\\mathbf x",
+ "dom": "\\lambda_1=1,\\quad|\\lambda_j|\\le1",
+ "car": "\\lambda=1,\\;0.8,\\;0.7,\\;0.7",
+ "series": "e^{A}=I+A+\\dfrac{A^2}{2!}+\\dfrac{A^3}{3!}+\\cdots",
+ "expd": "e^{A}=X\\,e^{D}X^{-1},\\quad e^{D}=\\begin{bmatrix}e^{\\lambda_1}&\\\\&e^{\\lambda_2}\\end{bmatrix}",
+ "e6": "A=\\begin{bmatrix}-2&-6\\\\1&3\\end{bmatrix}\\;\\Rightarrow\\;e^{A}={\\color{#E06A3A}\\begin{bmatrix}3-2e&6-6e\\\\e-1&3e-2\\end{bmatrix}}",
+ "ivp": "\\mathbf Y=e^{tA}\\mathbf Y_0\\qquad(y=e^{at}y_0)",
+ "e7": "e^{tA}\\begin{bmatrix}6\\\\1\\end{bmatrix}=\\begin{bmatrix}4e^{6t}+2e^{-t}\\\\3e^{6t}-2e^{-t}\\end{bmatrix}",
+ "dc": "A^n\\;\\leftrightarrow\\;e^{tA}",
+ "tj": "A^n=P\\Lambda^nP^{-1},\\qquad\\varphi(A)=P\\,\\varphi(\\Lambda)\\,P^{-1}"
+}

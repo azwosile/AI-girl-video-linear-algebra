@@ -1,0 +1,14 @@
+{
+ "qf": "ax^2+2bxy+cy^2=\\begin{bmatrix}x&y\\end{bmatrix}\\begin{bmatrix}a&b\\\\b&c\\end{bmatrix}\\begin{bmatrix}x\\\\y\\end{bmatrix}=\\mathbf x^TA\\mathbf x",
+ "std": "\\dfrac{x^2}{4}+\\dfrac{y^2}{9}=1",
+ "e2": "3x^2+{\\color{#E8577A}2xy}+3y^2=8,\\quad A=\\begin{bmatrix}3&1\\\\1&3\\end{bmatrix}",
+ "e2ev": "{\\color{#F2B544}\\lambda=2}:\\tfrac{1}{\\sqrt2}\\begin{bmatrix}1\\\\-1\\end{bmatrix}\\quad {\\color{#4FC1A6}\\lambda=4}:\\tfrac{1}{\\sqrt2}\\begin{bmatrix}1\\\\1\\end{bmatrix}",
+ "e2q": "\\mathbf x=Q\\mathbf x',\\;\\;{\\color{#F2B544}2x'^2}+{\\color{#4FC1A6}4y'^2}=8\\;\\Rightarrow\\;\\dfrac{x'^2}{4}+\\dfrac{y'^2}{2}=1",
+ "pa": "\\mathbf x^TA\\mathbf x=\\lambda_1y_1^2+\\lambda_2y_2^2+\\cdots+\\lambda_ny_n^2",
+ "cls": "\\mathbf x^TA\\mathbf x>0\\;(\\forall \\mathbf x\\ne\\mathbf 0)",
+ "thm2": "{\\color{#E06A3A}A\\succ0\\iff\\lambda_i>0\\;\\;\\forall i}",
+ "hes": "H=\\begin{bmatrix}f_{xx}&f_{xy}\\\\f_{xy}&f_{yy}\\end{bmatrix}",
+ "tb6": "f=x^3y+x^2+y^2-2x-y+4,\\quad(1,0)",
+ "tb6h": "H(1,0)=\\begin{bmatrix}2&3\\\\3&2\\end{bmatrix},\\;\\;\\lambda={\\color{#F2B544}5},\\;{\\color{#E8577A}-1}",
+ "tj": "f=d_1y_1^2+\\cdots+d_ny_n^2"
+}

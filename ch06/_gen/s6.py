@@ -1,0 +1,206 @@
+"""第六章全部 tex.json（TeX 里不放中文和 \\text）。用法：python ch06/_gen/s6.py → 各段 tex.json"""
+import json
+from pathlib import Path
+HERE = Path(__file__).resolve().parents[1]
+def bm(M, env='bmatrix'):
+    return f'\\begin{{{env}}}' + r'\\'.join('&'.join(str(v) for v in r) for r in M) + f'\\end{{{env}}}'
+v = lambda *xs: bm([[x] for x in xs])
+I_ = r'\color{#F2B544}'; J_ = r'\color{#4FC1A6}'; P_ = r'\color{#E06A3A}'; F_ = r'\color{#E8577A}'; K_ = r'\color{#8C9DFF}'
+ci = lambda s: '{' + I_ + str(s) + '}'; cj = lambda s: '{' + J_ + str(s) + '}'; cp = lambda s: '{' + P_ + str(s) + '}'; cf = lambda s: '{' + F_ + str(s) + '}'; ck = lambda s: '{' + K_ + str(s) + '}'
+x = r'\mathbf x'; y = r'\mathbf y'; z = r'\mathbf z'; w = r'\mathbf w'; Y = r'\mathbf Y'; u = r'\mathbf u'
+L_ = r'\lambda'; AmL = r'A-\lambda I'
+h = r'\tfrac12'
+T = {}
+T['s6_1a'] = {
+ 'marr': r'A=' + bm([['0.7', '0.2'], ['0.3', '0.8']]) + r',\quad ' + w + r'_0=' + v(8000, 2000),
+ 'w1': w + r'_1=A' + w + r'_0=' + v(6000, 4000),
+ 'w10': w + r'_{10}\approx' + v(4004, 5996) + r',\quad ' + w + r'_{12}=' + v(4000, 6000),
+ 'ax1': r'A' + ci(x + '_1') + '=' + ci(x + '_1') + r',\quad ' + x + '_1=' + v(2, 3),
+ 'ax2': r'A' + cj(x + '_2') + r'=\tfrac12\,' + cj(x + '_2') + r',\quad ' + x + '_2=' + v(-1, 1),
+ 'w0d': w + r'_0=2000\,' + ci(x + '_1') + r'-4000\,' + cj(x + '_2'),
+ 'wn': w + r'_n=2000\,' + ci(x + '_1') + r'-4000\left(\tfrac12\right)^{n}' + cj(x + '_2') + r'\;\to\;' + cp(v(4000, 6000)),
+ 'def': r'A' + x + '=' + cp(r'\lambda') + x + r',\qquad ' + x + r'\ne\mathbf 0',
+ 'e2': r'\begin{bmatrix}4&-2\\1&1\end{bmatrix}' + v(2, 1) + '=' + v(6, 3) + '=' + cp(3) + v(2, 1),
+ 'e2b': r'A' + v(4, 2) + '=' + v(12, 6) + '=' + cp(3) + v(4, 2),
+ 'zero': r'A\mathbf 0=\lambda\mathbf 0\;\;\forall\lambda',
+ 'shift': r'(' + AmL + r')' + x + r'=\mathbf 0',
+ 'espace': r'N(' + AmL + r')',
+ 'chareq': cp(r'\det(' + AmL + r')=0'),
+ 'tj': r'|A-\lambda E|=0',
+}
+T['s6_1b'] = {
+ 'cp': r'p(\lambda)=\det(' + AmL + ')',
+ 'e3A': r'A=' + bm([[3, 2], [3, -2]]),
+ 'e3p': r'\begin{vmatrix}3-\lambda&2\\3&-2-\lambda\end{vmatrix}=\lambda^2-\lambda-12=(\lambda-4)(\lambda+3)',
+ 'e3v': ci(r'\lambda_1=4') + r':\;' + v(2, 1) + r'\qquad ' + cj(r'\lambda_2=-3') + r':\;' + v(-1, 3),
+ 'e4A': r'A=' + bm([[2, -3, 1], [1, -2, 1], [1, -3, 2]]),
+ 'e4p': r'p(\lambda)=-\lambda(\lambda-1)^2',
+ 'e4n': ci(r'\lambda=0') + r':\;' + v(1, 1, 1),
+ 'e4r': cj(r'\lambda=1') + r':\;x_1-3x_2+x_3=0',
+ 'e4b': r'\mathrm{span}\left\{' + v(3, 1, 0) + ',' + v(-1, 0, 1) + r'\right\}',
+ 'e5A': r'A=' + bm([[1, 2], [-2, 1]]),
+ 'e5p': r'(1-\lambda)^2+4=0\;\Rightarrow\;\lambda=' + cp(r'1\pm 2i'),
+ 'e5v': r'1+2i:\;' + v(1, 'i') + r'\qquad 1-2i:\;' + v(1, '-i'),
+ 'prod': cp(r'\lambda_1\lambda_2\cdots\lambda_n=\det A'),
+ 'sum': cj(r'\lambda_1+\lambda_2+\cdots+\lambda_n=\mathrm{tr}\,A'),
+ 'fac': r'p(\lambda)=(\lambda_1-\lambda)(\lambda_2-\lambda)\cdots(\lambda_n-\lambda)',
+ 'e6A': r'A=' + bm([[5, -18], [1, -1]]),
+ 'e6c': r'\det A=' + cp(13) + r',\;\;\mathrm{tr}\,A=' + cj(4) + r',\;\;\lambda=2\pm3i',
+ 'e6k': r'(2+3i)+(2-3i)=' + cj(4) + r',\;\;(2+3i)(2-3i)=' + cp(13),
+ 'sim': r'B=S^{-1}AS\;\Rightarrow\;p_B(\lambda)=p_A(\lambda)',
+ 'simpf': r'\det(S^{-1}AS-\lambda I)=\det\!\big(S^{-1}(A-\lambda I)S\big)=\det(A-\lambda I)',
+ 'e7': r'T=' + bm([[2, 1], [0, 3]]) + r',\;S=' + bm([[5, 3], [3, 2]]) + r',\;A=S^{-1}TS=' + bm([[-1, -2], [6, 6]]),
+ 'e7e': r'\lambda=' + cp('2') + r',\;' + cp('3'),
+ 'tj1': r'\textstyle\sum\lambda_i=\sum a_{ii},\quad\prod\lambda_i=|A|',
+ 'tj2': r'\lambda^2\in\sigma(A^2),\;\;\varphi(\lambda)\in\sigma(\varphi(A)),\;\;\tfrac1\lambda\in\sigma(A^{-1})',
+}
+T['s6_2'] = {
+ 'y1': r"y'=ay\;\Rightarrow\;y=c\,e^{at}",
+ 'sys': r"\begin{aligned}y_1'&=3y_1+4y_2\\y_2'&=3y_1+2y_2\end{aligned}",
+ 'Y': Y + r"'=A" + Y + r',\quad A=' + bm([[3, 4], [3, 2]]),
+ 'try': Y + r'=e^{\lambda t}' + x,
+ 'chk': Y + r"'=\lambda e^{\lambda t}" + x + r'=e^{\lambda t}A' + x + '=A' + Y,
+ 'eig': ci(r'\lambda_1=6') + r',\;' + x + '_1=' + v(4, 3) + r'\qquad ' + cj(r'\lambda_2=-1') + r',\;' + x + '_2=' + v(1, -1),
+ 'gen': Y + '=c_1' + ci(r'e^{6t}') + x + '_1+c_2' + cj(r'e^{-t}') + x + '_2',
+ 'ivp': r'c_1' + v(4, 3) + '+c_2' + v(1, -1) + '=' + v(6, 1) + r'\;\Rightarrow\;c_1=1,\;c_2=2',
+ 'sol': r'\begin{aligned}y_1&=4e^{6t}+2e^{-t}\\y_2&=3e^{6t}-2e^{-t}\end{aligned}',
+ 'genn': Y + r'=c_1e^{\lambda_1t}' + x + r'_1+\cdots+c_ne^{\lambda_nt}' + x + '_n',
+ 'e2A': r'A=' + bm([[1, 1], [-2, 3]]) + r',\;\;\lambda=' + cp(r'2\pm i') + r',\;\;' + x + '=' + v(1, '1+i'),
+ 'euler': r'e^{(2+i)t}=' + ci(r'e^{2t}') + r'(' + cj(r'\cos t+i\sin t') + ')',
+ 're': r'\mathrm{Re}\,\lambda>0:\;\mathrm{out},\quad\mathrm{Re}\,\lambda<0:\;\mathrm{in}',
+ 'spring': r"y''=-ky\;\Rightarrow\;" + v("y", "y'") + r"'=" + bm([[0, 1], ['-k', 0]]) + v("y", "y'") + r',\;\;\lambda=\pm\sqrt k\,i',
+}
+T['s6_3a'] = {
+ 'thm1': r'\lambda_i\;\mathrm{distinct}\;\Rightarrow\;' + x + r'_1,\dots,' + x + r'_k\;\mathrm{independent}',
+ 'pf': r'\textstyle\sum c_i' + x + r'_i=\mathbf 0\;\xrightarrow{\;A\,-\,\lambda_{r+1}\;}\;\sum c_i(\lambda_i-\lambda_{r+1})' + x + r'_i=\mathbf 0',
+ 'def': r'X^{-1}AX=D',
+ 'thm2': r'A\;\mathrm{diagonalizable}\iff n\;\mathrm{independent\;eigenvectors}',
+ 'axxd': r'AX=(\lambda_1' + x + r'_1,\dots,\lambda_n' + x + r'_n)=X' + bm([[r'\lambda_1', '', ''], ['', r'\ddots', ''], ['', '', r'\lambda_n']]) + '=XD',
+ 'e1': r'A=' + bm([[2, -3], [2, -5]]) + r',\;X=' + bm([[ci(3), cj(1)], [ci(1), cj(2)]]) + r',\;D=' + bm([[ci(1), 0], [0, cj(-4)]]),
+ 'pow': r'A^k=XD^kX^{-1}=X' + bm([[r'\lambda_1^k', ''], ['', r'\lambda_2^k']]) + r'X^{-1}',
+ 'a5': r'A^5=X' + bm([[1, 0], [0, -1024]]) + r'X^{-1}=' + cp(bm([[206, -615], [410, -1229]])),
+ 'e2': r'\lambda=0:\;' + v(1, 1, 1) + r'\qquad\lambda=1,1:\;' + v(1, 2, 0) + ',' + v(1, 0, 1),
+ 'e3': r'A=' + bm([[1, 1], [0, 1]]) + r',\;\;\lambda=1,1,\;\;N(A-I)=\mathrm{span}\{' + v(1, 0) + r'\}',
+ 'e4': r'A=' + bm([[2, 0, 0], [0, 4, 0], [1, 0, 2]]) + r',\;\;B=' + bm([[2, 0, 0], [-1, 4, 0], [-3, 6, 2]]),
+ 'e4e': r'\lambda=4,\,2,\,2',
+ 'mult': r'1\le\mathrm{geo}(\lambda)\le\mathrm{alg}(\lambda)',
+ 'tj': r'P^{-1}AP=\Lambda',
+}
+T['s6_3b'] = {
+ 'prob': r'x_i\ge0,\;\;\textstyle\sum x_i=1',
+ 'stoch': r'A=' + bm([['0.7', '0.2'], ['0.3', '0.8']]) + r',\;\;\mathrm{columns\;sum\;to\;}1',
+ 'an': r'A^n=X' + bm([[1, 0], [0, r'(\frac12)^n']]) + r'X^{-1}\;\to\;X' + bm([[1, 0], [0, 0]]) + 'X^{-1}',
+ 'ss': cp(r'\mathbf x=' + v('0.4', '0.6')),
+ 'thm3': r'\mathbf x_k\to\mathbf x\;\Rightarrow\;A\mathbf x=\mathbf x',
+ 'dom': r'\lambda_1=1,\quad|\lambda_j|\le1',
+ 'car': r'\lambda=1,\;0.8,\;0.7,\;0.7',
+ 'series': r'e^{A}=I+A+\dfrac{A^2}{2!}+\dfrac{A^3}{3!}+\cdots',
+ 'expd': r'e^{A}=X\,e^{D}X^{-1},\quad e^{D}=' + bm([[r'e^{\lambda_1}', ''], ['', r'e^{\lambda_2}']]),
+ 'e6': r'A=' + bm([[-2, -6], [1, 3]]) + r'\;\Rightarrow\;e^{A}=' + cp(bm([['3-2e', '6-6e'], ['e-1', '3e-2']])),
+ 'ivp': Y + r'=e^{tA}' + Y + r'_0\qquad(y=e^{at}y_0)',
+ 'e7': r'e^{tA}' + v(6, 1) + '=' + v(r'4e^{6t}+2e^{-t}', r'3e^{6t}-2e^{-t}'),
+ 'dc': r'A^n\;\leftrightarrow\;e^{tA}',
+ 'tj': r'A^n=P\Lambda^nP^{-1},\qquad\varphi(A)=P\,\varphi(\Lambda)\,P^{-1}',
+}
+T['s6_4'] = {
+ 'zh': r'\|' + z + r'\|^2=\bar{' + z + r'}^T' + z + '=' + z + r'^H' + z,
+ 'zex': z + '=' + v('1+i', 2) + r',\;\;' + z + '^H' + z + r'=(1-i)(1+i)+4=' + cp(6),
+ 'herm': r'M=M^H',
+ 'mex': r'M=' + bm([[2, '1-i'], ['1+i', 3]]) + r',\;\;\lambda=' + cp('1') + r',\;' + cp('4'),
+ 'thm1': r'\lambda\in\mathbb R,\qquad\lambda\ne\mu\Rightarrow ' + z + r'\perp ' + w,
+ 'pf1': z + r'^HM' + z + r'=\lambda\,' + z + r'^H' + z + r'\in\mathbb R,\;\;' + z + '^H' + z + r'>0\;\Rightarrow\;\lambda\in\mathbb R',
+ 'pf2': r'(\lambda-\mu)\,' + z + '^H' + w + r'=0',
+ 'unit': r'U^HU=I',
+ 'spec': cp(r'A=QDQ^T'),
+ 'schur': r'U^HAU=T\;\;\mathrm{(upper)},\quad T=T^H\Rightarrow T\;\mathrm{diagonal}',
+ 'e4A': r'A=' + bm([[0, 2, -1], [2, 3, -2], [-1, -2, 0]]) + r',\;\;p(\lambda)=(1+\lambda)^2(5-\lambda)',
+ 'e4v': r'\lambda=-1:\;' + v(1, 0, 1) + ',' + v(-2, 1, 0) + r'\qquad\lambda=5:\;' + v(-1, -2, 1),
+ 'e4u': u + r'_1=\tfrac{1}{\sqrt2}' + v(1, 0, 1) + r',\;' + u + r'_2=\tfrac{1}{\sqrt3}' + v(-1, 1, 1) + r',\;' + u + r'_3=\tfrac{1}{\sqrt6}' + v(-1, -2, 1),
+ 'normal': r'AA^H=A^HA',
+ 'tj': r'P^{-1}AP=P^TAP=\Lambda',
+}
+T['s6_5'] = {
+ 'A': r'A=' + bm([[3, 0], [4, 5]]),
+ 'sig': ci(r'\sigma_1=3\sqrt5') + r',\quad ' + cj(r'\sigma_2=\sqrt5'),
+ 'vv': r'\mathbf v_1=\tfrac{1}{\sqrt2}' + v(1, 1) + r',\;\mathbf v_2=\tfrac{1}{\sqrt2}' + v(-1, 1),
+ 'ata': r'A^TA=' + bm([[25, 20], [20, 25]]) + r',\;\;\lambda=45,\,5',
+ 'svd': cp(r'A=U\Sigma V^T'),
+ 'sigm': r'\Sigma=' + bm([[r'\sigma_1', '', ''], ['', r'\ddots', ''], ['', '', r'\sigma_r']]) + r',\;\;\sigma_1\ge\cdots\ge\sigma_r>0',
+ 'how': r'\sigma_i=\sqrt{\lambda_i(A^TA)},\qquad ' + u + r'_i=\dfrac{A\mathbf v_i}{\sigma_i}',
+ 'e1A': r'A=' + bm([[1, 1], [1, 1], [0, 0]]) + r',\;\;A^TA=' + bm([[2, 2], [2, 2]]) + r',\;\;\sigma=2,\,0',
+ 'e1u': u + r'_1=\tfrac12A\mathbf v_1=\tfrac{1}{\sqrt2}' + v(1, 1, 0) + r',\;\;' + u + r'_2=\tfrac{1}{\sqrt2}' + v(1, -1, 0) + r',\;\;' + u + '_3=' + v(0, 0, 1),
+ 'rank': r'\mathrm{rank}\,A=\#\{\sigma_i>0\}',
+ 'layers': r'A=\sigma_1' + u + r'_1\mathbf v_1^T+\sigma_2' + u + r'_2\mathbf v_2^T+\cdots',
+ 'best': r'A_k=\textstyle\sum_{i\le k}\sigma_i' + u + r'_i\mathbf v_i^T,\quad\|A-A_k\|_F=\sqrt{\sigma_{k+1}^2+\cdots}',
+ 'tj': r'A^TA=V\Sigma^T\Sigma V^T',
+}
+T['s6_6'] = {
+ 'qf': r'ax^2+2bxy+cy^2=' + bm([['x', 'y']]) + bm([['a', 'b'], ['b', 'c']]) + v('x', 'y') + '=' + x + '^TA' + x,
+ 'std': r'\dfrac{x^2}{4}+\dfrac{y^2}{9}=1',
+ 'e2': r'3x^2+' + cf('2xy') + r'+3y^2=8,\quad A=' + bm([[3, 1], [1, 3]]),
+ 'e2ev': ci(r'\lambda=2') + r':\tfrac{1}{\sqrt2}' + v(1, -1) + r'\quad ' + cj(r'\lambda=4') + r':\tfrac{1}{\sqrt2}' + v(1, 1),
+ 'e2q': x + '=Q' + x + r"',\;\;" + ci(r"2x'^2") + '+' + cj(r"4y'^2") + r"=8\;\Rightarrow\;\dfrac{x'^2}{4}+\dfrac{y'^2}{2}=1",
+ 'pa': x + '^TA' + x + r'=\lambda_1y_1^2+\lambda_2y_2^2+\cdots+\lambda_ny_n^2',
+ 'cls': x + r'^TA' + x + r'>0\;(\forall ' + x + r'\ne\mathbf 0)',
+ 'thm2': cp(r'A\succ0\iff\lambda_i>0\;\;\forall i'),
+ 'hes': r'H=' + bm([[r'f_{xx}', r'f_{xy}'], [r'f_{xy}', r'f_{yy}']]),
+ 'tb6': r'f=x^3y+x^2+y^2-2x-y+4,\quad(1,0)',
+ 'tb6h': r'H(1,0)=' + bm([[2, 3], [3, 2]]) + r',\;\;\lambda=' + ci(5) + r',\;' + cf(-1),
+ 'tj': r'f=d_1y_1^2+\cdots+d_ny_n^2',
+}
+T['s6_7'] = {
+ 'A': r'A=' + bm([[4, 2, -2], [2, 10, 2], [-2, 2, 5]]),
+ 'lu': r'L=' + bm([[1, 0, 0], [h, 1, 0], [r'-\tfrac12', r'\tfrac13', 1]]) + r',\;U=' + bm([[4, 2, -2], [0, 9, 3], [0, 0, 3]]),
+ 'ldl': r'A=LDL^T,\quad D=' + bm([[ci(4), 0, 0], [0, cj(9), 0], [0, 0, ck(3)]]),
+ 'chol': r'A=L_1L_1^T,\quad L_1=LD^{1/2}=' + cp(bm([[2, 0, 0], [1, 3, 0], [-1, 1, r'\sqrt3']])),
+ 'btb': x + r'^TB^TB' + x + r'=\|B' + x + r'\|^2>0',
+ 'negI': r'-I_2:\;\det=1>0,\;\;\lambda=-1,-1',
+ 'perron': r'A>0\;\Rightarrow\;\lambda_1>0,\;\;\mathbf x_1>\mathbf 0',
+ 'tjA': bm([[1, 'a', -1], ['a', 1, 2], [-1, 2, 5]]),
+ 'tjm': r'1>0,\;\;1-a^2>0,\;\;-a(5a+4)>0',
+ 'tjr': cp(r'-\tfrac45<a<0'),
+}
+T['s6_xa'] = {
+ 'q1': r'\lambda_i\ne0\;\forall i\;\Rightarrow\;A\;\mathrm{nonsingular}',
+ 'q2': r'A,\;A^T\;\mathrm{same\;eigenvectors}',
+ 'q3': r'A\sim B\;\Rightarrow\;\mathrm{same}\;\lambda',
+ 'q4': r'\mathrm{same}\;\lambda\;\Rightarrow\;A\sim B',
+ 'q5': r'\mathrm{alg}(\lambda)>1\;\Rightarrow\;\mathrm{defective}',
+ 'q6': r'4\times4,\;\mathrm{rank}\,3,\;\lambda=0\;(\times3)\;\Rightarrow\;\mathrm{diagonalizable}',
+ 'q7': r'4\times4,\;\mathrm{rank}\,1,\;\lambda=0\;(\times3)\;\Rightarrow\;\mathrm{defective}',
+ 'q8': r'\mathrm{rank}\,A=\#\{\lambda_i\ne0\}',
+ 'q9': r'\mathrm{rank}\,A=\#\{\sigma_i\ne0\}',
+ 'q10': r'A=A^T,\;\det A>0\;\Rightarrow\;A\succ0',
+ 'q1b': r'\det A=\lambda_1\lambda_2\cdots\lambda_n\ne0',
+ 'q2a': bm([[1, 1], [0, 1]]) + r':\;' + v(1, 0),
+ 'q2b': bm([[1, 0], [1, 1]]) + r':\;' + v(0, 1),
+ 'q3b': r'p_B(\lambda)=p_A(\lambda)',
+ 'q4b': r'S^{-1}IS=I\ne' + bm([[1, 1], [0, 1]]),
+ 'q6b': r'\mathrm{geo}(0)=4-3=' + cf(1) + r'<3',
+ 'q7b': r'\mathrm{geo}(0)=4-1=' + cj(3) + r',\;\;3+1=4',
+ 'q8b': bm([[0, 1], [0, 1 - 1]]) + r':\;\mathrm{rank}=1,\;\lambda=0,0',
+ 'q9b': r'\mathrm{rank}\,A=\mathrm{rank}\,\Sigma',
+ 'q10b': r'-I_2:\;\det=1,\;\lambda=-1,-1',
+}
+T['s6_xb'] = {
+ 'tb1A': r'A=' + bm([[1, 0, 0], [1, 1, -1], [1, 2, -2]]),
+ 'tb1p': r'p(\lambda)=-\lambda(\lambda-1)(\lambda+1)',
+ 'tb1v': r'1:' + v(1, 1, 1) + r'\;\;0:' + v(0, 1, 1) + r'\;\;-1:' + v(0, 1, 2),
+ 'tb1d': r'D^7=' + bm([[r'1^7', '', ''], ['', r'0^7', ''], ['', '', r'(-1)^7']]) + '=D' + r'\;\Rightarrow\;' + cp(r'A^7=A'),
+ 'tb5A': r'A=' + bm([[4, 2, 2], [2, 10, 10], [2, 10, 14]]) + r',\quad 4,\;36,\;144>0',
+ 'tb5l': r'L=' + bm([[1, 0, 0], [h, 1, 0], [h, 1, 1]]) + r',\;D=' + bm([[4, 0, 0], [0, 9, 0], [0, 0, 4]]),
+ 'tb5c': r'L_1=' + cp(bm([[2, 0, 0], [1, 3, 0], [1, 3, 2]])),
+ 'tb7A': Y + r"'=" + bm([[1, -2], [3, -4]]) + Y + r',\;\;' + Y + '(0)=' + v(1, 2),
+ 'tb7e': r'\lambda=-1:\;' + v(1, 1) + r'\qquad\lambda=-2:\;' + v(2, 3),
+ 'tb7d': v(1, 2) + '=-' + v(1, 1) + '+' + v(2, 3),
+ 'tb7y': r'\begin{aligned}y_1&=2e^{-2t}-e^{-t}\\y_2&=3e^{-2t}-e^{-t}\end{aligned}',
+ 'tj1': r'A=' + bm([[-1, 1, 0], [-4, 3, 0], [1, 0, 2]]) + r',\;\lambda=2,1,1,\;\;r(A-E)=' + cf(2),
+ 'tj2': r'A=' + bm([[-2, 1, 1], [0, 2, 0], [-4, 1, 3]]) + r',\;\lambda=-1,2,2,\;\;r(A-2E)=' + cj(1),
+ 'tj3': r'f=-2x_1x_2+2x_1x_3+2x_2x_3\;\xrightarrow{\;' + x + r'=P\mathbf y\;}\;' + cp(r'-2y_1^2+y_2^2+y_3^2'),
+ 'eig': r'A' + x + r'=\lambda' + x,
+}
+if __name__ == '__main__':
+    import sys
+    for seg, d in T.items():
+        if len(sys.argv) > 1 and seg not in sys.argv[1:]: continue
+        (HERE / seg / 'tex.json').write_text(json.dumps(d, ensure_ascii=False, indent=1), encoding='utf-8'); print(seg, len(d))

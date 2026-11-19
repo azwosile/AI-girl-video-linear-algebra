@@ -1,0 +1,17 @@
+{
+ "marr": "A=\\begin{bmatrix}0.7&0.2\\\\0.3&0.8\\end{bmatrix},\\quad \\mathbf w_0=\\begin{bmatrix}8000\\\\2000\\end{bmatrix}",
+ "w1": "\\mathbf w_1=A\\mathbf w_0=\\begin{bmatrix}6000\\\\4000\\end{bmatrix}",
+ "w10": "\\mathbf w_{10}\\approx\\begin{bmatrix}4004\\\\5996\\end{bmatrix},\\quad \\mathbf w_{12}=\\begin{bmatrix}4000\\\\6000\\end{bmatrix}",
+ "ax1": "A{\\color{#F2B544}\\mathbf x_1}={\\color{#F2B544}\\mathbf x_1},\\quad \\mathbf x_1=\\begin{bmatrix}2\\\\3\\end{bmatrix}",
+ "ax2": "A{\\color{#4FC1A6}\\mathbf x_2}=\\tfrac12\\,{\\color{#4FC1A6}\\mathbf x_2},\\quad \\mathbf x_2=\\begin{bmatrix}-1\\\\1\\end{bmatrix}",
+ "w0d": "\\mathbf w_0=2000\\,{\\color{#F2B544}\\mathbf x_1}-4000\\,{\\color{#4FC1A6}\\mathbf x_2}",
+ "wn": "\\mathbf w_n=2000\\,{\\color{#F2B544}\\mathbf x_1}-4000\\left(\\tfrac12\\right)^{n}{\\color{#4FC1A6}\\mathbf x_2}\\;\\to\\;{\\color{#E06A3A}\\begin{bmatrix}4000\\\\6000\\end{bmatrix}}",
+ "def": "A\\mathbf x={\\color{#E06A3A}\\lambda}\\mathbf x,\\qquad \\mathbf x\\ne\\mathbf 0",
+ "e2": "\\begin{bmatrix}4&-2\\\\1&1\\end{bmatrix}\\begin{bmatrix}2\\\\1\\end{bmatrix}=\\begin{bmatrix}6\\\\3\\end{bmatrix}={\\color{#E06A3A}3}\\begin{bmatrix}2\\\\1\\end{bmatrix}",
+ "e2b": "A\\begin{bmatrix}4\\\\2\\end{bmatrix}=\\begin{bmatrix}12\\\\6\\end{bmatrix}={\\color{#E06A3A}3}\\begin{bmatrix}4\\\\2\\end{bmatrix}",
+ "zero": "A\\mathbf 0=\\lambda\\mathbf 0\\;\\;\\forall\\lambda",
+ "shift": "(A-\\lambda I)\\mathbf x=\\mathbf 0",
+ "espace": "N(A-\\lambda I)",
+ "chareq": "{\\color{#E06A3A}\\det(A-\\lambda I)=0}",
+ "tj": "|A-\\lambda E|=0"
+}

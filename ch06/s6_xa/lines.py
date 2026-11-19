@@ -1,0 +1,70 @@
+# -*- coding: utf-8 -*-
+"""第 6 章 复习（上）判断题（Leon 9th Chapter 6 Test A 第 1、2、3、4、5、6、7、8、9、14 题，共 10 道）台词源（唯一真源）。
+答案：1T 2F 3T 4F 5F 6F 7F 8F 9T 14F。大肥鱼 6 / 10（对 1、3、4、6、9、14；错 2、5、7、8）。
+形式：题卡 → 大肥鱼抢答气泡 → 判定印章 → 理由 / 最小反例（剪切、单位阵、秩与零空间）。
+运行：python lines.py → script.json / lines.json
+"""
+import json
+from pathlib import Path
+
+LINES = [
+    dict(id='D01', mood='easy', pose='ds_happy', sub='第六章：特征值、对角化、谱定理、奇异值、正定，我全会了！来考我！', read='第六章，特征值、对角化、谱定理、奇异值、正定，我全会了！来考我吧！'),
+    dict(id='C01', pose='claude_smile', sub='好。从第六章判断题里挑 10 道：永远成立判“对”并说理由，不一定成立就举反例。', read='好。从第六章的判断题里，挑十道：永远成立的判对，并说出理由；不一定成立的，就举一个反例。'),
+    # 1
+    dict(id='C02', pose='claude_point', sub='第 1 题：n 阶矩阵 A 的特征值全不为零，则 A 可逆。', read='第一题：n阶矩阵A的特征值全都不为零，那么A可逆。'),
+    dict(id='D02', mood='easy', pose='ds_proud', sub='对！特征值的乘积就是行列式！', read='对！特征值的乘积，就是行列式！'),
+    dict(id='C03', pose='claude_smile', sub='对。det A = λ₁λ₂⋯λₙ ≠ 0，所以 A 可逆。等价说法：A 奇异，当且仅当 0 是特征值。', read='对。行列式等于所有特征值的乘积，不为零，所以A可逆。等价的说法：A奇异，等价于零是特征值。'),
+    # 2
+    dict(id='C04', pose='claude_point', sub='第 2 题：A 与 Aᵀ 有相同的特征向量。', read='第二题：A和A的转置，有相同的特征向量。'),
+    dict(id='D03', mood='easy', pose='ds_happy', sub='对！特征多项式一样嘛。', read='对！特征多项式一样嘛。'),
+    dict(id='C05', pose='claude_think', sub='错。特征多项式相同，只说明特征值相同。反例：A = (1 1; 0 1)，特征向量只有 (1, 0)ᵀ 方向；Aᵀ = (1 0; 1 1)，特征向量却是 (0, 1)ᵀ 方向。', read='错。特征多项式相同，仅说明特征值相同。反例：剪切矩阵，第一行一、一，第二行零、一，特征向量只有一、零的方向；它的转置，特征向量却是零、一的方向。'),
+    # 3
+    dict(id='C06', pose='claude_point', sub='第 3 题：A 与 B 相似，则它们有相同的特征值。', read='第三题：如果A与B相似，那么它们有相同的特征值。'),
+    dict(id='D04', mood='easy', pose='ds_proud', sub='对！定理 6.1.1。', read='对！定理六点一点一。'),
+    dict(id='C07', pose='claude_smile', sub='对。相似矩阵的特征多项式相同，特征值自然相同。', read='对。相似矩阵的特征多项式相同，特征值自然相同。'),
+    # 4
+    dict(id='C08', pose='claude_point', sub='第 4 题：A、B 有相同的特征值，则它们相似。', read='第四题：A和B有相同的特征值，那么它们相似。'),
+    dict(id='D05', mood='think', pose='ds_think', sub='反过来……好像不一定，我猜错！', read='反过来，好像不一定，我猜错！'),
+    dict(id='C09', pose='claude_smile', sub='猜对了。I 和 (1 1; 0 1) 的特征值都是 1、1。可和 I 相似的只有 I 自己：S⁻¹IS = I。剪切矩阵不是 I，所以不相似。', read='猜对了。单位矩阵和剪切矩阵，特征值都是一、一。可是和单位矩阵相似的，只有它自己，因为S逆乘I乘S还是I。剪切矩阵不是I，所以不相似。'),
+    # 5
+    dict(id='C10', pose='claude_point', sub='第 5 题：A 有重数大于 1 的特征值，则 A 一定亏损。', read='第五题：如果A有重数大于一的特征值，那么A一定亏损。'),
+    dict(id='D06', mood='easy', pose='ds_proud', sub='对！有重根就凑不够特征向量！', read='对！有重根，就凑不够特征向量！'),
+    dict(id='C11', pose='claude_think', sub='错。单位矩阵 I 的特征值全是 1，可每个非零向量都是特征向量，完全不亏损。重根只是“可能”亏损，要看几何重数。', read='错。单位矩阵的特征值全是一，可每个非零向量都是特征向量，完全不亏损。有重根仅仅是可能亏损，要看几何重数。'),
+    # 6
+    dict(id='C12', pose='claude_point', sub='第 6 题：A 是 4 阶矩阵，秩为 3，λ = 0 是三重特征值，则 A 可对角化。', read='第六题：A是四阶矩阵，秩为三，零是三重特征值，那么A可以对角化。'),
+    dict(id='D07', mood='think', pose='ds_think', sub='秩 3，零空间才一维……可零要三个特征向量。错！', read='秩为三，零空间才一维，可是零需要三个特征向量。错！'),
+    dict(id='C13', pose='claude_smile', sub='漂亮。几何重数 = dim N(A) = 4 − 3 = 1，代数重数却是 3，不相等，A 亏损。', read='漂亮。零的几何重数，等于零空间的维数，四减三等于一，代数重数却是三，不相等，A亏损。'),
+    # 7
+    dict(id='C14', pose='claude_point', sub='第 7 题：A 是 4 阶矩阵，秩为 1，λ = 0 是三重特征值，则 A 亏损。', read='第七题：A是四阶矩阵，秩为一，零是三重特征值，那么A亏损。'),
+    dict(id='D08', mood='easy', pose='ds_happy', sub='对！又是三重的零，肯定亏损。', read='对！又是三重的零，肯定亏损。'),
+    dict(id='C15', pose='claude_think', sub='错。这次 dim N(A) = 4 − 1 = 3，零有三个无关特征向量；剩下那个单重特征值再配一个，共 4 个，A 可对角化，不亏损。', read='错。这次零空间的维数是四减一，等于三，零有三个无关的特征向量；剩下那个单重特征值再配一个，一共四个，A可以对角化，不亏损。'),
+    # 8
+    dict(id='C16', pose='claude_point', sub='第 8 题：n 阶矩阵 A 的秩，等于非零特征值的个数（按重数计）。', read='第八题：n阶矩阵A的秩，等于非零特征值的个数，按重数计算。'),
+    dict(id='D09', mood='easy', pose='ds_proud', sub='对！零特征值对应零空间嘛。', read='对！零特征值，对应零空间嘛。'),
+    dict(id='C17', pose='claude_think', sub='错。反例：A = (0 1; 0 0)，秩是 1，特征值却是 0、0，一个非零的都没有。亏损矩阵会让这两个数对不上。', read='错。反例：第一行零、一，第二行零、零，秩是一，特征值却是零、零，一个非零的都没有。亏损矩阵会让这两个数对不上。'),
+    # 9
+    dict(id='C18', pose='claude_point', sub='第 9 题：m×n 矩阵 A 的秩，等于非零奇异值的个数（按重数计）。', read='第九题：m行n列的矩阵A，秩等于非零奇异值的个数，按重数计算。'),
+    dict(id='D10', mood='easy', pose='ds_happy', sub='对！上一题换成奇异值，就对了！', read='对！上一题换成奇异值，就对了！'),
+    dict(id='C19', pose='claude_smile', sub='对。A = UΣVᵀ，U、V 可逆，所以 rank A = rank Σ，就是对角线上非零 σ 的个数。', read='对。A等于U大西格玛V的转置，U和V都可逆，所以A的秩，等于大西格玛的秩，就是对角线上非零西格玛的个数。'),
+    # 14
+    dict(id='C20', pose='claude_point', sub='第 10 题（原第 14 题）：A 对称，且 det A > 0，则 A 正定。', read='第十题，原书第十四题：A对称，并且行列式大于零，那么A正定。'),
+    dict(id='D11', mood='easy', pose='ds_proud', sub='错！上一段刚学：负单位矩阵！', read='错！上一段刚学过：负单位矩阵！'),
+    dict(id='C21', pose='claude_smile', sub='完全正确。−I₂ 的行列式是 1，特征值却是 −1、−1，负定。', read='完全正确。二阶负单位矩阵，行列式是一，特征值却是负一、负一，是负定的。'),
+    # 结尾
+    dict(id='D12', mood='sigh', pose='ds_confused', sub='六比十……错的四道，都是把“可能”当成了“一定”。', read='六比十，错的四道，都是把可能，看成了一定。'),
+    dict(id='C22', pose='claude_smile', sub='六题，不错。第 2 题：特征值相同不等于特征向量相同；第 5、7 题：重根要数特征空间的维数。', read='六题，不错。第二题，特征值相同，不等于特征向量相同；第五、第七题，有重根，要数特征空间的维数。'),
+    dict(id='C23', pose='claude_point', sub='第 8 题：秩看奇异值，不看特征值。这四道错题，背后都是同一件事：亏损矩阵。', read='第八题：秩看奇异值，不看特征值。这四道错题，背后都是同一件事：亏损矩阵。'),
+    dict(id='C24', pose='claude_explain', sub='下一段：计算题，加上同济的三道典型题。', read='下一段：计算题，再加上同济的三道典型题。'),
+]
+
+
+
+if __name__ == '__main__':
+    here = Path(__file__).resolve().parent
+    for l in LINES:
+        l.setdefault('read', l['sub'])
+        l.setdefault('mood', None)
+    ids = [l['id'] for l in LINES]; assert len(ids) == len(set(ids)), '台词 id 重复'
+    (here / 'script.json').write_text(json.dumps({l['id']: [l['read'], l['mood']] for l in LINES}, ensure_ascii=False, indent=1), encoding='utf-8')
+    (here / 'lines.json').write_text(json.dumps(LINES, ensure_ascii=False, indent=1), encoding='utf-8')
+    print(len(LINES), 'lines,', sum(len(l['read']) for l in LINES), 'chars')

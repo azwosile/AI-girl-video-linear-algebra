@@ -1,0 +1,43 @@
+# -*- coding: utf-8 -*-
+"""第 7 章 7.7 最小二乘的数值解法（Leon 9th §7.7：正规方程 cond(AᵀA) = cond(A)²；经典 vs 修正 Gram–Schmidt（Läuchli 例，算法 7.7.1）；
+Householder QR：c = Qᵀb，R₁x = c₁，残差 ‖c₂‖；伪逆 A⁺ = VΣ⁺Uᵀ，定理 7.7.1 最小范数解；|σᵢ − ωᵢ| ≤ ‖A − B‖₂；Golub–Kahan 双对角化（点到））台词源（唯一真源）。
+3B1B 画面：条件数刻度尺被平方；三根几乎重合的向量经 CGS / MGS 后夹角对比；残差向量分成 c₁、c₂ 两段；解集直线 + 原点垂足。
+运行：python lines.py → script.json / lines.json
+"""
+import json
+from pathlib import Path
+
+LINES = [
+    dict(id='C01', pose='claude_smile', sub='第五章解最小二乘：AᵀAx = Aᵀb，正规方程。理论上完美。在电脑上呢？', read='第五章解最小二乘，用的是正规方程。理论上完美。在电脑上呢？'),
+    dict(id='C02', pose='claude_explain', sub='问题出在 AᵀA：它的奇异值是 σᵢ²，所以 cond₂(AᵀA) = cond₂(A)²。条件数被平方了。', read='问题出在A转置A：它的奇异值，是A的奇异值的平方，所以它的条件数，等于A的条件数的平方。条件数被平方了。'),
+    dict(id='C03', pose='claude_point', sub='比如一个 3×2、两列几乎共线的 A：cond(A) ≈ 2.4 × 10⁶，cond(AᵀA) ≈ 6 × 10¹²。丢的位数翻了一倍。', read='比如屏幕上这个三行两列的矩阵，两列几乎共线：A的条件数大约二点四乘十的六次方，A转置A的大约六乘十的十二次方。丢掉的位数，翻了一倍。'),
+    dict(id='D01', mood='think', pose='ds_think', sub='那用第五章的 QR？A = QR，再解 Rx = Qᵀb。', read='那用第五章的Q R呢？A等于Q R，然后解R x等于Q转置b。'),
+    dict(id='C04', pose='claude_explain', sub='思路对，但要看 Q 怎么来。经典 Gram–Schmidt 一次减掉所有投影，舍入后 Q 的列可能不再正交。', read='思路是对的，但要看Q是怎么来的。经典的施密特正交化，一次性减掉所有投影，舍入以后，Q的各列可能不再正交。'),
+    dict(id='C05', pose='claude_point', sub='极端例子：三列几乎相同，差别只有 10⁻⁸。经典算法得到 q₂·q₃ = 0.5——夹角只有 60°，根本不正交。', read='一个极端的例子：三列几乎相同，差别只有十的负八次方。经典算法得到的第二、第三列，内积是零点五，夹角只有六十度，根本不正交。'),
+    dict(id='C06', pose='claude_explain', sub='修正 Gram–Schmidt：每得到一个 qₖ，立刻从剩下所有列里减掉它的分量。数学上一样，数值上好得多：同一个例子，内积约 10⁻¹⁶。', read='修正的施密特正交化：每得到一个新的q，就立刻从剩下的所有列里，减掉它方向上的分量。数学上完全一样，数值上好得多：同一个例子，内积只有十的负十六次方。'),
+    dict(id='C07', pose='claude_point', sub='算法 7.7.1：修正 GS 得 Q、R；右端也逐步修正：cₖ = qₖᵀbₖ，bₖ₊₁ = bₖ − cₖqₖ；最后回代 Rx = c。', read='算法七点七点一：用修正的施密特得到Q和R；右端也要逐步修正，每次求一个系数，再从b里减掉对应的分量；最后，回代解R x等于c。'),
+    dict(id='C08', pose='claude_explain', sub='更稳的是 Householder QR：用 n 个反射把 A 变成 R = (R₁; O)。同样的反射作用到 b 上，得 c = Qᵀb = (c₁; c₂)。', read='更稳的，是豪斯霍尔德Q R：用n个反射，把A变成上面是三角形、下面全是零的R。同样的反射作用到b上，得到c，分成上下两段。'),
+    dict(id='C09', pose='claude_point', sub='Qᵀ 不改变长度：‖b − Ax‖² = ‖c₁ − R₁x‖² + ‖c₂‖²。解 R₁x = c₁ 让第一项为 0，残差就是 ‖c₂‖。', read='因为Q转置不改变长度：残差的平方，等于c一减R一x的平方，加上c二的平方。解R一x等于c一，第一项变成零，残差就是c二的长度。'),
+    dict(id='D02', mood='easy', pose='ds_happy', sub='残差直接就读出来了！', read='残差直接就读出来了！'),
+    dict(id='C10', pose='claude_explain', sub='如果 A 不满秩呢？最小二乘解有无穷多个，组成一条直线或一个平面。该选哪个？', read='如果A不满秩呢？最小二乘解就有无穷多个，它们组成一条直线，或者一个平面。该选哪一个？'),
+    dict(id='C11', pose='claude_point', sub='选离原点最近的那个。用 SVD：A⁺ = VΣ⁺Uᵀ，Σ⁺ 把非零的 σᵢ 换成 1/σᵢ，零还是零。x = A⁺b。', read='选离原点最近的那个。用奇异值分解：伪逆等于V乘西格玛加再乘U转置，西格玛加，是把非零的奇异值取倒数，零还是零。解就是伪逆乘b。'),
+    dict(id='C12', pose='claude_explain', sub='定理 7.7.1：x = A⁺b 是最小二乘解；其他任何最小二乘解 z 都满足 ‖z‖₂ > ‖x‖₂。', read='定理七点七点一：伪逆乘b，是一个最小二乘解；而且其他任何最小二乘解，长度都比它大。'),
+    dict(id='C13', pose='claude_point', sub='画出来：解集是一条直线，A⁺b 就是从原点向这条直线作的垂足——它和零空间正交。', read='画出来：解集是一条直线，伪逆给出的，正是从原点向这条直线作的垂足，它和零空间正交。'),
+    dict(id='C14', pose='claude_explain', sub='计算分两步：yᵢ = uᵢᵀb/σᵢ（i = 1, …, r），x = y₁v₁ + ⋯ + yᵣvᵣ。复习课会算一道完整的例子。', read='计算的时候分两步：先用每个非零奇异值，算出系数y i；再把对应的v i，按这些系数加起来。复习课里，会算一道完整的例子。'),
+    dict(id='C15', pose='claude_point', sub='奇异值本身也很稳：|σᵢ − ωᵢ| ≤ ‖A − B‖₂。实际计算先用 Householder 化成上双对角形，再用 Golub–Reinsch 迭代。', read='奇异值本身也很稳：两个矩阵相差多少，对应的奇异值相差就不会超过多少。实际计算，先用豪斯霍尔德把A化成上双对角形，再用戈卢布和赖因施的迭代。'),
+    dict(id='G01', pose='gpt_explain', sub='同济本科没讲最小二乘，更没讲伪逆。但第四章说：非齐次方程组的通解 = 特解 + 齐次通解，就是这里那条解集直线。伪逆挑的，是和齐次解正交的那个特解。', read='同济本科没讲最小二乘，更没讲伪逆。但第四章说，非齐次方程组的通解，等于特解加上齐次方程组的通解，就是这里那条解集直线。伪逆挑的，正是和齐次解正交的那个特解。'),
+    dict(id='C16', pose='claude_smile', sub='小结：正规方程把条件数平方；修正 GS 比经典 GS 稳；Householder QR 最常用；秩亏时用 SVD 取最小范数解。', read='小结：正规方程会让条件数，变成原来的平方；修正的施密特比经典的稳；豪斯霍尔德Q R最常用；秩亏的时候，用奇异值分解，取范数最小的解。'),
+    dict(id='C17', pose='claude_point', sub='第七章的新内容到这里讲完了。接下来复习：先做十道判断题。', read='第七章的新内容，到这里就讲完了。接下来是复习：先做十道判断题。'),
+]
+
+
+
+if __name__ == '__main__':
+    here = Path(__file__).resolve().parent
+    for l in LINES:
+        l.setdefault('read', l['sub'])
+        l.setdefault('mood', None)
+    ids = [l['id'] for l in LINES]; assert len(ids) == len(set(ids)), '台词 id 重复'
+    (here / 'script.json').write_text(json.dumps({l['id']: [l['read'], l['mood']] for l in LINES}, ensure_ascii=False, indent=1), encoding='utf-8')
+    (here / 'lines.json').write_text(json.dumps(LINES, ensure_ascii=False, indent=1), encoding='utf-8')
+    print(len(LINES), 'lines,', sum(len(l['read']) for l in LINES), 'chars')

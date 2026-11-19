@@ -1,0 +1,10 @@
+{
+ "PA": "P=\\begin{bmatrix}0&0&1\\\\1&0&0\\\\0&1&0\\end{bmatrix}",
+ "PALU": "PA=\\begin{bmatrix}1&0&0\\\\{\\color{#E06A3A}3}&1&0\\\\{\\color{#E06A3A}2}&{\\color{#E06A3A}-4}&1\\end{bmatrix}\\begin{bmatrix}2&-1&1\\\\0&-1&-1\\\\0&0&-5\\end{bmatrix}",
+ "ex2": "\\mathbf c=P\\mathbf b=\\begin{bmatrix}-1\\\\-2\\\\4\\end{bmatrix}\\;\\to\\;\\mathbf y=\\begin{bmatrix}-1\\\\1\\\\10\\end{bmatrix}\\;\\to\\;\\mathbf x={\\color{#E06A3A}\\begin{bmatrix}1\\\\1\\\\-2\\end{bmatrix}}",
+ "sys3": "\\begin{aligned}0.0001x_1+2x_2&=4\\\\x_1+x_2&=3\\end{aligned}",
+ "exact3": "\\mathbf x\\approx(1.00005,\\;1.99995)^T",
+ "bad3": "-20000\\,x_2=-40000\\;\\Rightarrow\\;x_2=2,\\;x_1={\\color{#E8577A}0}",
+ "good3": "2x_2=4\\;\\Rightarrow\\;x_2=2,\\;x_1={\\color{#4FC1A6}1}",
+ "pp": "|l_{ki}|\\le1"
+}

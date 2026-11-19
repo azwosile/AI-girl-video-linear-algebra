@@ -1,0 +1,13 @@
+{
+ "thm": "\\min_i|\\lambda'-\\lambda_i|\\le{\\color{#E06A3A}\\mathrm{cond}_2(X)}\\|E\\|_2",
+ "sym": "A=A^T:\\;\\min_i|\\lambda'-\\lambda_i|\\le\\|E\\|_2",
+ "ns": "\\begin{bmatrix}1&1\\\\{\\color{#E8577A}10^{-10}}&1\\end{bmatrix}:\\;\\lambda=1\\pm{\\color{#E8577A}10^{-5}}",
+ "pw": "A^k\\mathbf v_0=\\alpha_1{\\color{#E06A3A}\\lambda_1^k}\\mathbf x_1+\\alpha_2\\lambda_2^k\\mathbf x_2+\\cdots",
+ "pstep": "\\mathbf v_{k+1}=A\\mathbf u_k,\\quad\\mathbf u_{k+1}=\\frac{\\mathbf v_{k+1}}{(\\mathbf v_{k+1})_{j}}",
+ "pA": "A=\\begin{bmatrix}2&1\\\\1&2\\end{bmatrix},\\;\\mathbf u_0=\\begin{bmatrix}2\\\\1\\end{bmatrix}",
+ "rate": "\\left|\\frac{\\lambda_2}{\\lambda_1}\\right|^k=\\left(\\tfrac13\\right)^k",
+ "qr": "A_k=Q_kR_k,\\qquad A_{k+1}={\\color{#E06A3A}R_kQ_k}",
+ "sim": "R_kQ_k=Q_k^T(Q_kR_k)Q_k=Q_k^TA_kQ_k",
+ "A2": "A_2=\\begin{bmatrix}2.8&-0.6\\\\-0.6&1.2\\end{bmatrix}",
+ "A3": "A_3\\approx\\begin{bmatrix}2.976&0.220\\\\0.220&1.024\\end{bmatrix}"
+}

@@ -1,0 +1,43 @@
+# -*- coding: utf-8 -*-
+"""第 7 章 7.5 正交变换（Leon 9th §7.5：‖Qe‖₂ = ‖e‖₂；Householder H = I − 2uuᵀ = I − (1/β)vvᵀ；例 1 x = (1, 2, 2)，α = −3，β = 12，v = (4, 2, 2)，Hx = −3e₁；
+例 2 嵌进 4 阶 Hy = (3, −3, 0, 0)；Householder QR ≈ ⅔n³；Givens 例 3 x = (−3, 4) → 5e₁（旋转 / 反射）；例 4 (5, 8, 12) → (13, 8, 0)；Givens QR ≈ 4/3 n³）台词源（唯一真源）。
+3B1B 画面：误差圆被 Q 旋转仍是同样大小；镜面（v 的法线）把 x 反射到 x₁ 轴上；旋转角扫过，第二坐标归零；Householder 一列列清零的矩阵格子。
+运行：python lines.py → script.json / lines.json
+"""
+import json
+from pathlib import Path
+
+LINES = [
+    dict(id='C01', pose='claude_smile', sub='这一节的主角是正交矩阵。它为什么在数值计算里这么受欢迎？', read='这一节的主角，是正交矩阵。它为什么在数值计算里这么受欢迎？'),
+    dict(id='C02', pose='claude_explain', sub='设 x′ = x + e，e 是误差。乘 Q 后误差是 Qe，而 ‖Qe‖₂ = ‖e‖₂：误差圆被转了一下，大小不变。', read='设x撇等于x，加上一个误差向量。乘上Q以后，误差向量也被Q乘了一下；而它的长度不变。误差圆被转了一下，大小不变。'),
+    dict(id='C03', pose='claude_point', sub='所以用正交变换消元，误差不会长大。问题是：怎样用正交矩阵把一列变成 (α, 0, …, 0)？', read='所以，用正交变换来消元，误差不会长大。问题是：怎样用正交矩阵，把一列变成只剩第一个数，其余全是零？'),
+    dict(id='C04', pose='claude_explain', sub='第一种：Householder 反射。H = I − 2uuᵀ，‖u‖ = 1。它是关于 u 的法平面的镜面反射：Hᵀ = H，H² = I。', read='第一种：豪斯霍尔德反射。H等于I减二倍u乘u转置，u是单位向量。它就是关于u的法平面的镜面反射：H的转置是它自己，H的平方是单位阵。'),
+    dict(id='C05', pose='claude_point', sub='想让 Hx 落到第一个坐标轴上：镜子要放在 x 和 αe₁ 的正中间，α = ±‖x‖，法向量 v = x − αe₁。', read='想让x反射以后，落到第一个坐标轴上：镜子就要放在x和目标点的正中间。目标点到原点的距离等于x的长度，法向量，就是x减去目标点。'),
+    dict(id='C06', pose='claude_explain', sub='符号怎么选？取 α 与 x₁ 反号，v 的第一个分量 x₁ − α 是两个同号数相加，不会抵消。', read='阿尔法的符号怎么选？取和x一相反的符号，这样v的第一个分量，是两个同号的数相加，不会发生抵消。'),
+    dict(id='D01', mood='easy', pose='ds_happy', sub='又是第 1 节那个躲抵消的技巧！', read='又是第一节那个躲开抵消的技巧！'),
+    dict(id='C07', pose='claude_point', sub='例 1：x = (1, 2, 2)。x₁ > 0，取 α = −3。v = (4, 2, 2)，β = α(α − x₁) = 12，H = I − (1/12)vvᵀ。', read='例一：x是一、二、二。x一大于零，取阿尔法等于负三。v是四、二、二；贝塔等于阿尔法乘阿尔法减x一，等于十二；H等于I减十二分之一倍v乘v转置。'),
+    dict(id='C08', pose='claude_explain', sub='算出 H = ⅓(−1 −2 −2; −2 2 −1; −2 −1 2)，Hx = (−3, 0, 0)。', read='算出来，H是三分之一乘屏幕上这个矩阵；H乘x，正好是负三、零、零。'),
+    dict(id='C09', pose='claude_point', sub='例 2：只消 y = (3, 1, 2, 2) 的后两个分量、第一个不动：把例 1 的 H 嵌进右下角，Hy = (3, −3, 0, 0)。', read='例二：只想消掉三、一、二、二的后两个分量，第一个不动：把例一的H，嵌进四阶单位阵的右下角，结果是三、负三、零、零。'),
+    dict(id='C10', pose='claude_explain', sub='一列一列做：H₁ 消第一列，H₂ 消第二列……最后 Hₙ₋₁⋯H₁A = R，即 A = QR。运算量约 ⅔n³，是消元的两倍，换来的是稳定。', read='一列一列这样做：H一消第一列，H二消第二列，依此类推，最后得到上三角矩阵R，也就是A等于Q乘R。运算量大约三分之二n的立方，是高斯消元的两倍，换来的是稳定。'),
+    dict(id='C11', pose='claude_point', sub='第二种：Givens 变换。一次只动两个坐标，在那个平面里转一个角，让其中一个变成 0。', read='第二种：吉文斯变换。一次只动两个坐标，在那个平面里转一个角度，让其中一个坐标变成零。'),
+    dict(id='C12', pose='claude_explain', sub='例 3：x = (−3, 4)，r = 5，cos θ = −3/5，sin θ = −4/5。旋转矩阵 R 把 x 转到 (5, 0)。', read='例三：x是负三、四，长度是五。取余弦为负五分之三，正弦为负五分之四，旋转矩阵把x转到五、零。'),
+    dict(id='C13', pose='claude_point', sub='也可以用反射 G：sin θ 改取 4/5，G = (−3/5 4/5; 4/5 3/5)，同样 Gx = (5, 0)。旋转的行列式是 1，反射是 −1。', read='也可以用反射G：正弦改取正五分之四，G同样把x变成五、零。旋转的行列式是一，反射的行列式是负一。'),
+    dict(id='C14', pose='claude_explain', sub='例 4：x = (5, 8, 12)，消第三个、保留第二个：只在第 1、3 坐标平面里转，r = 13，结果 (13, 8, 0)。', read='例四：x是五、八、十二，要消掉第三个、保留第二个：只在第一、第三坐标的平面里转，长度是十三，结果是十三、八、零。'),
+    dict(id='D02', mood='think', pose='ds_think', sub='有 Householder 了，为什么还要 Givens？', read='已经有豪斯霍尔德了，为什么还要吉文斯？'),
+    dict(id='C15', pose='claude_smile', sub='Givens 一次只消一个元素，适合本来就快是三角形、只剩零星几个要消的矩阵——第 6 节的 QR 算法就是这样。对满矩阵它约 4/3 n³，比 Householder 贵。', read='吉文斯一次只消一个元素，适合那种本来就快是三角形、只剩零星几个元素要消的矩阵，第六节的Q R算法就是这样。对满矩阵，它大约要三分之四n的立方，比豪斯霍尔德贵。'),
+    dict(id='G01', pose='gpt_explain', sub='同济第五章用施密特正交化，是一个个“造”出正交向量。Householder 和 Givens 反过来：用正交矩阵去“消零”。殊途同归，都得到 正交 × 上三角。', read='同济第五章用施密特正交化，是一个个造出正交向量。豪斯霍尔德和吉文斯是反过来：用正交矩阵去消零。殊途同归，得到的都是正交矩阵乘上三角矩阵。'),
+    dict(id='C16', pose='claude_smile', sub='小结：正交变换不放大误差；Householder = 镜面反射，一次消一整列；Givens = 平面旋转，一次消一个。', read='小结：正交变换不放大误差；豪斯霍尔德是镜面反射，一次消一整列；吉文斯是平面旋转，一次消一个。'),
+    dict(id='C17', pose='claude_point', sub='下一节，用它们来算特征值——完全不碰特征多项式。', read='下一节，用它们来算特征值，而且完全不碰特征多项式。'),
+]
+
+
+
+if __name__ == '__main__':
+    here = Path(__file__).resolve().parent
+    for l in LINES:
+        l.setdefault('read', l['sub'])
+        l.setdefault('mood', None)
+    ids = [l['id'] for l in LINES]; assert len(ids) == len(set(ids)), '台词 id 重复'
+    (here / 'script.json').write_text(json.dumps({l['id']: [l['read'], l['mood']] for l in LINES}, ensure_ascii=False, indent=1), encoding='utf-8')
+    (here / 'lines.json').write_text(json.dumps(LINES, ensure_ascii=False, indent=1), encoding='utf-8')
+    print(len(LINES), 'lines,', sum(len(l['read']) for l in LINES), 'chars')

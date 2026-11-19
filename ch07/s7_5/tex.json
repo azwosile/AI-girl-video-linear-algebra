@@ -1,0 +1,13 @@
+{
+ "Qe": "\\|Q\\mathbf e\\|_2=\\|\\mathbf e\\|_2",
+ "H": "H=I-2\\mathbf u\\mathbf u^T,\\quad H^T=H,\\;H^2=I",
+ "v": "\\mathbf v=\\mathbf x-\\alpha\\mathbf e_1,\\quad\\alpha=\\pm\\|\\mathbf x\\|_2",
+ "ex1": "\\mathbf x=\\begin{bmatrix}1\\\\2\\\\2\\end{bmatrix},\\;\\alpha=-3,\\;\\mathbf v=\\begin{bmatrix}4\\\\2\\\\2\\end{bmatrix},\\;\\beta=12",
+ "ex1H": "H=\\tfrac13\\begin{bmatrix}-1&-2&-2\\\\-2&2&-1\\\\-2&-1&2\\end{bmatrix},\\;H\\mathbf x={\\color{#E06A3A}\\begin{bmatrix}-3\\\\0\\\\0\\end{bmatrix}}",
+ "ex2": "H\\mathbf y=H\\begin{bmatrix}3\\\\1\\\\2\\\\2\\end{bmatrix}={\\color{#E06A3A}\\begin{bmatrix}3\\\\-3\\\\0\\\\0\\end{bmatrix}}",
+ "hqr": "H_{n-1}\\cdots H_2H_1A=R\\;\\Rightarrow\\;A=QR",
+ "cost": "\\tfrac23n^3\\;\\;(=2\\times\\tfrac13n^3)",
+ "G3": "R=\\begin{bmatrix}-\\tfrac35&\\tfrac45\\\\-\\tfrac45&-\\tfrac35\\end{bmatrix},\\;R\\begin{bmatrix}-3\\\\4\\end{bmatrix}={\\color{#E06A3A}\\begin{bmatrix}5\\\\0\\end{bmatrix}}",
+ "G3r": "G=\\begin{bmatrix}-\\tfrac35&\\tfrac45\\\\\\tfrac45&\\tfrac35\\end{bmatrix},\\;G\\begin{bmatrix}-3\\\\4\\end{bmatrix}={\\color{#E06A3A}\\begin{bmatrix}5\\\\0\\end{bmatrix}}",
+ "G4": "R=\\begin{bmatrix}\\tfrac5{13}&0&\\tfrac{12}{13}\\\\0&1&0\\\\-\\tfrac{12}{13}&0&\\tfrac5{13}\\end{bmatrix},\\;R\\begin{bmatrix}5\\\\8\\\\12\\end{bmatrix}={\\color{#E06A3A}\\begin{bmatrix}13\\\\8\\\\0\\end{bmatrix}}"
+}

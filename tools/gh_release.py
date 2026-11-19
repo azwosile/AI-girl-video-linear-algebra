@@ -4,7 +4,7 @@
 用法：
     python tools/gh_release.py [--skip-missing] [--no-proxy] [tag...]
 
-不传 tag 时处理全部 14 个标签（ep1–ep6、spx、sp1–sp7）。
+不传 tag 时处理全部 15 个标签（ep1–ep7、spx、sp1–sp7）。
 Token 运行时从 Git Credential Manager 获取，不打印、不落盘。
 """
 
@@ -39,7 +39,8 @@ SPECS = [
     ("ep3", "第 3 集 · 向量空间", 10, "out/gh_1080p/AI-girl-LA-ep3-1080p.mp4", "out/AI娘线性代数课_第3集_向量空间_720p.mp4", "docs/covers/ep03", "ep/ep3_meta.txt", True, "false"),
     ("ep4", "第 4 集 · 线性变换", 8, "out/gh_1080p/AI-girl-LA-ep4-1080p.mp4", "out/AI娘线性代数课_第4集_线性变换_720p.mp4", "docs/covers/ep04", "ep/ep4_meta.txt", True, "false"),
     ("ep5", "第 5 集 · 正交性", 10, "out/gh_1080p/AI-girl-LA-ep5-1080p.mp4", "out/AI娘线性代数课_第5集_正交性_720p.mp4", "docs/covers/ep05", "ep/ep5_meta.txt", True, "false"),
-    ("ep6", "第 6 集 · 特征值", 11, "out/gh_1080p/AI-girl-LA-ep6-1080p.mp4", "out/AI娘线性代数课_第6集_特征值_720p.mp4", "docs/covers/ep06", "ep/ep6_meta.txt", True, "true"),
+    ("ep6", "第 6 集 · 特征值", 11, "out/gh_1080p/AI-girl-LA-ep6-1080p.mp4", "out/AI娘线性代数课_第6集_特征值_720p.mp4", "docs/covers/ep06", "ep/ep6_meta.txt", True, "false"),
+    ("ep7", "第 7 集 · 数值线性代数", 12, "out/gh_1080p/AI-girl-LA-ep7-1080p.mp4", "out/AI娘线性代数课_第7集_数值线性代数_720p.mp4", "docs/covers/ep07", "ep/ep7_meta.txt", True, "true"),
     ("spx", "期中特别篇 · 速成版（第1–3章）", 9, "out/gh_1080p/AI-girl-LA-spx-1080p.mp4", "spx/out/特别篇速成版_期中90分钟_720p.mp4", "docs/covers/spx", "spx/out/meta.txt", True, "false"),
     ("sp1", "期中特别篇 1 · 含参方程组", 7, "out/AI娘线性代数课_期中特别篇1_含参方程组.mp4", "out/AI娘线性代数课_期中特别篇1_含参方程组_720p.mp4", "docs/covers/sp1", "ep/sp1_meta.txt", False, "false"),
     ("sp2", "期中特别篇 2 · 初等矩阵、LU 与逆", 5, "out/AI娘线性代数课_期中特别篇2_初等矩阵、LU与逆.mp4", "out/AI娘线性代数课_期中特别篇2_初等矩阵、LU与逆_720p.mp4", "docs/covers/sp2", "ep/sp2_meta.txt", False, "false"),

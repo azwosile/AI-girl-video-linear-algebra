@@ -1,0 +1,13 @@
+{
+ "b1a": "(AB)\\mathbf x:\\;n^3+n^2\\;\\times,\\;\\;n^3-n\\;+",
+ "b1b": "A(B\\mathbf x):\\;2n^2\\;\\times,\\;\\;2n^2-2n\\;+",
+ "b2A": "A=\\begin{bmatrix}2&3&6\\\\4&4&8\\\\1&3&4\\end{bmatrix},\\;\\mathbf b=\\begin{bmatrix}3\\\\0\\\\4\\end{bmatrix},\\;\\mathbf c=\\begin{bmatrix}1\\\\8\\\\2\\end{bmatrix}",
+ "b2P": "P=\\begin{bmatrix}0&1&0\\\\0&0&1\\\\1&0&0\\end{bmatrix}",
+ "b2LU": "L=\\begin{bmatrix}1&0&0\\\\{\\color{#E06A3A}\\tfrac14}&1&0\\\\{\\color{#E06A3A}\\tfrac12}&{\\color{#E06A3A}\\tfrac12}&1\\end{bmatrix},\\;U=\\begin{bmatrix}4&4&8\\\\0&2&2\\\\0&0&1\\end{bmatrix}",
+ "b2x": "\\mathbf x_b={\\color{#E06A3A}\\begin{bmatrix}-3\\\\1\\\\1\\end{bmatrix}},\\qquad\\mathbf x_c={\\color{#E06A3A}\\begin{bmatrix}5\\\\3\\\\-3\\end{bmatrix}}",
+ "b3": "\\|Q\\mathbf x\\|_2=\\|\\mathbf x\\|_2\\Rightarrow\\|Q\\|_2=1,\\quad\\|Q\\|_F=\\sqrt{4}=2",
+ "b4n": "\\|H\\|_1=\\tfrac{25}{12},\\quad\\|H^{-1}\\|_1=13620",
+ "b4c": "\\mathrm{cond}_1(H)=28375,\\quad\\|\\mathbf b\\|_1=50",
+ "b4e": "\\frac{\\|\\mathbf x-\\mathbf x'\\|_1}{\\|\\mathbf x\\|_1}\\le\\frac{28375\\times0.36\\times10^{-11}}{50}\\approx{\\color{#E06A3A}2.04\\times10^{-9}}",
+ "b5": "5\\times10^6\\times2\\times\\tfrac12\\times10^{-14}={\\color{#E06A3A}5\\times10^{-8}}"
+}

@@ -1,0 +1,12 @@
+{
+ "F": "\\|A\\|_F=\\Big(\\sum_{i,j}a_{ij}^2\\Big)^{1/2}",
+ "iv": "\\|AB\\|\\le\\|A\\|\\|B\\|",
+ "sub": "\\|A\\|=\\max_{\\mathbf x\\ne0}\\frac{\\|A\\mathbf x\\|}{\\|\\mathbf x\\|}",
+ "two": "\\|A\\|_2={\\color{#E06A3A}\\sigma_1}",
+ "Am": "A=\\begin{bmatrix}2&1\\\\1&3\\end{bmatrix},\\quad\\sigma_1\\approx3.618",
+ "one": "\\|A\\|_1=\\max_j\\sum_i|a_{ij}|",
+ "inf": "\\|A\\|_\\infty=\\max_i\\sum_j|a_{ij}|",
+ "compat": "\\|A\\mathbf x\\|\\le\\|A\\|\\|\\mathbf x\\|",
+ "IF": "\\|I\\|_2=1,\\qquad\\|I\\|_F=\\sqrt n",
+ "Q2": "\\|Q\\|_2=1"
+}

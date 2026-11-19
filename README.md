@@ -6,11 +6,11 @@
 - **画面**：3Blue1Brown 式几何动画，构成主义三色平涂剪纸视觉（[视觉规范](docs/视觉规范.md) v1 初定奶油纸底，v2 定稿为深色海报底 `#121010` + 奶油 `#F2E2C8` / 橙 `#E06A3A` 配色）。Canvas 2D、three.js、MathJax 共用一条 `renderAt(t)` 引擎时间轴，全项目仅保留一份渲染引擎。
 - **声音**：GPT-SoVITS 本地克隆配音（声线沿用同系列微积分课 / Git 课），配音前经 `g2p_lint` 做发音审查，配音后逐句做 ASR（Paraformer）复核，字幕与朗读稿分开维护、逐句对应。
 - **规格与包装**：1920×1080 · 60 fps（同时提供 720p60），响度 −16 LUFS，内嵌章节标记；由 After Effects 制作片头、段落卡与片尾包装后合成为单集完整成片，并在正片之外配套**期中特别篇**（75 分钟速成版 + 7 集真题精讲）。
-- **成片**：在 [Releases](https://github.com/azwosile/AI-girl-video-linear-algebra/releases) 下载（正片第 1–6 集 + 期中特别篇速成版 + 期中特别篇 1–7，共 14 个 Release）。
+- **成片**：在 [Releases](https://github.com/azwosile/AI-girl-video-linear-algebra/releases) 下载（正片第 1–7 集（全课完结）+ 期中特别篇速成版 + 期中特别篇 1–7，共 15 个 Release）。
 
 ## 成片下载
 
-### 正片（第 1–6 章）
+### 正片（第 1–7 章，全课完结）
 
 | 集数 | 内容 | Release | 段数 | 时长 |
 |---|---|---|---|---|
@@ -20,8 +20,9 @@
 | 第 4 集 | 线性变换（Leon 第 4 章） | [ep4](https://github.com/azwosile/AI-girl-video-linear-algebra/releases/tag/ep4) | 8 段 | `35:12` |
 | 第 5 集 | 正交性（Leon 第 5 章） | [ep5](https://github.com/azwosile/AI-girl-video-linear-algebra/releases/tag/ep5) | 10 段 | `38:29` |
 | 第 6 集 | 特征值（Leon 第 6 章） | [ep6](https://github.com/azwosile/AI-girl-video-linear-algebra/releases/tag/ep6) | 11 段 | `42:56` |
+| 第 7 集 | 数值线性代数（Leon 第 7 章） | [ep7](https://github.com/azwosile/AI-girl-video-linear-algebra/releases/tag/ep7) | 12 段 | `45:39` |
 
-> 后续规划：第 7 章（数值线性代数，已在第 6 集片尾预告）尚待制作，暂未发布 Release。
+> 第 7 集为 Leon 第 9 版印刷版的最后一章，正片至此完结。Leon 官网另有第 8 章（迭代法）与第 9 章（Jordan 标准形）两章补充，视反馈再决定是否制作。
 
 ### 期中特别篇（第 1–3 章真题精讲）
 
@@ -38,7 +39,7 @@
 
 每个 Release 均包含 4 个文件：`1080p60`（`AI-girl-LA-<tag>-1080p.mp4`）、`720p60`（`AI-girl-LA-<tag>-720p.mp4`，两者均内嵌章节标记），以及 `16:9` / `4:3` 封面（`AI-girl-LA-<tag>-cover-16x9.jpg`、`AI-girl-LA-<tag>-cover-4x3.jpg`）。
 
-> **1080p 体积说明**：`ep1`–`ep6` 与 `spx` 的原版 `1080p60` 成片文件超过 GitHub Releases 单文件 2 GiB 上限，Release 中的 `1080p60` 版本已使用 NVIDIA NVENC 压缩重编码至 2 GiB 以内（保留 `1920×1080`、60 fps、音频规格与内嵌章节标记）。
+> **1080p 体积说明**：`ep1`–`ep7` 与 `spx` 的原版 `1080p60` 成片文件超过 GitHub Releases 单文件 2 GiB 上限，Release 中的 `1080p60` 版本已使用 NVIDIA NVENC 压缩重编码至 2 GiB 以内（保留 `1920×1080`、60 fps、音频规格与内嵌章节标记）。
 
 <details><summary>分段与章节明细</summary>
 
@@ -142,6 +143,25 @@
 | `34:36` | 复习 · 判断题 10 道 |
 | `38:35` | 复习 · 计算题、同济题型与小结 |
 | `42:46` | 片尾 · 下一集预告 |
+
+**第 7 集 · 数值线性代数（`ep7` · 12 段 · `45:39`）**
+
+| 起点 | 章节 |
+|---|---|
+| `00:00` | 片头 |
+| `00:08` | 7.1 电脑里的数：浮点表示与舍入 |
+| `04:15` | 7.1 抵消与不稳定 |
+| `07:49` | 7.2 消元就是 LU 分解 |
+| `11:24` | 7.3 主元策略 |
+| `14:44` | 7.4 矩阵范数 |
+| `17:58` | 7.4 条件数 |
+| `21:43` | 7.5 正交变换：Householder 与 Givens |
+| `25:05` | 7.6 特征值问题：幂法与 QR 算法 |
+| `28:40` | 7.7 最小二乘问题 |
+| `32:12` | 复习 · 判断题 10 道 |
+| `37:09` | 复习 · 计算题（上） |
+| `41:19` | 复习 · 计算题（下）与全课收尾 |
+| `45:29` | 片尾 · 全课完结 |
 
 **期中特别篇 · 速成版（第 1–3 章）（`spx` · 9 段 · `74:56`）**
 

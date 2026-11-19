@@ -15,7 +15,7 @@ SFX = P + '/assets/sfx/'
 os.makedirs(EP + '/pack', exist_ok=True)
 os.makedirs(P + '/out', exist_ok=True)
 CFG = json.load(open(EP + '/ep_split.json', encoding='utf-8'))
-NCARD = {1: 11, 2: 9, 3: 10, 4: 8, 5: 10, 6: 11}
+NCARD = {1: 11, 2: 9, 3: 10, 4: 8, 5: 10, 6: 11, 7: 12}
 
 
 def log(*a):
@@ -106,7 +106,7 @@ def build(e):
         files.append((body, None))
     if os.environ.get('EP_TRIAL'):
         files = files[:int(os.environ['EP_TRIAL'])]
-    files.append((add_sfx('EP%02d_End' % e), '片尾 · 下一集预告'))
+    files.append((add_sfx('EP%02d_End' % e), ('片尾 · 全课完结' if e == 7 else ('片尾 · 全课完结' if e == 7 else '片尾 · 下一集预告'))))
     lst = f'{EP}/ep{e}_list.txt'; meta = f'{EP}/ep{e}_meta.txt'
     T = 0; cur = None
     with open(lst, 'w', encoding='utf-8') as L:

@@ -1,0 +1,45 @@
+# -*- coding: utf-8 -*-
+"""第 7 章 7.2 高斯消元与 LU（Leon 9th §7.2：例 1 A = (2 3 1; 4 1 4; 3 4 6)，乘数 2、3/2、1/10，U 对角 2、−5、4.3；
+例 2 b = (−4, 9, 0)，y = (−4, 17, 4.3)，x = (2, −3, 1)；运算量 ⅓n³ + n² − ⅓n；(AB)x vs A(Bx)（Test B 1））台词源（唯一真源）。
+3B1B 画面：乘数飞进被消掉的格子，L 一格格长出来；前代自上而下、回代自下而上点亮；正方形逐层堆成金字塔（⅓n³）。
+运行：python lines.py → script.json / lines.json
+"""
+import json
+from pathlib import Path
+
+LINES = [
+    dict(id='C01', pose='claude_smile', sub='第一章我们就会解方程组了：消元。这一节换个角度看它：消元其实是在把 A 拆成两个三角矩阵。', read='第一章我们就会解方程组了：消元。这一节换个角度看它：消元，其实是在把A拆成两个三角矩阵。'),
+    dict(id='C02', pose='claude_point', sub='例 1：A = (2 3 1; 4 1 4; 3 4 6)。第一步用第一行消第一列：乘数 l₂₁ = 4/2 = 2，l₃₁ = 3/2。', read='例一：A的三行是，二三一；四一四；三四六。第一步，用第一行消第一列：乘数l二一，是四除以二，等于二；l三一，是二分之三。'),
+    dict(id='C03', pose='claude_explain', sub='第二行减 2 倍第一行得 (0, −5, 2)；第三行减 3/2 倍得 (0, −½, 9/2)。第二步乘数 l₃₂ = (−½)/(−5) = 1/10，第三行变成 (0, 0, 4.3)。', read='第二行减二倍第一行，得到零、负五、二；第三行减二分之三倍，得到零、负二分之一、二分之九。第二步，乘数l三二，是负二分之一除以负五，等于十分之一；第三行变成零、零、四点三。'),
+    dict(id='C04', pose='claude_point', sub='关键一步：把乘数填回被消掉的位置。下三角放乘数、对角线放 1，就是 L；消元的结果就是 U。', read='关键的一步：把乘数，填回被消掉的位置。下三角放乘数，对角线放一，这就是L；消元的结果，就是U。'),
+    dict(id='C05', pose='claude_explain', sub='L = (1 0 0; 2 1 0; 3/2 1/10 1)，U = (2 3 1; 0 −5 2; 0 0 4.3)。可以验证 LU = A。', read='L的三行是，一零零；二一零；二分之三、十分之一、一。U的三行是，二三一；零、负五、二；零、零、四点三。可以验证，L乘U，正好等于A。'),
+    dict(id='D01', mood='think', pose='ds_think', sub='为什么乘数正好就组成了 L？', read='为什么乘数，正好就组成了L？'),
+    dict(id='C06', pose='claude_explain', sub='消元每一步都是左乘一个初等矩阵；把它们的逆按顺序乘回去，乘数恰好原样落到 L 的下三角，不需要任何额外计算。', read='消元的每一步，都是左乘一个初等矩阵；把它们的逆，按顺序乘回去，乘数恰好原样落到L的下三角，不需要任何额外计算。'),
+    dict(id='C07', pose='claude_point', sub='有了 A = LU，解 Ax = b 分两步：先解 Ly = b（前代），再解 Ux = y（回代）。', read='有了A等于L乘U，解方程组就分两步：先解L乘y等于b，叫前代；再解U乘x等于y，叫回代。'),
+    dict(id='C08', pose='claude_explain', sub='例 2：b = (−4, 9, 0)。前代：y₁ = −4，y₂ = 9 − 2y₁ = 17，y₃ = 0 − (3/2)y₁ − (1/10)y₂ = 4.3。', read='例二：b是负四、九、零。前代：y一是负四；y二是九减二倍y一，等于十七；y三是零，减二分之三倍y一，再减十分之一倍y二，等于四点三。'),
+    dict(id='C09', pose='claude_point', sub='回代：x₃ = 4.3/4.3 = 1，x₂ = (17 − 2x₃)/(−5) = −3，x₁ = (−4 − 3x₂ − x₃)/2 = 2。解是 (2, −3, 1)。', read='回代：x三是四点三除以四点三，等于一；x二是十七减二，除以负五，等于负三；x一是负四加九减一，除以二，等于二。解是二、负三、一。'),
+    dict(id='C10', pose='claude_explain', sub='现在数一数运算次数。消元第 1 步：n − 1 次除法求乘数，(n − 1)² 次乘法更新右下角。', read='现在，数一数要做多少次运算。消元的第一步：n减一次除法求乘数，n减一的平方次乘法，更新右下角。'),
+    dict(id='C11', pose='claude_point', sub='第 2 步右下角缩小一圈：(n − 2)² 次……一层层正方形堆成金字塔，体积约 ⅓n³。', read='第二步，右下角缩小一圈，n减二的平方次；依此类推。这些正方形一层层堆起来，像一座金字塔，体积大约是三分之一n的立方。'),
+    dict(id='C12', pose='claude_explain', sub='精确地说，解一个方程组：乘除 ⅓n³ + n² − ⅓n 次，加减 ⅓n³ + ½n² − ⅚n 次。主项都是 ⅓n³。', read='精确地说，解一个方程组，乘除法和加减法的次数见屏幕，主项都是三分之一n的立方。'),
+    dict(id='D02', mood='easy', pose='ds_proud', sub='那 n = 1000 也就三亿多次，电脑一眨眼！', read='那n等于一千，也就三亿多次，电脑一眨眼就算完！'),
+    dict(id='C13', pose='claude_smile', sub='没错。但 n 翻一倍，工作量翻八倍。而且这三亿次运算，每次都带着一个 (1 + δ)。', read='没错。不过要注意，n翻一倍，工作量就翻八倍。而且这三亿次运算，每一次，都带着一个一加德尔塔。'),
+    dict(id='C14', pose='claude_point', sub='LU 的另一个好处：A 只分解一次；换一个右端 b，只要再做前代、回代，约 n² 次运算。', read='L U的另一个好处：A只分解一次；换一个右端b，只要再做一次前代和回代，大约n的平方次运算。'),
+    dict(id='C15', pose='claude_explain', sub='运算次数还取决于计算顺序。(AB)x 要 n³ + n² 次乘法；A(Bx) 只要 2n²。n = 1000 时相差五百倍。', read='运算次数，还取决于计算的顺序。先算A乘B再乘x，要n的立方加n的平方次乘法；先算B乘x，再用A去乘，只要二倍n的平方次。n等于一千时，相差五百倍。'),
+    dict(id='G01', pose='gpt_explain', sub='同济第三章用初等行变换解方程组，和这里的消元完全一样，只是没写成 LU。同济第二章讲过矩阵乘法满足结合律——但乘的顺序会影响计算量。', read='同济第三章，用初等行变换解方程组，和这里的消元完全一样，只是没有写成L乘U。同济第二章讲过，矩阵乘法满足结合律；但是乘的顺序，会影响计算量。'),
+    dict(id='D03', mood='think', pose='ds_think', sub='如果消元时对角线上出现 0 呢？', read='那如果消元的时候，对角线上出现零呢？'),
+    dict(id='C16', pose='claude_smile', sub='算法就进行不下去了，必须换行。而且不光是 0——很小的主元也会出大问题。', read='算法就进行不下去了，必须换行。而且不光是零，很小的主元，也会出大问题。'),
+    dict(id='C17', pose='claude_explain', sub='小结：消元 = LU 分解；乘数存进 L；先前代、再回代；总运算量约 ⅓n³。', read='小结：消元就是L U分解；乘数存进L；先前代，再回代；总运算量大约三分之一n的立方。'),
+    dict(id='C18', pose='claude_point', sub='下一节：主元策略——该选哪一行当主元。', read='下一节：主元策略，该选哪一行当主元。'),
+]
+
+
+
+if __name__ == '__main__':
+    here = Path(__file__).resolve().parent
+    for l in LINES:
+        l.setdefault('read', l['sub'])
+        l.setdefault('mood', None)
+    ids = [l['id'] for l in LINES]; assert len(ids) == len(set(ids)), '台词 id 重复'
+    (here / 'script.json').write_text(json.dumps({l['id']: [l['read'], l['mood']] for l in LINES}, ensure_ascii=False, indent=1), encoding='utf-8')
+    (here / 'lines.json').write_text(json.dumps(LINES, ensure_ascii=False, indent=1), encoding='utf-8')
+    print(len(LINES), 'lines,', sum(len(l['read']) for l in LINES), 'chars')

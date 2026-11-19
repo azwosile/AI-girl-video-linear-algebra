@@ -1,0 +1,23 @@
+{
+ "q1": "\\mathrm{fl}(\\mathrm{fl}(a+b)+c)=\\mathrm{fl}(a+\\mathrm{fl}(b+c))",
+ "q2": "A(BC)\\;\\;\\mathrm{vs}\\;\\;(AB)C:\\;\\mathrm{same\\;flops}",
+ "q3": "\\mathrm{stable}\\;\\Rightarrow\\;\\mathrm{small\\;rel.\\;error}",
+ "q4": "A=A^T,\\;\\mathrm{stable}\\;\\Rightarrow\\;\\lambda\\;\\mathrm{accurate}",
+ "q5": "A\\ne A^T,\\;\\mathrm{stable}\\;\\Rightarrow\\;\\lambda\\;\\mathrm{accurate}",
+ "q6": "A^{-1}\\mathbf b\\;\\;\\mathrm{vs}\\;\\;LU\\mathbf x=\\mathbf b",
+ "q7": "A=A^T\\;\\Rightarrow\\;\\|A\\|_1=\\|A\\|_\\infty",
+ "q8": "\\|A\\|_2=\\|A\\|_F",
+ "q9": "\\mathrm{rank}\\,n:\\;\\mathrm{all\\;LS\\;methods\\;accurate}",
+ "q10": "\\|A-B\\|_2<\\epsilon\\;\\Rightarrow\\;\\|A^+-B^+\\|_2<\\delta",
+ "a1": "(1.00+0.004)+0.004=1.00\\ne1.01",
+ "a2": "(1\\times n)(n\\times1)(1\\times n):\\;2n\\;\\;\\mathrm{vs}\\;\\;2n^2",
+ "a3": "\\mathrm{err}\\approx{\\color{#E06A3A}\\mathrm{cond}(A)}\\times\\mathrm{small}",
+ "a4": "\\mathrm{cond}_2(Q)=1\\;\\Rightarrow\\;|\\Delta\\lambda|\\le\\|E\\|_2",
+ "a5": "\\begin{bmatrix}1&1\\\\10^{-10}&1\\end{bmatrix}:\\;\\lambda=1\\pm10^{-5}",
+ "a6": "A^{-1}\\mathbf b:\\;n^2\\qquad LU:\\;n^2",
+ "a7": "\\|A\\|_1=\\|A^T\\|_\\infty",
+ "IF": "\\|I\\|_2=1,\\qquad\\|I\\|_F=\\sqrt n",
+ "a8": "\\|A\\|_2=\\sigma_1,\\;\\;\\|A\\|_F=\\sqrt{\\sigma_1^2+\\cdots+\\sigma_r^2}",
+ "a9": "\\mathrm{cond}(A^TA)=\\mathrm{cond}(A)^2",
+ "a10": "B=\\begin{bmatrix}1&0\\\\0&\\epsilon\\end{bmatrix},\\;B^+=\\begin{bmatrix}1&0\\\\0&{\\color{#E8577A}1/\\epsilon}\\end{bmatrix}"
+}

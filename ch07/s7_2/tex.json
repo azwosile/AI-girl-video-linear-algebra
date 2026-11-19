@@ -1,0 +1,12 @@
+{
+ "mult1": "l_{21}=\\tfrac42={\\color{#E06A3A}2},\\quad l_{31}={\\color{#E06A3A}\\tfrac32}",
+ "mult2": "l_{32}=\\frac{-1/2}{-5}={\\color{#E06A3A}\\tfrac1{10}}",
+ "LU": "A=\\begin{bmatrix}1&0&0\\\\{\\color{#E06A3A}2}&1&0\\\\{\\color{#E06A3A}\\tfrac32}&{\\color{#E06A3A}\\tfrac1{10}}&1\\end{bmatrix}\\begin{bmatrix}2&3&1\\\\0&-5&2\\\\0&0&4.3\\end{bmatrix}",
+ "solve": "L\\mathbf y=\\mathbf b,\\qquad U\\mathbf x=\\mathbf y",
+ "fwd": "\\mathbf y=\\begin{bmatrix}-4\\\\17\\\\4.3\\end{bmatrix}",
+ "bwd": "\\mathbf x={\\color{#E06A3A}\\begin{bmatrix}2\\\\-3\\\\1\\end{bmatrix}}",
+ "cnt1": "\\sum_{k=1}^{n-1}(n-k)^2\\approx\\tfrac13n^3",
+ "cntm": "\\times\\div:\\;\\tfrac13n^3+n^2-\\tfrac13n",
+ "cnta": "+-:\\;\\tfrac13n^3+\\tfrac12n^2-\\tfrac56n",
+ "abx": "(AB)\\mathbf x:\\;n^3+n^2\\qquad A(B\\mathbf x):\\;2n^2"
+}

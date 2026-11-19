@@ -1,0 +1,12 @@
+{
+ "ne": "A^TA\\mathbf x=A^T\\mathbf b",
+ "Al": "A=\\begin{bmatrix}1&1\\\\1&1+10^{-6}\\\\1&1-10^{-6}\\end{bmatrix}",
+ "sq": "\\mathrm{cond}_2(A^TA)={\\color{#E8577A}\\mathrm{cond}_2(A)^2}",
+ "mgs": "c_k=\\mathbf q_k^T\\mathbf b_k,\\quad\\mathbf b_{k+1}=\\mathbf b_k-c_k\\mathbf q_k",
+ "hqr": "Q^TA=\\begin{bmatrix}R_1\\\\O\\end{bmatrix},\\quad Q^T\\mathbf b=\\begin{bmatrix}\\mathbf c_1\\\\\\mathbf c_2\\end{bmatrix}",
+ "split": "\\|\\mathbf b-A\\mathbf x\\|_2^2=\\|\\mathbf c_1-R_1\\mathbf x\\|_2^2+{\\color{#E8577A}\\|\\mathbf c_2\\|_2^2}",
+ "pinv": "A^+=V\\Sigma^+U^T,\\quad\\Sigma^+=\\mathrm{diag}(\\tfrac1{\\sigma_1},\\dots,\\tfrac1{\\sigma_r},0,\\dots)",
+ "mn": "\\mathbf x=A^+\\mathbf b,\\qquad\\|\\mathbf z\\|_2>\\|\\mathbf x\\|_2",
+ "two": "y_i=\\frac{\\mathbf u_i^T\\mathbf b}{\\sigma_i},\\quad\\mathbf x=y_1\\mathbf v_1+\\cdots+y_r\\mathbf v_r",
+ "svs": "|\\sigma_i-\\omega_i|\\le\\|A-B\\|_2"
+}

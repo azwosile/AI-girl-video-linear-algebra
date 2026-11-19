@@ -1,0 +1,18 @@
+{
+ "fdef": "\\pm\\left(\\frac{d_1}{\\beta}+\\frac{d_2}{\\beta^2}+\\cdots+\\frac{d_t}{\\beta^t}\\right)\\times\\beta^{e}",
+ "fdig": "0\\le d_i\\le\\beta-1,\\qquad L\\le e\\le U",
+ "ex1": "0.53216\\times10^{-4},\\qquad -0.81724\\times10^{21}",
+ "norm": "0.00112\\times10^{8}={\\color{#E06A3A}0.11200\\times10^{6}}",
+ "err": "\\underbrace{x'-x}_{\\mathrm{abs}}\\qquad\\underbrace{\\frac{x'-x}{x}}_{\\mathrm{rel}}",
+ "b11": "11=(1011)_2",
+ "b1131": "11.31\\approx(1011.010100)_2={\\color{#E06A3A}11.3125}",
+ "fladd": "\\mathrm{fl}(a'+b')={\\color{#E06A3A}0.263\\times10^{4}}",
+ "flmul": "\\mathrm{fl}(a'b')={\\color{#E06A3A}0.117\\times10^{5}}",
+ "epsdef": "\\mathrm{fl}(1+\\epsilon)>1",
+ "eps3": "\\mathrm{fl}(1+0.00499)=1,\\quad \\mathrm{fl}(1+0.005)=1.01",
+ "epsb": "\\epsilon=\\tfrac12\\,\\beta^{1-t}",
+ "delta": "\\mathrm{fl}(a'\\circ b')=(a'\\circ b')(1+\\delta),\\quad|\\delta|<\\epsilon",
+ "ieee": "x=(-1)^{s}\\times(1.m)_2\\times2^{\\,e-127}",
+ "ex7": "(1+\\tfrac1{16}+\\tfrac1{32})\\times2^4={\\color{#E06A3A}17.5}",
+ "dbl": "\\epsilon=2^{-52}\\approx{\\color{#E06A3A}2.22\\times10^{-16}}"
+}
